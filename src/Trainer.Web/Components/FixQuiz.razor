@@ -3,14 +3,13 @@
 @* TODO: syntax-highlight the snippets with highlight.js served from wwwroot (SPEC §5.7). *@
 <div class="quiz">
     <h3>Which change fixes it?</h3>
-    <StoryPanel Speaker="Lt. Barclay" Text="@BarclayNote" Kind="barclay" />
-
     @foreach (var option in _options)
     {
         <label class="option @OptionClass(option)">
             <input type="radio" name="fix-@Lab.Slug" value="@option.Id"
                    checked="@(_selected == option.Id)" disabled="@Solved"
                    @onchange="() => _selected = option.Id" />
+            <StoryPanel Speaker="Lt. Barclay" Text="@option.BarclayLine" Kind="barclay" />
             <pre><code class="language-csharp">@option.Code</code></pre>
             @if (Solved || _wrong.Contains(option.Id))
             {
@@ -37,9 +36,6 @@
 
 @code {
     [Parameter, EditorRequired] public ILab Lab { get; set; } = default!;
-
-    // TODO: Barclay's line comes with the rewritten story.
-    private const string? BarclayNote = null;
 
     private List<FixOption> _options = [];
     private readonly HashSet<string> _wrong = [];

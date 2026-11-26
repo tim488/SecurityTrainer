@@ -27,6 +27,7 @@ public enum Difficulty
 
 public record LabStory(int Act, int Order, string Briefing, string CallingCard, string Debrief);
 
-public record FixOption(string Id, string Code, bool IsCorrect, string Feedback);
+/// <param name="BarclayLine">Barclay's story line for a wrong option; hidden by "Skip story".</param>
+public record FixOption(string Id, string Code, bool IsCorrect, string Feedback, string? BarclayLine = null);
 
 public record RequestTemplate(string Method, string Path, Dictionary<string, string> Headers, string? Body);
