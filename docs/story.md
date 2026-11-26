@@ -146,18 +146,55 @@ The German version is `docs/story.de.md`; keep both in step.
   > So is our visitor.
 
 ### 1.3 `sql-injection`: Classified Manifest
-- Beat: Lore finds a classified prototype hidden in the cargo manifest.
+- Beat: Lore finds a classified prototype hidden in the cargo manifest: the
+  emotion chip Dr. Soong built for Data. Lore wants it, but not yet.
 - Calling card points to: becoming someone else (→ Act 2).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `escape-quotes` TODO · `keyword-blocklist` TODO · `string-format` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47323.6. The roster leak has been contained, but Ten Forward
+  > has a new favourite subject: a classified prototype in our cargo hold. Nobody can say
+  > what it is, yet everyone seems to know it is there. The cargo manifest leaves
+  > classified items out of every crew search. Someone has looked anyway. I have asked
+  > Mr. Crusher to find out how, and what exactly the crew is talking about.
+- Hints (Data):
+  1. A search for `phaser` returns two items. The code places your search term directly
+     inside the SQL text, between two single quotes. I am curious what happens to a
+     search term that contains a single quote of its own.
+  2. A quote in your input ends the string early, and whatever follows is read as SQL.
+     In SQLite, `--` turns the rest of the line into a comment. That would include the
+     condition `IsClassified = 0`.
+  3. A condition that is always true, such as `OR 1=1`, matches every row. The request
+     console encodes spaces in the path for you, so you may type them as they are.
+- Calling card (Lore):
+  > An emotion chip, Wesley. Father built it for Data. Not for me, of course, never for me.
+  > I'll collect it later. For now I'm bored of reading about people. I'd rather be one of
+  > them. Someone with a little more rank, I think. — L.
+- Barclay lines:
+  - `linq-where`: "W-we could just use LINQ, like everywhere else? Then there's no SQL string to b-break. Unless that's cheating."
+  - `escape-quotes`: "If the quote is the problem, w-we double it. Two quotes. SQL likes that. I-I read it somewhere."
+  - `keyword-blocklist`: "We could block the dangerous bits. `--`, `OR`, semicolons. N-nobody needs those in a cargo search. Right?"
+  - `string-format`: "What if we build the query with `string.Format` instead of plus signs? It l-looks a lot more professional."
+- Debrief:
+  > Well done, Mr. Crusher. The search now treats your words as words, not as orders. The
+  > classified item is back under lock, and Mr. Data has asked that it stay there for now.
+  > He did not say why. I did not ask.
 
 ### Act 1 ending
 - Shown once all Act 1 labs are completed.
 - Beat: Lore appears on the viewscreen for the first time and recognises Wesley. It's personal now.
-- TODO: text
+
+> The bridge lights dim for half a second. Then the main viewscreen switches on by itself.
+>
+> Data's face looks down at them, smiling in a way Data never smiles.
+>
+> "Captain. Commander. And brother, you look well. Wonderfully dull." His eyes move
+> across the bridge and stop at the conn. "And the boy. Of course it's the boy."
+>
+> "Lore," Data says quietly.
+>
+> "You've been tidying up after me, Wesley. Logs, rosters, cargo. Very thorough. But I'm
+> done reading about this crew." He leans closer. "Now I'm going to be one of you."
+>
+> The screen goes dark. Riker looks at Wesley. For the first time, nobody tells him to sit down.
 
 ---
 

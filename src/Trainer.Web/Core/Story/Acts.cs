@@ -54,7 +54,39 @@ public static class Acts
     [
         new(1, new("Uninvited Guest", "Ungebetener Gast"),
             new("Lore looks around: reading data he shouldn't see.",
-                "Lore schnüffelt in fremden Daten herum.")),
+                "Lore schnüffelt in fremden Daten herum."),
+            Ending: new(
+                En: """
+                    The bridge lights dim for half a second. Then the main viewscreen switches on by itself.
+
+                    Data's face looks down at them, smiling in a way Data never smiles.
+
+                    "Captain. Commander. And brother, you look well. Wonderfully dull." His eyes move
+                    across the bridge and stop at the conn. "And the boy. Of course it's the boy."
+
+                    "Lore," Data says quietly.
+
+                    "You've been tidying up after me, Wesley. Logs, rosters, cargo. Very thorough. But I'm
+                    done reading about this crew." He leans closer. "Now I'm going to be one of you."
+
+                    The screen goes dark. Riker looks at Wesley. For the first time, nobody tells him to sit down.
+                    """,
+                De: """
+                    Die Lichter auf der Brücke flackern einen Moment lang. Dann schaltet sich der Hauptschirm
+                    von selbst ein.
+
+                    Datas Gesicht blickt auf sie herab, mit einem Lächeln, das Data nie lächeln würde.
+
+                    „Captain. Commander. Und du, Bruder, siehst gut aus. Herrlich langweilig.“ Sein Blick wandert
+                    über die Brücke und bleibt am Steuer hängen. „Und der Junge. Natürlich ist es der Junge.“
+
+                    „Lore“, sagt Data leise.
+
+                    „Du räumst mir hinterher, Wesley. Logbücher, Crewlisten, Fracht. Sehr gründlich. Aber vom
+                    Lesen über diese Crew hab' ich genug.“ Er beugt sich vor. „Jetzt werd' ich selbst einer von euch.“
+
+                    Der Schirm wird schwarz. Riker sieht Wesley an. Zum ersten Mal sagt ihm keiner, er solle sich setzen.
+                    """)),
         new(2, new("Borrowed Identities", "Falsche Identitäten"),
             new("Lore stops reading and starts becoming someone else.",
                 "Lore gibt sich als jemand anderes aus.")),

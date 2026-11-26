@@ -105,8 +105,47 @@ von hier.
   > Ich habe es erlaubt, aber nur als Dekoration. Die Crewliste ist leider schon draußen.
   > Unser Besucher auch.
 
-### 1.3 `sql-injection` · Ende von Akt 1
-- TODO
+### 1.3 `sql-injection`: Das geheime Frachtmanifest
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47323.6. Das Leck in der Crewliste ist gestopft, aber in
+  > Zehn Vorne gibt es ein neues Lieblingsthema: einen geheimen Prototyp in unserem Frachtraum.
+  > Keiner weiß, was es ist, aber alle wissen, dass es ihn gibt. Das Frachtmanifest blendet
+  > geheime Posten bei jeder Suche der Crew aus. Trotzdem hat jemand hineingesehen. Ich habe
+  > Mr. Crusher gebeten herauszufinden, wie das ging und worüber die Crew eigentlich redet.
+- Hinweise (Data):
+  1. Eine Suche nach `phaser` liefert zwei Posten. Der Code setzt Ihren Suchbegriff direkt in den SQL-Text, zwischen zwei einfache Anführungszeichen. Mich interessiert, was mit einem Suchbegriff geschieht, der selbst ein einfaches Anführungszeichen enthält.
+  2. Ein Anführungszeichen in Ihrer Eingabe beendet den String vorzeitig, und alles danach wird als SQL gelesen. In SQLite macht `--` den Rest der Zeile zu einem Kommentar. Das beträfe auch die Bedingung `IsClassified = 0`.
+  3. Eine Bedingung, die immer wahr ist, etwa `OR 1=1`, trifft auf jede Zeile zu. Leerzeichen im Pfad codiert die Request-Konsole selbst, Sie können sie also einfach eintippen.
+- Visitenkarte (Lore):
+  > Ein Emotionschip, Wesley. Vater hat ihn für Data gebaut. Nicht für mich, natürlich, nie
+  > für mich. Den hol' ich mir später. Jetzt hab' ich erst mal genug davon, über Leute zu lesen.
+  > Ich wär' lieber selbst einer von ihnen. Einer mit ein bisschen mehr Rang, schätz' ich. — L.
+- Barclay:
+  - `linq-where`: „W-wir könnten einfach LINQ nehmen, wie überall sonst? Dann gibt's keinen SQL-String, den man k-kaputt machen kann. Oder ist das geschummelt?“
+  - `escape-quotes`: „Wenn das Anführungszeichen das Problem ist, d-dann verdoppeln wir es eben. Zwei Anführungszeichen, das mag SQL. Hab' ich irgendwo gelesen.“
+  - `keyword-blocklist`: „W-wir könnten die gefährlichen Teile sperren: `--`, `OR`, Semikolons. Die braucht doch k-keiner für eine Frachtsuche. Oder?“
+  - `string-format`: „Und wenn wir die Abfrage mit `string.Format` bauen statt mit Pluszeichen? D-das sieht viel professioneller aus.“
+- Nachbesprechung:
+  > Gut gemacht, Mr. Crusher. Die Suche behandelt Ihre Eingabe jetzt als Text und nicht mehr
+  > als Befehl. Der geheime Posten ist wieder unter Verschluss. Mr. Data hat gebeten, dass er
+  > vorerst dort bleibt. Er hat nicht gesagt, warum, und ich habe nicht gefragt.
+
+### Ende von Akt 1
+
+> Die Lichter auf der Brücke flackern einen Moment lang. Dann schaltet sich der Hauptschirm
+> von selbst ein.
+>
+> Datas Gesicht blickt auf sie herab, mit einem Lächeln, das Data nie lächeln würde.
+>
+> „Captain. Commander. Und du, Bruder, siehst gut aus. Herrlich langweilig.“ Sein Blick wandert
+> über die Brücke und bleibt am Steuer hängen. „Und der Junge. Natürlich ist es der Junge.“
+>
+> „Lore“, sagt Data leise.
+>
+> „Du räumst mir hinterher, Wesley. Logbücher, Crewlisten, Fracht. Sehr gründlich. Aber vom
+> Lesen über diese Crew hab' ich genug.“ Er beugt sich vor. „Jetzt werd' ich selbst einer von euch.“
+>
+> Der Schirm wird schwarz. Riker sieht Wesley an. Zum ersten Mal sagt ihm keiner, er solle sich setzen.
 
 ---
 

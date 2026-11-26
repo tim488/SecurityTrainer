@@ -274,11 +274,13 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Premise:* A classified prototype in the cargo manifest is the talk of Ten Forward.
 - *Vulnerable:* `GET /cargo?search=` uses `FromSqlRaw("SELECT * FROM CargoItems
   WHERE Name LIKE '%" + search + "%' AND IsClassified = 0")`.
-- *Flag:* in the `Description` of the classified cargo item.
+- *Data:* one in-memory SQLite database per language (same schema), picked by
+  `Accept-Language`. SQL errors are returned in the response (verbose on purpose).
+- *Flag:* in the `Description` of the classified cargo item (Soong's emotion chip).
 - *Exploit:* `search=' OR 1=1 --`
 - ✅ LINQ `Where(c => c.Name.Contains(search) && !c.IsClassified)` or `FromSql($"...{search}...")`
 - ❌ `search.Replace("'", "''")` (fragile, context-dependent) · ❌ Reject `--`,
-  `OR`, `;` (bypassable, breaks real searches) · ❌ `string.Format` (still concatenation)
+  `OR`, `;`, `/*` (`UNION SELECT` bypasses it, "photon torpedo" is blocked) · ❌ `string.Format` (still concatenation)
 
 ### Act 2 — "Borrowed Identities" (v1.1)
 
