@@ -1,4 +1,5 @@
 @page "/"
+@using Trainer.Web.Core.Story
 @inherits ProgressAwareComponent
 
 <PageTitle>Security Trainer</PageTitle>
@@ -7,13 +8,22 @@
 
 <p class="muted">@Completed of @Registry.Labs.Count labs completed</p>
 
-@foreach (var act in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
+@if (Completed == 0)
 {
+    <StoryPanel Text="@Acts.OpeningScene" Kind="epilogue" />
+}
+
+@foreach (var group in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
+{
+    var act = Acts.Find(group.Key);
     <section class="act">
-        @* TODO: act titles and epilogues come with the story (docs/story.md). *@
-        <h2>@(act.Key == 0 ? "Training (placeholder)" : $"Act {act.Key}")</h2>
+        <h2>Act @group.Key@(act is null ? "" : $": {act.Title}")</h2>
+        @if (act is not null)
+        {
+            <p class="muted">@act.Tagline</p>
+        }
         <div class="cards">
-            @foreach (var lab in act.OrderBy(l => l.Story.Order))
+            @foreach (var lab in group.OrderBy(l => l.Story.Order))
             {
                 var status = Progress.StatusOf(lab.Slug);
                 <a class="card status-@status.ToString().ToLowerInvariant()" href="@($"labs/{lab.Slug}")">
@@ -27,7 +37,16 @@
                 </a>
             }
         </div>
+        @if (act is not null && group.All(l => Progress.Get(l.Slug).IsCompleted))
+        {
+            <StoryPanel Text="@act.Ending" Kind="epilogue" />
+        }
     </section>
+}
+
+@if (Registry.Labs.Count > 0 && Completed == Registry.Labs.Count)
+{
+    <StoryPanel Text="@Acts.Finale" Kind="epilogue" />
 }
 
 @code {

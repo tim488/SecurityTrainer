@@ -32,6 +32,8 @@ The single source for all story text. Labs copy their text from here.
 - Wesley once helped expose Lore and stop him. Lore has not forgiven "the boy".
 - Data can't use contractions ("I do not", never "I don't"). Lore can. That's
   how Wesley unmasks him at the end of Act 2.
+- Ten Forward is the ship's lounge, where the crew go to relax off duty. Its
+  comment board is where the finale happens (3.5).
 
 ## Cast
 
@@ -47,7 +49,22 @@ The single source for all story text. Labs copy their text from here.
 - Shown on the home page until the first lab is completed.
 - Beat: the refit is finished and the crew is celebrating. Then Data notices a
   signature inside the core that matches his own, but it isn't him.
-- TODO: text
+
+> Ten Forward, the ship's lounge, is loud tonight. The computer core refit is finished, three days
+> early, and Lt. Barclay has been toasted so often he is hiding behind a plant.
+> Acting Ensign Wesley Crusher stands at the edge of the party. Nobody has
+> asked him to make a toast.
+>
+> Across the room, Data stops in the middle of a sentence and tilts his head.
+>
+> "Captain, there is a positronic signature inside the computer core. It
+> matches my own."
+>
+> "Then it is yours, Mr. Data."
+>
+> "No, sir. I am here."
+>
+> The music keeps playing. Nobody else has noticed. Wesley puts down his glass.
 
 ---
 
@@ -58,11 +75,38 @@ The single source for all story text. Labs copy their text from here.
 ### 1.1 `bola`: Someone Else's Personal Log
 - Beat: Lore reads Riker's personal log.
 - Calling card points to: the crew roster (→ 1.2).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `guid-ids` TODO · `hide-in-ui` TODO · `authorize-attribute` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47321.4. One hour after the refit, an unidentified
+  > signature appeared in the computer core. Now an ensign reports that she can
+  > open personal logs that are not her own. Personal logs are private by
+  > regulation. If an ensign can read them, so can whatever is hiding in the
+  > core. I have asked Mr. Crusher to confirm the report from his own account,
+  > before Commander Riker hears of it. Quietly.
+- Hints (Data):
+  1. `GET /logs` returns only your own entries, 1001 and 1002. I note that the
+     identifiers are sequential integers. Sequences rarely stop where one's own
+     entries do.
+  2. `GET /logs/{id}` verifies that the caller is logged in. I have not observed
+     it verifying anything else.
+  3. Commander Riker's most recent log directly follows yours in the sequence.
+     Requesting it with your own token would be instructive. I would prefer that
+     the Commander not learn I suggested this.
+- Calling card (Lore):
+  > Hello, Wesley. Reading the Commander's diary? So was I. Forty minutes on
+  > trombone technique. Riveting. But one log at a time is so slow. Somewhere on
+  > this ship there is a list of everyone aboard. I think I'll read that next.
+  > — L.
+- Barclay lines:
+  - `guid-ids`: "W-what if the log numbers weren't numbers? Long random ones.
+    Nobody could guess those. C-could they?"
+  - `hide-in-ui`: "The log viewer only shows your own logs anyway. M-maybe we just
+    make really, really sure it only shows those?"
+  - `authorize-attribute`: "I'll put an `[Authorize]` on it, sir. That's what
+    it's for, isn't it? Authorizing?"
+- Debrief:
+  > Well done, Mr. Crusher. Every log now answers only to its owner. Commander
+  > Riker asked me to thank you, and to ask how much of his log you read. I told
+  > him you were thorough. He did not take it as a compliment.
 
 ### 1.2 `bfla`: Bridge Access
 - Beat: Lore exports the full crew roster and broadcasts it on all frequencies.

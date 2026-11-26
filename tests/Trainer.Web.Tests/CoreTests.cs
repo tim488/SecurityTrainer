@@ -27,14 +27,14 @@ public class FlagServiceTests
     public void Check_accepts_only_the_right_flag()
     {
         var flags = new FlagService();
-        var flag = flags.GetFlag("sample");
+        var flag = flags.GetFlag("bola");
 
-        Assert.True(flags.Check("sample", flag));
-        Assert.True(flags.Check("sample", $"  {flag}\n"));
-        Assert.False(flags.Check("sample", flag.ToUpperInvariant()));
-        Assert.False(flags.Check("sample", flag[..^1]));
-        Assert.False(flags.Check("sample", ""));
-        Assert.False(flags.Check("sample", null));
+        Assert.True(flags.Check("bola", flag));
+        Assert.True(flags.Check("bola", $"  {flag}\n"));
+        Assert.False(flags.Check("bola", flag.ToUpperInvariant()));
+        Assert.False(flags.Check("bola", flag[..^1]));
+        Assert.False(flags.Check("bola", ""));
+        Assert.False(flags.Check("bola", null));
         Assert.False(flags.Check("other", flag));
     }
 }
@@ -45,16 +45,16 @@ public class DemoAuthTests
     public void Tokens_are_random_and_map_back_to_their_user_and_lab()
     {
         var auth = new DemoAuth();
-        var wesley = auth.GetToken("sample", "wesley");
-        var riker = auth.GetToken("sample", "riker");
+        var wesley = auth.GetToken("bola", "wesley");
+        var riker = auth.GetToken("bola", "riker");
 
         Assert.NotEqual(wesley, riker);
-        Assert.NotEqual(wesley, new DemoAuth().GetToken("sample", "wesley"));
-        Assert.Equal(new DemoUser("sample", "wesley"), auth.FindUser("sample", wesley));
-        Assert.Equal("riker", auth.FindUser("sample", riker)?.Name);
+        Assert.NotEqual(wesley, new DemoAuth().GetToken("bola", "wesley"));
+        Assert.Equal(new DemoUser("bola", "wesley"), auth.FindUser("bola", wesley));
+        Assert.Equal("riker", auth.FindUser("bola", riker)?.Name);
         Assert.Null(auth.FindUser("other-lab", wesley));
-        Assert.Null(auth.FindUser("sample", "not-a-token"));
-        Assert.Null(auth.FindUser("sample", (string?)null));
+        Assert.Null(auth.FindUser("bola", "not-a-token"));
+        Assert.Null(auth.FindUser("bola", (string?)null));
     }
 }
 
@@ -63,7 +63,7 @@ public class RequestSenderTests
     private static readonly Uri Base = new("http://localhost:5000/");
 
     [Theory]
-    [InlineData("/api/labs/sample/flag")]
+    [InlineData("/api/labs/bola/logs")]
     [InlineData("/api/labs/bola/logs/1003?x=1")]
     public void Allows_lab_api_paths(string path) =>
         Assert.True(RequestSender.TryBuildUri(Base, path, out _));

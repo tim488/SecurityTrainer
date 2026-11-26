@@ -4,6 +4,10 @@
 {
     <div class="hints">
         <h3>Hints</h3>
+        @if (!SkipStory)
+        {
+            <p class="story-speaker">Lt. Commander Data</p>
+        }
         <ol>
             @foreach (var hint in Hints.Take(Revealed))
             {

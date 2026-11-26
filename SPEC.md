@@ -7,7 +7,7 @@ and Web APIs**. Each lab is a chapter of a short story: exploit a real
 vulnerable endpoint in the browser, capture the flag, then pick the correct fix.
 
 - **Goals:** learn by doing (every lab has a real exploit) · everything happens
-  in the browser · zero setup (`git clone` → `dotnet run`) · new lab = new folder
+  in the browser · zero setup (`git clone` → `dotnet run --project src/Trainer.Web`) · new lab = new folder
   · fun to play through.
 - **Non-goals:** in-browser code editing, user accounts, hosting, leaderboards,
   Docker, server-side progress storage.

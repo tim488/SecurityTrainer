@@ -27,7 +27,8 @@ dotnet test
 - `src/Trainer.Web/`: the Blazor Web App and the vulnerable lab endpoints (`/api/labs/{slug}`)
   - `Core/`: lab contract, registry, flags, demo auth, progress
   - `Components/`: home page, lab page, request console, quiz
-  - `Labs/<Name>/`: one folder per lab (only a placeholder `Sample` lab for now)
+  - `Core/Story/`: act titles, opening scene, act endings, finale
+  - `Labs/<Name>/`: one folder per lab
 - `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
 - `SPEC.md`: the full specification
 - `docs/story.md`: the story outline

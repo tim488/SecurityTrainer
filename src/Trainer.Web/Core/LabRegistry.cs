@@ -1,4 +1,4 @@
-using Trainer.Web.Labs.Sample;
+using Trainer.Web.Labs.Bola;
 
 namespace Trainer.Web.Core;
 
@@ -17,7 +17,7 @@ public sealed class LabRegistry
         // Register labs here, one line per lab. Act and order come from each lab's Story.
         ILab[] labs =
         [
-            new SampleLab(flags, auth), // PLACEHOLDER: remove once real labs exist
+            new BolaLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();

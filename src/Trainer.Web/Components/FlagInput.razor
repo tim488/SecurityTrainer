@@ -6,7 +6,7 @@
     @if (Progress.Get(Slug).FlagSubmitted)
     {
         <p class="success">Flag accepted.</p>
-        <StoryPanel Speaker="A calling card" Text="@CallingCard" Kind="calling-card" />
+        <StoryPanel Speaker="A calling card from Lore" Text="@CallingCard" Kind="calling-card" />
         <button class="primary" @onclick="OnAccepted">Continue to fix &rarr;</button>
     }
     else

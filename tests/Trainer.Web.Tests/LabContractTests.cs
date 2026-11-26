@@ -35,6 +35,15 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.False(string.IsNullOrWhiteSpace(story.Debrief));
     }
 
+    [Theory, MemberData(nameof(Slugs))]
+    public void Every_wrong_option_has_a_barclay_line(string slug)
+    {
+        var lab = Registry.Find(slug)!;
+
+        Assert.All(lab.FixOptions.Where(o => !o.IsCorrect), o => Assert.False(string.IsNullOrWhiteSpace(o.BarclayLine), o.Id));
+        Assert.Equal(3, lab.Hints.Count);
+    }
+
     [Fact]
     public void Slugs_and_act_order_are_unique()
     {
