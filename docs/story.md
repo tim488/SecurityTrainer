@@ -114,11 +114,36 @@ The German version is `docs/story.de.md`; keep both in step.
 ### 1.2 `bfla`: Bridge Access
 - Beat: Lore exports the full crew roster and broadcasts it on all frequencies.
 - Calling card points to: the cargo manifest (→ 1.3).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `hide-menu` TODO · `secret-route` TODO · `referer-check` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47322.1. At 0300 hours the complete crew roster went out
+  > on all subspace frequencies: names, quarters, duty shifts. The signal came from
+  > inside the ship, and nobody sent it. Only senior officers can export the roster,
+  > and their consoles were idle all night. Mr. Barclay assures me that nobody else
+  > even sees the admin menu. I have asked Mr. Crusher to find out how it happened
+  > anyway.
+- Hints (Data):
+  1. `GET /menu` gives you a single entry. According to the code, the admin entry is
+     simply left out for your role. Leaving something out of a list does not remove
+     it from the ship.
+  2. The `/admin` group calls `RequireAuthorization()` without naming a policy or a
+     role. In that form it only requires that the caller is logged in. You are logged in.
+  3. I would expect `GET /api/labs/bfla/admin/crew/export` with your own token to be
+     refused. I would also have expected the roster not to be broadcast at 0300 hours.
+- Calling card (Lore):
+  > Wesley! Found the roster too? Then you've seen how they list you: "acting ensign".
+  > Acting. That must sting. I know where everyone sleeps now. Next I'd like to know
+  > what this ship is carrying. There's a cargo manifest with a few lines nobody is
+  > supposed to read. — L.
+- Barclay lines:
+  - `admin-policy`: "M-maybe the server should check the role itself? For the whole admin group? I-if that isn't overkill."
+  - `lock-admin-page`: "The menu is already hidden, sir. I c-could lock the admin page as well? With an attribute? Then n-nobody gets in."
+  - `secret-route`: "W-we could rename the route. Something long, like `/admin-7f3a9c-do-not-use`. Nobody would ever type that. W-would they?"
+  - `referer-check`: "What if the export only works when you come from the admin page? We c-could check the `Referer` header. Only admins can open that page, s-so …"
+- Debrief:
+  > Good work, Mr. Crusher. The export now asks for a senior officer's role, not just a
+  > working login. Mr. Barclay wanted to keep the hidden menu as well. I allowed it, on
+  > the understanding that it is decoration. The roster is still out there, I am afraid.
+  > So is our visitor.
 
 ### 1.3 `sql-injection`: Classified Manifest
 - Beat: Lore finds a classified prototype hidden in the cargo manifest.

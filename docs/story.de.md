@@ -77,7 +77,35 @@ von hier.
   > Riker lässt Ihnen danken und möchte wissen, wie viel Sie von seinem Logbuch gelesen haben.
   > Ich sagte ihm, Sie seien sehr gründlich gewesen. Als Kompliment hat er das nicht verstanden.
 
-### 1.2 `bfla` · 1.3 `sql-injection` · Ende von Akt 1
+### 1.2 `bfla`: Zutritt zur Brücke
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47322.1. Um drei Uhr nachts ging die komplette Crewliste
+  > über alle Subraumfrequenzen hinaus, mit Namen, Quartieren und Dienstzeiten. Das Signal kam
+  > von Bord, aber abgeschickt hat es niemand. Exportieren können die Liste nur die
+  > Führungsoffiziere, und deren Konsolen waren die ganze Nacht unbenutzt. Mr. Barclay versichert
+  > mir, dass alle anderen das Admin-Menü gar nicht erst zu sehen bekommen. Ich habe Mr. Crusher
+  > gebeten herauszufinden, wie es trotzdem passieren konnte.
+- Hinweise (Data):
+  1. `GET /menu` liefert Ihnen nur einen Eintrag. Laut Code wird der Admin-Eintrag für Ihre Rolle einfach weggelassen. Was in einer Liste fehlt, ist deshalb aber nicht vom Schiff verschwunden.
+  2. Die Gruppe `/admin` ruft `RequireAuthorization()` auf, ohne eine Policy oder Rolle zu nennen. In dieser Form verlangt sie nur, dass der Aufrufer angemeldet ist. Sie sind angemeldet.
+  3. Ich würde erwarten, dass `GET /api/labs/bfla/admin/crew/export` mit Ihrem eigenen Token abgelehnt wird. Ich hätte allerdings auch erwartet, dass die Crewliste nicht um drei Uhr nachts gesendet wird.
+- Visitenkarte (Lore):
+  > Wesley! Hast du die Liste auch gefunden? Dann weißt du ja, was da bei dir steht:
+  > „Fähnrich auf Probe“. Auf Probe, das tut weh, oder? Ich weiß jetzt, wo alle schlafen.
+  > Als Nächstes will ich wissen, was das Schiff so geladen hat. Im Frachtmanifest gibt's
+  > ein paar Zeilen, die keiner lesen soll. — L.
+- Barclay:
+  - `admin-policy`: „V-vielleicht sollte der Server die Rolle selbst prüfen? Für die ganze Admin-Gruppe? W-wenn das nicht übertrieben ist.“
+  - `lock-admin-page`: „Das Menü ist ja schon versteckt, Sir. I-ich könnte zusätzlich die Admin-Seite absperren, mit einem Attribut? D-dann kommt keiner mehr rein.“
+  - `secret-route`: „W-wir könnten die Route umbenennen. Irgendwas Langes, so wie `/admin-7f3a9c-do-not-use`. D-das tippt doch keiner ein. Oder?“
+  - `referer-check`: „Und wenn der Export nur klappt, wenn man von der Admin-Seite kommt? W-wir könnten den `Referer`-Header prüfen. Die Seite können ja nur Admins öffnen, a-also …“
+- Nachbesprechung:
+  > Gute Arbeit, Mr. Crusher. Der Export verlangt jetzt die Rolle eines Führungsoffiziers und
+  > nicht bloß eine gültige Anmeldung. Mr. Barclay wollte das versteckte Menü trotzdem behalten.
+  > Ich habe es erlaubt, aber nur als Dekoration. Die Crewliste ist leider schon draußen.
+  > Unser Besucher auch.
+
+### 1.3 `sql-injection` · Ende von Akt 1
 - TODO
 
 ---

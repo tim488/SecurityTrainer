@@ -260,12 +260,15 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 
 **1.2 Bridge Access** — `bfla` · API · Easy
 - *Premise:* The full crew roster was broadcast on all frequencies. Nobody sent it.
-- *Vulnerable:* `GET /admin/crew/export` only requires an authenticated
-  user. The Blazor UI hides the admin menu for non-admins.
-- *Flag:* in the export. *Exploit:* call it with Wesley's token.
-- ✅ `RequireAuthorization` with an `Admin` role policy on the admin route group
-- ❌ Hide the menu (already done, didn't help) · ❌ Unguessable route name
-  (obscurity) · ❌ Check the `Referer` is the admin page (client-controlled)
+- *Vulnerable:* the `/admin` route group only calls `RequireAuthorization()` (any
+  logged-in user), so `GET /admin/crew/export` is open to all crew. `GET /menu`
+  correctly leaves the admin entry out for non-admins. `GET /me` returns your profile.
+- *Users:* `wesley` (crew), `riker` (admin).
+- *Flag:* the export's `verificationCode`. *Exploit:* call the export with Wesley's token.
+- ✅ `RequireAuthorization("Admin")` with a `RequireRole("admin")` policy on the admin route group
+- ❌ `[Authorize(Roles = "admin")]` on the Blazor admin page (protects the page, not
+  the API) · ❌ Unguessable route name (obscurity) · ❌ Check the `Referer` is the
+  admin page (client-controlled)
 
 **1.3 Classified Manifest** — `sql-injection` · Injection · Medium
 - *Premise:* A classified prototype in the cargo manifest is the talk of Ten Forward.
