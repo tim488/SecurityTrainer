@@ -10,7 +10,7 @@ The German version is `docs/story.de.md`; keep both in step.
 - **Calling card points to:** the next system Lore attacks, which is the next lab.
 - **Barclay lines:** one per fix option, the correct one too, keyed by the option's `Id`
   (see SPEC §5.1). They all sound equally unsure, so they give nothing away.
-- Where each element appears in the app, and what "Skip story" hides, is defined in SPEC §3.3.
+- Where each element appears in the app is defined in SPEC §3.3.
 - Limits: opening scene ≤ 120 words, briefing ≤ 100 words, debrief ≤ 60 words.
   The story never gives away the exploit.
 

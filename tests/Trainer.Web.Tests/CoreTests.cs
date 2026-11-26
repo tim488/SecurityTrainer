@@ -104,3 +104,14 @@ public class StoryTests
         Assert.False(new Text("Hints", " ").IsComplete);
     }
 }
+
+public class StardateTests
+{
+    [Theory]
+    [InlineData(2026, 1, 1, 0, "47000.0")]   // start of the year
+    [InlineData(2026, 7, 2, 12, "47500.0")]  // exactly half way through 2026 (182.5 of 365 days)
+    [InlineData(2026, 12, 31, 23, "47999.8")] // cut off, never rounded up to the next year
+    [InlineData(2027, 1, 1, 0, "48000.0")]
+    public void Converts_date_and_time_to_tng_stardate(int year, int month, int day, int hour, string expected) =>
+        Assert.Equal(expected, Trainer.Web.Core.Story.Stardate.Format(new DateTime(year, month, day, hour, 0, 0)));
+}

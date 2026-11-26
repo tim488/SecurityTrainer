@@ -4,13 +4,10 @@
 {
     <div class="hints">
         <h3>@L("Hints", "Hinweise")</h3>
-        <div class="@(SkipStory ? null : "story story-hint")">
-            @if (!SkipStory)
-            {
-                <div class="story-speaker">Lt. Commander Data</div>
-                <p class="hint-offer">@L("I have several observations that may be of use, should you require assistance.",
-                    "Ich habe einige Beobachtungen gemacht, die Ihnen weiterhelfen könnten, falls Sie Unterstützung benötigen.")</p>
-            }
+        <div class="story story-hint">
+            <div class="story-speaker">Lt. Commander Data</div>
+            <p class="hint-offer">@L("I have several observations that may be of use, should you require assistance.",
+                "Ich habe einige Beobachtungen gemacht, die Ihnen weiterhelfen könnten, falls Sie Unterstützung benötigen.")</p>
             <ol>
                 @foreach (var hint in Hints.Take(Revealed))
                 {

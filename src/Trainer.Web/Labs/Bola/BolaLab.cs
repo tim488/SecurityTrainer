@@ -184,9 +184,9 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 <a href="logs/@log.Id">@log.Title</a>
             }
             """, IsCorrect: false,
-            new("The UI is not the security boundary. You never used the UI in this lab: you called the API directly, " +
+            new("The UI is not the security boundary. You never used the UI in this mission: you called the API directly, " +
                 "and the API still returns any log to anyone who asks.",
-                "Die Oberfläche ist keine Sicherheitsgrenze. Du hast die API in diesem Lab direkt aufgerufen, und die gibt weiterhin jedem jedes Logbuch heraus."),
+                "Die Oberfläche ist keine Sicherheitsgrenze. Du hast die API in dieser Mission direkt aufgerufen, und die gibt weiterhin jedem jedes Logbuch heraus."),
             BarclayLine: new(
                 "The log viewer only shows your own logs anyway. M-maybe we just make really, really sure it only shows those?",
                 "Die Ansicht zeigt doch sowieso nur die eigenen Logbücher. V-vielleicht sorgen wir einfach dafür, dass das auch so bleibt?"),

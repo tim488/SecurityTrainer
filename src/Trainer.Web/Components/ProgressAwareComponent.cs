@@ -12,8 +12,6 @@ public abstract class ProgressAwareComponent : ComponentBase, IDisposable
     [Inject] protected ProgressStore Progress { get; set; } = default!;
     [Inject] protected LabRegistry Registry { get; set; } = default!;
 
-    protected bool SkipStory => Progress.Settings.SkipStory;
-
     protected Language Lang => Progress.Settings.Language;
 
     /// <summary>Picks the current language's version of an inline UI string.</summary>

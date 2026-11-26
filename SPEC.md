@@ -72,8 +72,6 @@ for story content, with the German version in **`docs/story.de.md`**. This spec 
 Rules:
 - The story is flavour. Scenario, goal, hints and explanation must stand on
   their own.
-- **"Skip story"** hides every element above **except the hints**. Hints are
-  technical help, so they stay visible, just without Data's name.
 - The story never gives away the exploit.
 - The Star Trek theme is for personal use only.
 
@@ -116,8 +114,9 @@ full outline is in `docs/story.md`.
 
 ## 4. User flow
 
-1. **Home** — a case board grouped by act. Each card shows title, category,
-   difficulty and status (new / exploited / solved). All labs are open; acts
+1. **Home** — the mission list, grouped by act. Each card shows title, category,
+   difficulty and, once started, status (exploited / solved). Players see labs
+   as "missions" ("Missionen" in German); code, URLs and docs keep "lab". All labs are open; acts
    are a suggested order. The opening scene, act endings and finale appear here
    (§3.3).
 2. **Lab page** (`/labs/{slug}`), two steps:
@@ -188,7 +187,7 @@ from `docs/story.md`.
 
 `FixOption.Id` is a short kebab-case name of the approach, unique within the lab
 (e.g. `owner-check`, `guid-ids`, `hide-in-ui`). `Feedback` is the technical
-reason; `BarclayLine` is flavour and hidden by "Skip story". Every option has a
+reason; `BarclayLine` is flavour. Every option has a
 Barclay line, the correct one too, and they all sound equally unsure.
 
 ### 5.2 Request console
@@ -226,7 +225,7 @@ server-side with constant-time comparison.
 ### 5.6 Progress
 
 `localStorage`, per lab slug: `{ hintsRevealed, flagSubmitted,
-fixAnsweredCorrectly, attempts }`, plus global `{ skipStory, language }`. Accessed via JS
+fixAnsweredCorrectly, attempts }`, plus global `{ language }`. Accessed via JS
 interop in try/catch; the app works without it (progress is lost on reload).
 
 ### 5.7 Fix quiz
@@ -426,7 +425,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 - `dotnet run` starts the app on `http://localhost:5000`; not reachable from other machines.
 - Home shows the labs grouped by act, with status.
 - Every lab is solvable end-to-end in the browser: exploit → flag → fix → debrief.
-- Progress survives a reload; Reset clears it. "Skip story" hides all story elements.
+- Progress survives a reload; Reset clears it.
 - The `EN | DE` switch translates every page; the choice survives a reload.
 - Flags differ on every start.
 - `dotnet test` passes. README explains running; `docs/writing-a-lab.md` explains adding a lab.

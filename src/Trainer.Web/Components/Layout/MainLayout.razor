@@ -2,27 +2,39 @@
 @implements IDisposable
 @inject ProgressStore Progress
 
-<header class="topbar">
-    <a href="/" class="brand">Security Trainer</a>
-    <div class="topbar-controls">
-        <label class="skip-story">
-            <input type="checkbox" checked="@Progress.Settings.SkipStory" @onchange="ToggleSkipStory" />
-            @L("Skip story", "Story ausblenden")
-        </label>
-        <div class="lang-switch" role="group" aria-label="@L("Language", "Sprache")">
-            @foreach (var (language, label) in Languages)
-            {
-                <button type="button" class="@(Lang == language ? "active" : null)"
-                        aria-pressed="@(Lang == language ? "true" : "false")"
-                        @onclick="() => Progress.SetLanguageAsync(language)">@label</button>
-            }
-        </div>
-    </div>
-</header>
+@* Ship's computer frame: elbow top left, bar across the top, blocks down the left side. *@
+<div class="frame">
+    <div class="frame-elbow" aria-hidden="true"></div>
 
-<main class="content">
-    @Body
-</main>
+    <header class="frame-top">
+        <div class="frame-bar">
+            <span class="bar bar-orange"></span>
+            <span class="bar bar-lilac"></span>
+            <a href="/" class="brand">Security Trainer</a>
+            @* The language switch closes the bar on the right. *@
+            <div class="lang-switch" role="group" aria-label="@L("Language", "Sprache")">
+                @foreach (var (language, label) in Languages)
+                {
+                    <button type="button" class="@(Lang == language ? "active" : null)"
+                            aria-pressed="@(Lang == language ? "true" : "false")"
+                            @onclick="() => Progress.SetLanguageAsync(language)">@label</button>
+                }
+            </div>
+        </div>
+    </header>
+
+    <nav class="frame-side" aria-label="@L("Main", "Hauptnavigation")">
+        <a href="/" class="side-block side-orange"><span class="side-label">@L("Missions", "Missionen")</span></a>
+        <div class="side-block side-peach" aria-hidden="true"></div>
+        <div class="side-block side-lilac side-tall"><span class="side-label">@L("Stardate", "Sternzeit")</span><span class="side-label stardate">@Trainer.Web.Core.Story.Stardate.Format(DateTime.Now)</span></div>
+        @* Decoration: the ship and its registry number. *@
+        <div class="side-block side-sky side-fill" aria-hidden="true"><span class="side-label">USS Enterprise</span><span class="side-no">NCC-1701-D</span></div>
+    </nav>
+
+    <main class="content">
+        @Body
+    </main>
+</div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
@@ -40,8 +52,6 @@
     protected override void OnInitialized() => Progress.Changed += OnChanged;
 
     private void OnChanged() => _ = InvokeAsync(StateHasChanged);
-
-    private Task ToggleSkipStory(ChangeEventArgs e) => Progress.SetSkipStoryAsync(e.Value is true);
 
     public void Dispose() => Progress.Changed -= OnChanged;
 }

@@ -1,7 +1,6 @@
 @inherits ProgressAwareComponent
 
-@* Story elements are flavour only; the global "Skip story" toggle hides them all. *@
-@if (!SkipStory && !string.IsNullOrWhiteSpace(Text))
+@if (!string.IsNullOrWhiteSpace(Text))
 {
     @if (Collapsed)
     {

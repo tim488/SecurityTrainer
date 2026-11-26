@@ -4,9 +4,9 @@
 
 <PageTitle>Security Trainer</PageTitle>
 
-<h1>@L("Case board", "Einsatzübersicht")</h1>
+<h1>@L("Missions", "Missionen")</h1>
 
-<p class="muted">@L($"{Completed} of {Registry.Labs.Count} labs completed", $"{Completed} von {Registry.Labs.Count} Labs abgeschlossen")</p>
+<p class="muted">@L($"{Completed} of {Registry.Labs.Count} missions completed", $"{Completed} von {Registry.Labs.Count} Missionen abgeschlossen")</p>
 
 @if (Completed == 0)
 {
@@ -26,13 +26,19 @@
             @foreach (var lab in group.OrderBy(l => l.Story.Order))
             {
                 var status = Progress.StatusOf(lab.Slug);
+                @* Number block on the left (its colour is the status), title and plain labels on the right. *@
                 <a class="card status-@status.ToString().ToLowerInvariant()" href="@($"labs/{lab.Slug}")">
                     <span class="card-order">@lab.Story.Act.@lab.Story.Order</span>
-                    <span class="card-title">@L(lab.Title)</span>
-                    <span class="card-meta">
-                        <span class="tag">@lab.Category</span>
-                        <span class="tag difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@L(lab.Difficulty)</span>
-                        <span class="tag status">@L(status)</span>
+                    <span class="card-body">
+                        <span class="card-title">@L(lab.Title)</span>
+                        <span class="lab-facts">
+                            <span>@lab.Category</span>
+                            <span class="difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@L(lab.Difficulty)</span>
+                            @if (status != LabStatus.New)
+                            {
+                                <span class="status-@status.ToString().ToLowerInvariant()">@L(status)</span>
+                            }
+                        </span>
                     </span>
                 </a>
             }

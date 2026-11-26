@@ -4,29 +4,39 @@
 
 @if (_lab is null)
 {
-    <PageTitle>@L("Lab not found", "Lab nicht gefunden")</PageTitle>
-    <h1>@L("Lab not found", "Lab nicht gefunden")</h1>
-    <p>@L("There is no lab called", "Es gibt kein Lab namens") <code>@Slug</code>. <a href="/">@L("Back to the case board", "Zurück zur Einsatzübersicht")</a>.</p>
+    <PageTitle>@L("Mission not found", "Mission nicht gefunden")</PageTitle>
+    <h1>@L("Mission not found", "Mission nicht gefunden")</h1>
+    <p>@L("There is no mission called", "Es gibt keine Mission namens") <code>@Slug</code>. <a href="/">@L("Back to the missions", "Zurück zu den Missionen")</a>.</p>
     return;
 }
 
 <PageTitle>@L(_lab.Title)</PageTitle>
 
-<p><a href="/">&larr; @L("Case board", "Einsatzübersicht")</a></p>
-<h1>@L(_lab.Title)</h1>
-<p class="card-meta">
-    <span class="tag">@_lab.Category</span>
-    <span class="tag difficulty-@_lab.Difficulty.ToString().ToLowerInvariant()">@L(_lab.Difficulty)</span>
-    <span class="tag status">@L(Progress.StatusOf(_lab.Slug))</span>
-    <button class="link-button" @onclick="ResetLab">@L("Reset lab", "Lab zurücksetzen")</button>
-</p>
+<header class="lab-header">
+    <h1>@L(_lab.Title)</h1>
+    @* Plain labels, not controls: no box, no fill. *@
+    <p class="lab-facts">
+        <span>@_lab.Category</span>
+        <span class="difficulty-@_lab.Difficulty.ToString().ToLowerInvariant()">@L(_lab.Difficulty)</span>
+    </p>
+</header>
 
-<nav class="steps">
-    <button class="@StepClass(Step.Exploit)" @onclick="() => _step = Step.Exploit">1. @L("Exploit", "Angreifen")</button>
-    <button class="@StepClass(Step.Fix)" disabled="@(!LabProgress.FlagSubmitted)"
+@* Tabs on the left, lab facts on the right, all on the bar that leads into the section. *@
+<div class="steps-row">
+<nav class="steps" role="tablist">
+    <button role="tab" aria-selected="@(_step == Step.Exploit ? "true" : "false")" class="@StepClass(Step.Exploit)"
+            @onclick="() => _step = Step.Exploit">
+        <span class="step-no">01</span><span class="step-label">@L("Exploit", "Angreifen")</span>
+    </button>
+    <button role="tab" aria-selected="@(_step == Step.Fix ? "true" : "false")" class="@StepClass(Step.Fix)"
+            disabled="@(!LabProgress.FlagSubmitted)"
             title="@(LabProgress.FlagSubmitted ? null : L("Submit the flag first", "Reiche zuerst die Flag ein"))"
-            @onclick="() => _step = Step.Fix">2. @L("Fix", "Absichern")</button>
+            @onclick="() => _step = Step.Fix">
+        <span class="step-no">02</span><span class="step-label">@L("Fix", "Absichern")</span>
+    </button>
 </nav>
+<button class="reset-lab" @onclick="ResetLab">@L("Reset mission", "Mission zurücksetzen")</button>
+</div>
 
 @switch (_step)
 {

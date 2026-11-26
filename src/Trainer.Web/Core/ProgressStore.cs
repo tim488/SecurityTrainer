@@ -16,7 +16,6 @@ public sealed class LabProgress
 
 public sealed class GlobalSettings
 {
-    public bool SkipStory { get; set; }
     public Language Language { get; set; } = Language.En;
 }
 
@@ -91,13 +90,6 @@ public sealed class ProgressStore(IJSRuntime js)
         _labs[slug] = new LabProgress();
         try { await js.InvokeVoidAsync("localStorage.removeItem", LabKeyPrefix + slug); }
         catch (Exception ex) when (IsInteropFailure(ex)) { }
-        Changed?.Invoke();
-    }
-
-    public async Task SetSkipStoryAsync(bool skip)
-    {
-        Settings.SkipStory = skip;
-        await WriteAsync(SettingsKey, Settings);
         Changed?.Invoke();
     }
 

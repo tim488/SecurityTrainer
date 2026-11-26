@@ -5,13 +5,13 @@ namespace Trainer.Web.Tests;
 public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
     [Fact]
-    public async Task App_starts_and_home_page_renders_case_board()
+    public async Task App_starts_and_home_page_renders_mission_list()
     {
         var response = await factory.CreateClient().GetAsync("/");
 
         response.EnsureSuccessStatusCode();
         var html = await response.Content.ReadAsStringAsync();
-        Assert.Contains("Case board", html);
+        Assert.Contains("Missions", html);
         Assert.Contains("Uninvited Guest", html);
         Assert.Contains("labs/bola", html);
     }
