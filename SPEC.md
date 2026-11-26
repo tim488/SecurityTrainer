@@ -290,7 +290,8 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Premise:* The crew database now lists an admiral nobody has heard of. He promoted himself.
 - *Vulnerable:* `PUT /profile` binds the body straight to the `User` entity
   (`Id`, `DisplayName`, `Email`, `IsAdmin`, `Credits`) and copies everything.
-- *Flag:* `GET /admin/secret` returns it if `IsAdmin`.
+- *Also:* `GET /profile` (own profile), `GET /crew` (lists "Admiral L. Soong", Lore's promoted account).
+- *Flag:* `GET /admin/secret` returns it as `authCode` if `IsAdmin`.
 - *Exploit:* `PUT /profile` with `"isAdmin": true`, then `GET /admin/secret`.
 - ✅ Bind to `UpdateProfileRequest { DisplayName, Email }` and map only those fields
 - ❌ Reject `IsAdmin == true` (blocklist; `Credits` still writable, future fields

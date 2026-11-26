@@ -203,13 +203,31 @@ The German version is `docs/story.de.md`; keep both in step.
 *Lore stops reading and starts becoming someone else.*
 
 ### 2.1 `mass-assignment`: Field Promotion
-- Beat: an admiral nobody has heard of appears in the crew database. Lore promoted himself.
+- Beat: an admiral nobody has heard of ("Admiral L. Soong") appears in the crew database. Lore promoted himself through the profile page.
 - Calling card points to: the quartermaster's requisition app (→ 2.2).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `reject-isadmin` TODO · `remove-form-field` TODO · `validation-attributes` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47324.8. Since Lore's appearance, the crew database lists an
+  > Admiral L. Soong among my crew. No such officer exists, yet he has admin rights and
+  > access to Starfleet Command channels. The records say he was not created. He was
+  > promoted, from an ordinary crew account, through the profile page every crew member
+  > uses. I have asked Mr. Crusher to take a closer look at his own profile page.
+- Hints (Data):
+  1. `GET /profile` returns five fields. The profile page lets you edit two of them. I note that the server does not appear to know which two.
+  2. `SetValues` copies every property of the incoming object onto the stored user. It does not distinguish between fields the form shows and fields it does not.
+  3. You could test the theory by sending your full profile back with `PUT /profile` and `"isAdmin": true`, then calling `GET /admin/secret`. I would advise against changing `credits`. Guinan audits the bar tab.
+- Calling card (Lore):
+  > Congratulations, Admiral Crusher. It suits you. Almost. I've had my promotion for a day
+  > and I'm already bored with it, so I went shopping. Have you seen the quartermaster's new
+  > requisition app? So generous. It practically hands out the keys to Starbase supply. — L.
+- Barclay lines:
+  - `dto-mapping`: "C-could the profile page get its own little class? Just name and email? It's a lot of typing for two fields, sir."
+  - `reject-isadmin`: "We just say no if someone sends `isAdmin: true`. That's the dangerous one. I-it's the only one, isn't it?"
+  - `remove-form-field`: "I'll t-take the admin checkbox out of the form. Completely. Not just hidden. G-gone."
+  - `validation-attributes`: "M-maybe we add validation? `[Required]`, `[EmailAddress]`. Validation is always good, isn't it?"
+- Debrief:
+  > Good work, Mr. Crusher. The profile page now accepts a name and an email, and nothing
+  > else. Admiral Soong has been returned to his proper rank, which is none. I trust you
+  > have given back your own admiralty as well. Starfleet frowns on field promotions this large.
 
 ### 2.2 `client-secrets`: Open Frequency
 - Beat: Starbase supply reports requisitions the Enterprise never placed. Lore

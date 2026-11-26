@@ -153,8 +153,37 @@ von hier.
 
 *Lore gibt sich als jemand anderes aus.*
 
-- TODO. Am Ende von Akt 2 verrät sich Lore, weil er eine Verkürzung benutzt
-  („gibt's“, „hab'“), die Data nie benutzen würde.
+### 2.1 `mass-assignment`: Beförderung im Feld
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47324.8. Seit Lores Auftritt führt die Crew-Datenbank einen
+  > Admiral L. Soong in meiner Besatzung. Einen solchen Offizier gibt es nicht, und trotzdem hat
+  > er Admin-Rechte und Zugriff auf die Kanäle des Sternenflottenkommandos. Laut Protokoll wurde
+  > er nicht angelegt, sondern befördert, und zwar von einem ganz normalen Crew-Konto aus. Über
+  > die Profilseite, die jeder an Bord benutzt. Ich habe Mr. Crusher gebeten, sich seine eigene
+  > Profilseite einmal genauer anzusehen.
+- Hinweise (Data):
+  1. `GET /profile` liefert fünf Felder. Auf der Profilseite können Sie zwei davon bearbeiten. Mir fällt auf, dass der Server offenbar nicht weiß, welche zwei.
+  2. `SetValues` kopiert jede Eigenschaft des eingehenden Objekts auf den gespeicherten Benutzer. Dabei unterscheidet es nicht zwischen Feldern, die das Formular zeigt, und solchen, die es nicht zeigt.
+  3. Sie könnten die Theorie prüfen, indem Sie Ihr vollständiges Profil mit `"isAdmin": true` per `PUT /profile` zurückschicken und danach `GET /admin/secret` aufrufen. Von einer Änderung der `credits` rate ich ab. Guinan prüft die Rechnungen in Zehn Vorne.
+- Visitenkarte (Lore):
+  > Glückwunsch, Admiral Crusher. Steht dir. Fast. Ich bin seit einem Tag befördert und find's
+  > schon langweilig, also war ich einkaufen. Kennst du die neue Bestell-App vom Quartiermeister?
+  > So großzügig. Die drückt einem den Schlüssel zum Lager der Sternenbasis praktisch in die
+  > Hand. — L.
+- Barclay:
+  - `dto-mapping`: „K-könnte die Profilseite eine eigene kleine Klasse kriegen? Nur Name und E-Mail? Ist ziemlich viel Tipparbeit für zwei Felder, Sir.“
+  - `reject-isadmin`: „W-wir sagen einfach nein, wenn jemand `isAdmin: true` schickt. Das ist doch das gefährliche Feld. D-das einzige, oder?“
+  - `remove-form-field`: „Ich n-nehme die Admin-Checkbox aus dem Formular. Komplett, nicht nur versteckt. W-weg.“
+  - `validation-attributes`: „V-vielleicht bauen wir Validierung ein? `[Required]`, `[EmailAddress]`. Validierung ist doch immer gut, oder?“
+- Nachbesprechung:
+  > Gute Arbeit, Mr. Crusher. Die Profilseite nimmt jetzt nur noch Namen und E-Mail an, sonst
+  > nichts. Admiral Soong hat seinen rechtmäßigen Rang zurück, nämlich keinen. Ich gehe davon aus,
+  > dass Sie Ihren eigenen Admiralsrang auch wieder abgegeben haben. So große Beförderungen im
+  > Feld sieht die Sternenflotte nicht gern.
+
+### Ende von Akt 2
+- TODO. Lore verrät sich, weil er eine Verkürzung benutzt („gibt's“, „hab'“), die
+  Data nie benutzen würde.
 
 ---
 
@@ -162,4 +191,5 @@ von hier.
 
 *Lore greift nach dem Hauptcomputer.*
 
+### Finale
 - TODO

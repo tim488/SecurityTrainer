@@ -1,5 +1,6 @@
 using Trainer.Web.Labs.Bfla;
 using Trainer.Web.Labs.Bola;
+using Trainer.Web.Labs.MassAssignment;
 using Trainer.Web.Labs.SqlInjection;
 
 namespace Trainer.Web.Core;
@@ -22,6 +23,7 @@ public sealed class LabRegistry
             new BolaLab(flags, auth),
             new BflaLab(flags, auth),
             new SqlInjectionLab(flags, auth),
+            new MassAssignmentLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();
