@@ -183,7 +183,7 @@ story never gives away the exploit.
 
 ### Finale
 - Beat: the ship is secure and Wesley earns the bridge's respect. Lore escapes into the dark.
-- TODO: text
+- Sequel stinger: a final, faint signature in the core. TODO: text
 
 ---
 
