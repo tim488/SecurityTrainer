@@ -83,6 +83,9 @@ details.story > summary { cursor: pointer; }
 details.story:not([open]) { padding-bottom: 0.5rem; }
 .story-speaker { font-style: normal; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; color: var(--accent); }
 .hints ol { padding-left: 1.25rem; }
+.story-hint { font-style: normal; }
+.hint-offer { font-style: italic; margin: 0.25rem 0 0.5rem; }
+.story-hint button { margin-bottom: 0.25rem; }
 
 /* Request console */
 .console-line { display: flex; gap: 0.5rem; }

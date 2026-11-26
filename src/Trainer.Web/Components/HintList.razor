@@ -4,20 +4,24 @@
 {
     <div class="hints">
         <h3>@L("Hints", "Hinweise")</h3>
-        @if (!SkipStory)
-        {
-            <p class="story-speaker">Lt. Commander Data</p>
-        }
-        <ol>
-            @foreach (var hint in Hints.Take(Revealed))
+        <div class="@(SkipStory ? null : "story story-hint")">
+            @if (!SkipStory)
             {
-                <li><MarkdownView Text="@L(hint)" /></li>
+                <div class="story-speaker">Lt. Commander Data</div>
+                <p class="hint-offer">@L("I have several observations that may be of use, should you require assistance.",
+                    "Ich habe einige Beobachtungen gemacht, die Ihnen weiterhelfen könnten, falls Sie Unterstützung benötigen.")</p>
             }
-        </ol>
-        @if (Revealed < Hints.Count)
-        {
-            <button @onclick="RevealNext">@L($"Reveal hint {Revealed + 1} of {Hints.Count}", $"Hinweis {Revealed + 1} von {Hints.Count} anzeigen")</button>
-        }
+            <ol>
+                @foreach (var hint in Hints.Take(Revealed))
+                {
+                    <li><MarkdownView Text="@L(hint)" /></li>
+                }
+            </ol>
+            @if (Revealed < Hints.Count)
+            {
+                <button @onclick="RevealNext">@L($"Reveal hint {Revealed + 1} of {Hints.Count}", $"Hinweis {Revealed + 1} von {Hints.Count} anzeigen")</button>
+            }
+        </div>
     </div>
 }
 
