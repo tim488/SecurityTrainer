@@ -8,8 +8,7 @@ story never gives away the exploit.
 
 - Setting: USS Enterprise-D, right after a rushed software refit of the computer core.
 - Hero: **Wesley Crusher**, acting ensign and teenage prodigy. Nobody on the
-  bridge takes him fully seriously. He grows into the job lab by lab
-  (rank Cadet → Captain).
+  bridge takes him fully seriously. He grows into the job lab by lab.
 - Villain: **Lore**, Data's android brother. He has slipped into the ship's
   computer, holds a grudge against Wesley and wants the ship.
 - Lore's path follows a real attack: **look around → take over identities → reach the core**.
@@ -26,14 +25,6 @@ story never gives away the exploit.
 - **Lt. Barclay**: wrote much of the refit and feels guilty about it. Voices the wrong fix options.
 - **Lore**: calling cards. Charming, cruel, mocks "the boy".
 - **Commander Riker**: Lore's favourite victim account (lab user `riker`).
-
-## Ranks
-
-- Cadet: TODO (Lore's reaction)
-- Ensign: TODO
-- Lieutenant: TODO
-- Commander: TODO
-- Captain: TODO
 
 ## Opening scene
 
@@ -135,8 +126,7 @@ story never gives away the exploit.
 ### 3.1 `path-traversal`: Jefferies Tube
 - Beat: Lore climbs into the ship's archive.
 - Calling card points to: the computer can't tell its users apart.
-- Open question: the flag file is `payroll.pdf`, but the briefing talks about crew
-  evaluations. Rename it (e.g. `crew-evaluations.pdf`).
+- Flag file: `crew-evaluations.pdf`.
 - Briefing: TODO
 - Hints (Data): TODO ×3
 - Calling card (Lore): TODO
@@ -190,4 +180,4 @@ story never gives away the exploit.
 ## Open points
 
 - Fix option IDs aren't defined in the spec yet. Barclay's lines will map to them.
-- Rank thresholds aren't defined (suggested: Cadet 0–2, Ensign 3–6, Lieutenant 7–9, Commander 10–12, Captain 13).
+- Story text is written lab by lab, as each lab is built.
