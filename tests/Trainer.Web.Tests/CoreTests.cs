@@ -79,3 +79,28 @@ public class RequestSenderTests
     public void Rejects_other_paths(string path) =>
         Assert.False(RequestSender.TryBuildUri(Base, path, out _));
 }
+
+public class StoryTests
+{
+    [Fact]
+    public void Acts_and_opening_scene_exist_in_english_and_german()
+    {
+        Assert.True(Trainer.Web.Core.Story.Acts.OpeningScene.IsComplete);
+        Assert.All(Trainer.Web.Core.Story.Acts.All, a =>
+        {
+            Assert.True(a.Title.IsComplete);
+            Assert.True(a.Tagline.IsComplete);
+            Assert.True(a.Ending?.IsComplete ?? true);
+        });
+    }
+
+    [Fact]
+    public void Text_picks_the_requested_language()
+    {
+        var text = new Text("Hints", "Hinweise");
+
+        Assert.Equal("Hints", text[Language.En]);
+        Assert.Equal("Hinweise", text[Language.De]);
+        Assert.False(new Text("Hints", " ").IsComplete);
+    }
+}

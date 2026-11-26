@@ -4,23 +4,23 @@
 
 <PageTitle>Security Trainer</PageTitle>
 
-<h1>Case board</h1>
+<h1>@L("Case board", "Einsatzübersicht")</h1>
 
-<p class="muted">@Completed of @Registry.Labs.Count labs completed</p>
+<p class="muted">@L($"{Completed} of {Registry.Labs.Count} labs completed", $"{Completed} von {Registry.Labs.Count} Labs abgeschlossen")</p>
 
 @if (Completed == 0)
 {
-    <StoryPanel Text="@Acts.OpeningScene" Kind="epilogue" />
+    <StoryPanel Text="@L(Acts.OpeningScene)" Kind="epilogue" />
 }
 
 @foreach (var group in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
 {
     var act = Acts.Find(group.Key);
     <section class="act">
-        <h2>Act @group.Key@(act is null ? "" : $": {act.Title}")</h2>
+        <h2>@L("Act", "Akt") @group.Key@(act is null ? "" : $": {L(act.Title)}")</h2>
         @if (act is not null)
         {
-            <p class="muted">@act.Tagline</p>
+            <p class="muted">@L(act.Tagline)</p>
         }
         <div class="cards">
             @foreach (var lab in group.OrderBy(l => l.Story.Order))
@@ -28,25 +28,25 @@
                 var status = Progress.StatusOf(lab.Slug);
                 <a class="card status-@status.ToString().ToLowerInvariant()" href="@($"labs/{lab.Slug}")">
                     <span class="card-order">@lab.Story.Act.@lab.Story.Order</span>
-                    <span class="card-title">@lab.Title</span>
+                    <span class="card-title">@L(lab.Title)</span>
                     <span class="card-meta">
                         <span class="tag">@lab.Category</span>
-                        <span class="tag difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@lab.Difficulty</span>
-                        <span class="tag status">@status.ToString().ToLowerInvariant()</span>
+                        <span class="tag difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@L(lab.Difficulty)</span>
+                        <span class="tag status">@L(status)</span>
                     </span>
                 </a>
             }
         </div>
         @if (act is not null && group.All(l => Progress.Get(l.Slug).IsCompleted))
         {
-            <StoryPanel Text="@act.Ending" Kind="epilogue" />
+            <StoryPanel Text="@L(act.Ending)" Kind="epilogue" />
         }
     </section>
 }
 
 @if (Registry.Labs.Count > 0 && Completed == Registry.Labs.Count)
 {
-    <StoryPanel Text="@Acts.Finale" Kind="epilogue" />
+    <StoryPanel Text="@L(Acts.Finale)" Kind="epilogue" />
 }
 
 @code {

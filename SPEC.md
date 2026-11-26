@@ -8,7 +8,7 @@ vulnerable endpoint in the browser, capture the flag, then pick the correct fix.
 
 - **Goals:** learn by doing (every lab has a real exploit) · everything happens
   in the browser · zero setup (`git clone` → `dotnet run --project src/Trainer.Web`) · new lab = new folder
-  · fun to play through.
+  · fun to play through · English and German.
 - **Non-goals:** in-browser code editing, user accounts, hosting, leaderboards,
   Docker, server-side progress storage.
 
@@ -43,7 +43,7 @@ matters at the end of Act 2.
 
 All story text (opening scene, briefings, hints, calling cards, Barclay's
 lines, debriefs, act endings) lives in **`docs/story.md`**, the single source
-for story content. This spec only gives a one-line premise per lab (§6).
+for story content, with the German version in **`docs/story.de.md`**. This spec only gives a one-line premise per lab (§6).
 
 ### 3.2 Cast
 
@@ -76,6 +76,15 @@ Rules:
   technical help, so they stay visible, just without Data's name.
 - The story never gives away the exploit.
 - The Star Trek theme is for personal use only.
+
+### 3.5 Languages
+
+The app is fully bilingual: **English and German**, switched with `EN | DE` in the
+top right. Everything the player reads is translated: UI, story, scenario, hints,
+fix feedback and explanation. Code snippets, HTTP requests and API responses stay
+English. The German is written for native speakers, not translated word for word;
+the style rules (names from the German dub, "du" vs. "Sie", character voices) are
+at the top of `docs/story.de.md`.
 
 ### 3.4 Story arc
 
@@ -150,23 +159,24 @@ securityTrainer/
 public interface ILab
 {
     string Slug { get; }                     // "bola"
-    string Title { get; }                    // "Someone Else's Personal Log"
+    Text Title { get; }                      // "Someone Else's Personal Log"
     string Category { get; }                 // "API", "Injection", "Blazor", ...
     Difficulty Difficulty { get; }           // Easy, Medium, Hard
     LabStory Story { get; }
-    string ScenarioMarkdown { get; }         // technical scenario + goal
-    IReadOnlyList<string> Hints { get; }
+    Text ScenarioMarkdown { get; }           // technical scenario + goal
+    IReadOnlyList<Text> Hints { get; }
     RequestTemplate DefaultRequest { get; }
     IReadOnlyList<FixOption> FixOptions { get; }
-    string ExplanationMarkdown { get; }
+    Text ExplanationMarkdown { get; }
 
     void MapEndpoints(IEndpointRouteBuilder app);
     void Reset();
 }
 
-public record LabStory(int Act, int Order, string Briefing, string CallingCard, string Debrief);
-public record FixOption(string Id, string Code, bool IsCorrect, string Feedback,
-                        string? BarclayLine = null); // story line for wrong options
+public record Text(string En, string De);    // every player-facing string
+public record LabStory(int Act, int Order, Text Briefing, Text CallingCard, Text Debrief);
+public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback,
+                        Text? BarclayLine = null); // story line for wrong options
 public record RequestTemplate(string Method, string Path, Dictionary<string,string> Headers, string? Body);
 ```
 
@@ -213,7 +223,7 @@ server-side with constant-time comparison.
 ### 5.6 Progress
 
 `localStorage`, per lab slug: `{ hintsRevealed, flagSubmitted,
-fixAnsweredCorrectly, attempts }`, plus global `{ skipStory }`. Accessed via JS
+fixAnsweredCorrectly, attempts }`, plus global `{ skipStory, language }`. Accessed via JS
 interop in try/catch; the app works without it (progress is lost on reload).
 
 ### 5.7 Fix quiz
@@ -392,6 +402,8 @@ Guidelines:
 - Story: write it in `docs/story.md` first (briefing as Picard's log, hints in
   Data's voice, a Barclay line per wrong fix, one calling card from Lore), then
   copy it into the lab. Keep it short and never spoil the exploit.
+- Write every text in English and German (`docs/story.de.md` for the story).
+  UI strings use `L("English", "Deutsch")` in components.
 
 ## 8. Testing
 
@@ -401,6 +413,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 - `Reset()` restores the initial data.
 - Story is complete (briefing, calling card, debrief, a `BarclayLine` on every
   wrong option) and `(Act, Order)` is unique.
+- Every text exists in English and German.
 
 ## 9. Acceptance criteria
 
@@ -408,6 +421,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 - Home shows the labs grouped by act, with status.
 - Every lab is solvable end-to-end in the browser: read → exploit → flag → fix → debrief.
 - Progress survives a reload; Reset clears it. "Skip story" hides all story elements.
+- The `EN | DE` switch translates every page; the choice survives a reload.
 - Flags differ on every start.
 - `dotnet test` passes. README explains running; `docs/writing-a-lab.md` explains adding a lab.
 

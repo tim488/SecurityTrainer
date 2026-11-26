@@ -3,7 +3,7 @@
 @if (Hints.Count > 0)
 {
     <div class="hints">
-        <h3>Hints</h3>
+        <h3>@L("Hints", "Hinweise")</h3>
         @if (!SkipStory)
         {
             <p class="story-speaker">Lt. Commander Data</p>
@@ -11,19 +11,19 @@
         <ol>
             @foreach (var hint in Hints.Take(Revealed))
             {
-                <li><MarkdownView Text="@hint" /></li>
+                <li><MarkdownView Text="@L(hint)" /></li>
             }
         </ol>
         @if (Revealed < Hints.Count)
         {
-            <button @onclick="RevealNext">Reveal hint @(Revealed + 1) of @Hints.Count</button>
+            <button @onclick="RevealNext">@L($"Reveal hint {Revealed + 1} of {Hints.Count}", $"Hinweis {Revealed + 1} von {Hints.Count} anzeigen")</button>
         }
     </div>
 }
 
 @code {
     [Parameter, EditorRequired] public string Slug { get; set; } = "";
-    [Parameter, EditorRequired] public IReadOnlyList<string> Hints { get; set; } = [];
+    [Parameter, EditorRequired] public IReadOnlyList<Text> Hints { get; set; } = [];
 
     private int Revealed => Math.Min(Progress.Get(Slug).HintsRevealed, Hints.Count);
 

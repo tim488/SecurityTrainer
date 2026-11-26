@@ -2,35 +2,35 @@
 
 @* TODO: syntax-highlight the snippets with highlight.js served from wwwroot (SPEC §5.7). *@
 <div class="quiz">
-    <h3>Which change fixes it?</h3>
+    <h3>@L("Which change fixes it?", "Welche Änderung schließt die Lücke?")</h3>
     @foreach (var option in _options)
     {
         <label class="option @OptionClass(option)">
             <input type="radio" name="fix-@Lab.Slug" value="@option.Id"
                    checked="@(_selected == option.Id)" disabled="@Solved"
                    @onchange="() => _selected = option.Id" />
-            <StoryPanel Speaker="Lt. Barclay" Text="@option.BarclayLine" Kind="barclay" />
+            <StoryPanel Speaker="Lt. Barclay" Text="@L(option.BarclayLine)" Kind="barclay" />
             <pre><code class="language-csharp">@option.Code</code></pre>
             @if (Solved || _wrong.Contains(option.Id))
             {
-                <p class="feedback">@(option.IsCorrect ? "✔ " : "✘ ")@option.Feedback</p>
+                <p class="feedback">@(option.IsCorrect ? "✔ " : "✘ ")@L(option.Feedback)</p>
             }
         </label>
     }
 
     @if (!Solved)
     {
-        <button class="primary" disabled="@(_selected is null)" @onclick="Submit">Check answer</button>
-        <span class="muted">Attempts: @Progress.Get(Lab.Slug).Attempts</span>
+        <button class="primary" disabled="@(_selected is null)" @onclick="Submit">@L("Check answer", "Antwort prüfen")</button>
+        <span class="muted">@L("Attempts", "Versuche"): @Progress.Get(Lab.Slug).Attempts</span>
     }
     else
     {
         <div class="explanation">
-            <h3>Explanation</h3>
-            <MarkdownView Text="@Lab.ExplanationMarkdown" />
+            <h3>@L("Explanation", "Erklärung")</h3>
+            <MarkdownView Text="@L(Lab.ExplanationMarkdown)" />
         </div>
-        <StoryPanel Speaker="Debrief" Text="@Lab.Story.Debrief" Kind="debrief" />
-        <p class="success">Lab completed. <a href="/">Back to the case board</a></p>
+        <StoryPanel Speaker="@L("Debrief", "Nachbesprechung")" Text="@L(Lab.Story.Debrief)" Kind="debrief" />
+        <p class="success">@L("Lab completed.", "Lab abgeschlossen.") <a href="/">@L("Back to the case board", "Zurück zur Einsatzübersicht")</a></p>
     }
 </div>
 

@@ -26,13 +26,13 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
     }
 
     [Theory, MemberData(nameof(Slugs))]
-    public void Story_is_complete(string slug)
+    public void Story_is_complete_in_every_language(string slug)
     {
         var story = Registry.Find(slug)!.Story;
 
-        Assert.False(string.IsNullOrWhiteSpace(story.Briefing));
-        Assert.False(string.IsNullOrWhiteSpace(story.CallingCard));
-        Assert.False(string.IsNullOrWhiteSpace(story.Debrief));
+        Assert.True(story.Briefing.IsComplete, "Briefing");
+        Assert.True(story.CallingCard.IsComplete, "Calling card");
+        Assert.True(story.Debrief.IsComplete, "Debrief");
     }
 
     [Theory, MemberData(nameof(Slugs))]
@@ -40,8 +40,20 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
     {
         var lab = Registry.Find(slug)!;
 
-        Assert.All(lab.FixOptions.Where(o => !o.IsCorrect), o => Assert.False(string.IsNullOrWhiteSpace(o.BarclayLine), o.Id));
+        Assert.All(lab.FixOptions.Where(o => !o.IsCorrect), o => Assert.True(o.BarclayLine?.IsComplete, o.Id));
         Assert.Equal(3, lab.Hints.Count);
+    }
+
+    [Theory, MemberData(nameof(Slugs))]
+    public void All_lab_text_exists_in_english_and_german(string slug)
+    {
+        var lab = Registry.Find(slug)!;
+
+        Assert.True(lab.Title.IsComplete, "Title");
+        Assert.True(lab.ScenarioMarkdown.IsComplete, "Scenario");
+        Assert.True(lab.ExplanationMarkdown.IsComplete, "Explanation");
+        Assert.All(lab.Hints, h => Assert.True(h.IsComplete, "Hint"));
+        Assert.All(lab.FixOptions, o => Assert.True(o.Feedback.IsComplete, o.Id));
     }
 
     [Fact]

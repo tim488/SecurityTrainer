@@ -2,22 +2,22 @@
 @inject FlagService Flags
 
 <div class="flag-input">
-    <h3>Submit the flag</h3>
+    <h3>@L("Submit the flag", "Flag einreichen")</h3>
     @if (Progress.Get(Slug).FlagSubmitted)
     {
-        <p class="success">Flag accepted.</p>
-        <StoryPanel Speaker="A calling card from Lore" Text="@CallingCard" Kind="calling-card" />
-        <button class="primary" @onclick="OnAccepted">Continue to fix &rarr;</button>
+        <p class="success">@L("Flag accepted.", "Flag akzeptiert.")</p>
+        <StoryPanel Speaker="@L("A calling card from Lore", "Lores Visitenkarte")" Text="@CallingCard" Kind="calling-card" />
+        <button class="primary" @onclick="OnAccepted">@L("Continue to fix", "Weiter zum Absichern") &rarr;</button>
     }
     else
     {
         <form @onsubmit="Submit" @onsubmit:preventDefault>
             <input @bind="_value" placeholder="FLAG{...}" aria-label="Flag" autocomplete="off" spellcheck="false" />
-            <button type="submit" class="primary">Submit</button>
+            <button type="submit" class="primary">@L("Submit", "Einreichen")</button>
         </form>
         @if (_wrong)
         {
-            <p class="error">That is not the flag for this lab.</p>
+            <p class="error">@L("That is not the flag for this lab.", "Das ist nicht die Flag für dieses Lab.")</p>
         }
     }
 </div>

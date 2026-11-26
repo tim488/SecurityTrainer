@@ -4,17 +4,28 @@
 
 <header class="topbar">
     <a href="/" class="brand">Security Trainer</a>
-    <label class="skip-story">
-        <input type="checkbox" checked="@Progress.Settings.SkipStory" @onchange="ToggleSkipStory" />
-        Skip story
-    </label>
+    <div class="topbar-controls">
+        <label class="skip-story">
+            <input type="checkbox" checked="@Progress.Settings.SkipStory" @onchange="ToggleSkipStory" />
+            @L("Skip story", "Story ausblenden")
+        </label>
+        <div class="lang-switch" role="group" aria-label="@L("Language", "Sprache")">
+            @foreach (var (language, label) in Languages)
+            {
+                <button type="button" class="@(Lang == language ? "active" : null)"
+                        aria-pressed="@(Lang == language ? "true" : "false")"
+                        @onclick="() => Progress.SetLanguageAsync(language)">@label</button>
+            }
+        </div>
+    </div>
 </header>
 
 <main class="content">
     @Body
 </main>
 
-<footer class="footer">Deliberately vulnerable. Runs on localhost only. Never expose it to a network.</footer>
+<footer class="footer">@L("Deliberately vulnerable. Runs on localhost only. Never expose it to a network.",
+    "Absichtlich verwundbar. Läuft nur auf localhost. Niemals in einem Netzwerk freigeben.")</footer>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
@@ -23,6 +34,12 @@
 </div>
 
 @code {
+    private static readonly (Language, string)[] Languages = [(Language.En, "EN"), (Language.De, "DE")];
+
+    private Language Lang => Progress.Settings.Language;
+
+    private string L(string en, string de) => Lang == Language.De ? de : en;
+
     protected override void OnInitialized() => Progress.Changed += OnChanged;
 
     private void OnChanged() => _ = InvokeAsync(StateHasChanged);

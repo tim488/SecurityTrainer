@@ -1,6 +1,7 @@
 # Security Trainer — Story
 
 The single source for all story text. Labs copy their text from here.
+The German version is `docs/story.de.md`; keep both in step.
 
 ## How to read this file
 

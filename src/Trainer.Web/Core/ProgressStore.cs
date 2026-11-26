@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 
 namespace Trainer.Web.Core;
@@ -16,6 +17,7 @@ public sealed class LabProgress
 public sealed class GlobalSettings
 {
     public bool SkipStory { get; set; }
+    public Language Language { get; set; } = Language.En;
 }
 
 public enum LabStatus { New, Exploited, Solved }
@@ -30,7 +32,7 @@ public sealed class ProgressStore(IJSRuntime js)
 {
     private const string LabKeyPrefix = "securityTrainer.lab.";
     private const string SettingsKey = "securityTrainer.settings";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { Converters = { new JsonStringEnumConverter() } };
 
     private readonly Dictionary<string, LabProgress> _labs = new(StringComparer.OrdinalIgnoreCase);
     private bool _loaded;
@@ -95,6 +97,13 @@ public sealed class ProgressStore(IJSRuntime js)
     public async Task SetSkipStoryAsync(bool skip)
     {
         Settings.SkipStory = skip;
+        await WriteAsync(SettingsKey, Settings);
+        Changed?.Invoke();
+    }
+
+    public async Task SetLanguageAsync(Language language)
+    {
+        Settings.Language = language;
         await WriteAsync(SettingsKey, Settings);
         Changed?.Invoke();
     }

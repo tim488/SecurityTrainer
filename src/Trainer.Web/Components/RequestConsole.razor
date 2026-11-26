@@ -1,7 +1,8 @@
+@inherits ProgressAwareComponent
 @inject RequestSender Sender
 
 <div class="console">
-    <h3>Request console</h3>
+    <h3>@L("Request console", "Request-Konsole")</h3>
     <form @onsubmit="Send" @onsubmit:preventDefault>
         <div class="console-line">
             <select @bind="_method" aria-label="Method">
@@ -11,17 +12,17 @@
                 }
             </select>
             <input class="console-path" @bind="_path" aria-label="Path" spellcheck="false" />
-            <button type="submit" class="primary" disabled="@_sending">@(_sending ? "Sending…" : "Send")</button>
+            <button type="submit" class="primary" disabled="@_sending">@(_sending ? L("Sending…", "Wird gesendet …") : L("Send", "Senden"))</button>
         </div>
         <label>
-            Headers <span class="muted">(one <code>Name: value</code> per line)</span>
+            Header <span class="muted">(@L("one per line:", "einer pro Zeile:") <code>Name: @L("value", "Wert")</code>)</span>
             <textarea rows="3" @bind="_headers" spellcheck="false"></textarea>
         </label>
         <label>
-            Body <span class="muted">(JSON, ignored for GET)</span>
+            Body <span class="muted">(@L("JSON, ignored for GET", "JSON, wird bei GET ignoriert"))</span>
             <textarea rows="4" @bind="_body" spellcheck="false"></textarea>
         </label>
-        <button type="button" class="link-button" @onclick="LoadDefault">Restore default request</button>
+        <button type="button" class="link-button" @onclick="LoadDefault">@L("Restore default request", "Standard-Request wiederherstellen")</button>
     </form>
 
     @foreach (var exchange in Sender.History(Slug))
@@ -36,10 +37,10 @@
                 }
                 else
                 {
-                    <span class="error">error</span>
+                    <span class="error">@L("error", "Fehler")</span>
                 }
                 <span class="muted">@exchange.At.ToString("HH:mm:ss")</span>
-                <button type="button" class="link-button" @onclick="() => LoadExchange(exchange)">Edit &amp; resend</button>
+                <button type="button" class="link-button" @onclick="() => LoadExchange(exchange)">@L("Edit & resend", "Bearbeiten und erneut senden")</button>
             </summary>
             @if (exchange.Response is { } response)
             {
@@ -64,7 +65,11 @@
     private string _body = "";
     private bool _sending;
 
-    protected override void OnInitialized() => LoadDefault();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        LoadDefault();
+    }
 
     private void LoadDefault() =>
         Load(DefaultRequest.Method, DefaultRequest.Path, DefaultRequest.Headers, DefaultRequest.Body);

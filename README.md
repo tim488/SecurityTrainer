@@ -31,6 +31,6 @@ dotnet test
   - `Labs/<Name>/`: one folder per lab
 - `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
 - `SPEC.md`: the full specification
-- `docs/story.md`: the story outline
+- `docs/story.md`: the story outline; `docs/story.de.md`: the German version
 
 Progress is stored in your browser's `localStorage`. Use **Reset** on a lab to start it over.

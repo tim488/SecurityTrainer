@@ -45,6 +45,12 @@ label { display: block; margin: 0.5rem 0; }
 .topbar { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.5rem; background: var(--panel); border-bottom: 2px solid var(--accent); }
 .brand { color: var(--text); font-weight: 700; text-decoration: none; letter-spacing: 0.05em; }
 .skip-story { margin: 0; color: var(--muted); }
+.topbar-controls { display: flex; align-items: center; gap: 1rem; }
+.lang-switch { display: flex; }
+.lang-switch button { padding: 0.2rem 0.6rem; font-size: 0.85rem; color: var(--muted); }
+.lang-switch button:first-child { border-radius: 6px 0 0 6px; }
+.lang-switch button:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+.lang-switch button.active { background: var(--accent); border-color: var(--accent); color: #1a1300; font-weight: 600; }
 .content { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
 .footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 1rem; }
 .muted { color: var(--muted); }
