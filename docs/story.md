@@ -183,12 +183,11 @@ story never gives away the exploit.
 
 ### Finale
 - Beat: the ship is secure and Wesley earns the bridge's respect. Lore escapes into the dark.
-- Sequel stinger: a final, faint signature in the core. TODO: text
+- TODO: text
 
 ---
 
 ## Open points
 
-- SPEC §10 "Season 2: a new antagonist" clashes with Lore escaping. Decide which way to go.
 - Fix option IDs aren't defined in the spec yet. Barclay's lines will map to them.
 - Rank thresholds aren't defined (suggested: Cadet 0–2, Ensign 3–6, Lieutenant 7–9, Commander 10–12, Captain 13).
