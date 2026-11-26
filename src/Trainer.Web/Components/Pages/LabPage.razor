@@ -22,26 +22,21 @@
 </p>
 
 <nav class="steps">
-    <button class="@StepClass(Step.Read)" @onclick="() => _step = Step.Read">1. @L("Read", "Lesen")</button>
-    <button class="@StepClass(Step.Exploit)" @onclick="() => _step = Step.Exploit">2. @L("Exploit", "Angreifen")</button>
+    <button class="@StepClass(Step.Exploit)" @onclick="() => _step = Step.Exploit">1. @L("Exploit", "Angreifen")</button>
     <button class="@StepClass(Step.Fix)" disabled="@(!LabProgress.FlagSubmitted)"
             title="@(LabProgress.FlagSubmitted ? null : L("Submit the flag first", "Reiche zuerst die Flag ein"))"
-            @onclick="() => _step = Step.Fix">3. @L("Fix", "Absichern")</button>
+            @onclick="() => _step = Step.Fix">2. @L("Fix", "Absichern")</button>
 </nav>
 
 @switch (_step)
 {
-    case Step.Read:
-        <section>
-            <StoryPanel Speaker="@L("Captain's log", "Logbuch des Captains")" Text="@L(_lab.Story.Briefing)" Kind="briefing" />
-            <MarkdownView Text="@L(_lab.ScenarioMarkdown)" />
-            <HintList Slug="@_lab.Slug" Hints="_lab.Hints" />
-            <button class="primary" @onclick="() => _step = Step.Exploit">@L("Continue to exploit", "Weiter zum Angriff") &rarr;</button>
-        </section>
-        break;
-
     case Step.Exploit:
         <section>
+            @* The briefing folds up once the flag is in, to keep the page short. *@
+            <StoryPanel Speaker="@L("Captain's log", "Logbuch des Captains")" Text="@L(_lab.Story.Briefing)" Kind="briefing"
+                        Collapsed="LabProgress.FlagSubmitted" />
+            <MarkdownView Text="@L(_lab.ScenarioMarkdown)" />
+            <HintList Slug="@_lab.Slug" Hints="_lab.Hints" />
             <RequestConsole @key="_resetCount" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
             <FlagInput Slug="@_lab.Slug" CallingCard="@L(_lab.Story.CallingCard)" OnAccepted="() => _step = Step.Fix" />
         </section>
@@ -55,12 +50,12 @@
 }
 
 @code {
-    private enum Step { Read, Exploit, Fix }
+    private enum Step { Exploit, Fix }
 
     [Parameter] public string Slug { get; set; } = "";
 
     private ILab? _lab;
-    private Step _step = Step.Read;
+    private Step _step = Step.Exploit;
     private int _resetCount;
 
     private LabProgress LabProgress => Progress.Get(_lab!.Slug);
@@ -68,7 +63,7 @@
     protected override void OnParametersSet()
     {
         var lab = Registry.Find(Slug);
-        if (!ReferenceEquals(lab, _lab)) _step = Step.Read;
+        if (!ReferenceEquals(lab, _lab)) _step = Step.Exploit;
         _lab = lab;
     }
 
@@ -80,6 +75,6 @@
         Sender.ClearHistory(_lab.Slug);
         await Progress.ClearAsync(_lab.Slug);
         _resetCount++;
-        _step = Step.Read;
+        _step = Step.Exploit;
     }
 }

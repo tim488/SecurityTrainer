@@ -3,13 +3,23 @@
 @* Story elements are flavour only; the global "Skip story" toggle hides them all. *@
 @if (!SkipStory && !string.IsNullOrWhiteSpace(Text))
 {
-    <aside class="story story-@Kind">
-        @if (!string.IsNullOrEmpty(Speaker))
-        {
-            <div class="story-speaker">@Speaker</div>
-        }
-        <MarkdownView Text="@Text" />
-    </aside>
+    @if (Collapsed)
+    {
+        <details class="story story-@Kind">
+            <summary class="story-speaker">@(Speaker ?? L("Story", "Story"))</summary>
+            <MarkdownView Text="@Text" />
+        </details>
+    }
+    else
+    {
+        <aside class="story story-@Kind">
+            @if (!string.IsNullOrEmpty(Speaker))
+            {
+                <div class="story-speaker">@Speaker</div>
+            }
+            <MarkdownView Text="@Text" />
+        </aside>
+    }
 }
 
 @code {
@@ -18,4 +28,7 @@
 
     /// <summary>briefing, hint, calling-card, barclay, debrief, epilogue</summary>
     [Parameter] public string Kind { get; set; } = "briefing";
+
+    /// <summary>Render folded up (click the speaker to open it).</summary>
+    [Parameter] public bool Collapsed { get; set; }
 }

@@ -5,7 +5,7 @@
 @code {
     // Raw HTML is disabled: lab content is rendered as Markdown only.
     private static readonly MarkdownPipeline Pipeline =
-        new MarkdownPipelineBuilder().DisableHtml().UseAutoLinks().Build();
+        new MarkdownPipelineBuilder().DisableHtml().UseAutoLinks().UsePipeTables().Build();
 
     [Parameter] public string? Text { get; set; }
 }

@@ -61,8 +61,8 @@ for story content, with the German version in **`docs/story.de.md`**. This spec 
 | Element | Voice | Where it appears | Stored in |
 |---|---|---|---|
 | **Opening scene** (≤ 120 words) | narrator | Home page, until the first lab is completed | `Core/Story/Acts.cs` |
-| **Briefing** (≤ 100 words) | Picard, Captain's log | Lab page, step Read, above the scenario | `LabStory.Briefing` |
-| **Hints** | Data, sensor observations | Lab page, step Read, revealed one at a time | `ILab.Hints` |
+| **Briefing** (≤ 100 words) | Picard, Captain's log | Lab page, step Exploit, above the scenario; folded up once the flag is submitted | `LabStory.Briefing` |
+| **Hints** | Data, sensor observations | Lab page, step Exploit, above the request console, revealed one at a time | `ILab.Hints` |
 | **Calling card** | Lore | Next to the flag, once it is revealed | `LabStory.CallingCard` |
 | **Barclay's line** | Barclay | Under each wrong option in the fix quiz | `FixOption.BarclayLine` |
 | **Debrief** (≤ 60 words) | Picard | After the correct fix | `LabStory.Debrief` |
@@ -119,11 +119,11 @@ full outline is in `docs/story.md`.
    difficulty and status (new / exploited / solved). All labs are open; acts
    are a suggested order. The opening scene, act endings and finale appear here
    (§3.3).
-2. **Lab page** (`/labs/{slug}`), three steps:
-   1. **Read** — briefing, scenario, goal, hints revealed one at a time.
-   2. **Exploit** — attack the endpoint with the request console. A successful
-      exploit reveals `FLAG{...}`; submit it to complete the step.
-   3. **Fix** — unlocked after the flag. Pick the correct fix from 3–4 code
+2. **Lab page** (`/labs/{slug}`), two steps:
+   1. **Exploit** — briefing, scenario and goal, hints revealed one at a time, and
+      the request console, all on one page. A successful exploit reveals
+      `FLAG{...}`; submit it to complete the step.
+   2. **Fix** — unlocked after the flag. Pick the correct fix from 3–4 code
       snippets. Wrong answers can be retried. After the correct answer: feedback
       for every option, an explanation with links (OWASP, Microsoft Docs) and
       the debrief.
@@ -419,7 +419,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 
 - `dotnet run` starts the app on `http://localhost:5000`; not reachable from other machines.
 - Home shows the labs grouped by act, with status.
-- Every lab is solvable end-to-end in the browser: read → exploit → flag → fix → debrief.
+- Every lab is solvable end-to-end in the browser: exploit → flag → fix → debrief.
 - Progress survives a reload; Reset clears it. "Skip story" hides all story elements.
 - The `EN | DE` switch translates every page; the choice survives a reload.
 - Flags differ on every start.

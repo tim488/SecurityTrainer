@@ -22,6 +22,8 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
         var response = await factory.CreateClient().GetAsync("/labs/bola");
 
         response.EnsureSuccessStatusCode();
-        Assert.Contains("Someone Else&#x27;s Personal Log", await response.Content.ReadAsStringAsync());
+        var html = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Someone Else&#x27;s Personal Log", html);
+        Assert.Contains("<table>", html); // Markdown tables in the scenario render as tables
     }
 }
