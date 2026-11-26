@@ -2,11 +2,16 @@ using Trainer.Web.Core;
 
 namespace Trainer.Web.Labs.Bola;
 
-public sealed record PersonalLog(int Id, string OwnerId, string Stardate, string Title, string Notes);
+public sealed record PersonalLog(int Id, string OwnerId, string Stardate, Text Title, Text Notes)
+{
+    public object ToJson(Language language) => new { Id, OwnerId, Stardate, Title = Title[language], Notes = Notes[language] };
+}
 
 /// <summary>
 /// 1.1 Broken Object Level Authorization (SPEC §6): <c>GET /logs/{id}</c> returns
-/// any log to any logged-in user. Riker's log 1003 holds the flag.
+/// any log to any logged-in user. Riker's log 1003 holds the flag. Any other ID
+/// returns one of ten joke logs from the rest of the crew, picked at random per ID.
+/// Log text follows the request's <c>Accept-Language</c> (English or German).
 /// </summary>
 public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
 {
@@ -15,6 +20,7 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
 
     private readonly Lock _gate = new();
     private List<PersonalLog> _logs = [];
+    private uint _seed;
 
     public string Slug => "bola";
     public Text Title => new("Someone Else's Personal Log", "Ein fremdes Logbuch");
@@ -120,8 +126,8 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
             "`GET /logs` liefert nur Ihre eigenen Einträge, 1001 und 1002. Mir fällt auf, dass die IDs fortlaufend nummeriert sind. Eine solche Reihe endet selten genau bei den eigenen Einträgen."),
         new("`GET /logs/{id}` verifies that the caller is logged in. I have not observed it verifying anything else.",
             "`GET /logs/{id}` prüft, ob der Aufrufer angemeldet ist. Weitere Prüfungen habe ich nicht festgestellt."),
-        new("Commander Riker's most recent log directly follows yours in the sequence. Requesting it with your own token would be instructive. I would prefer that the Commander not learn I suggested this.",
-            "Commander Rikers neuestes Logbuch hat die nächste Nummer nach Ihren. Es mit Ihrem eigenen Token abzurufen, wäre aufschlussreich. Bitte sagen Sie dem Commander aber nicht, dass der Vorschlag von mir kommt."),
+        new("Commander Riker's logs start directly after yours. Requesting the first one with your own token would be instructive. I would prefer that the Commander not learn I suggested this.",
+            "Commander Rikers Logbücher beginnen direkt nach Ihren. Das erste mit Ihrem eigenen Token abzurufen, wäre aufschlussreich. Bitte sagen Sie dem Commander aber nicht, dass der Vorschlag von mir kommt."),
     ];
 
     public RequestTemplate DefaultRequest => new(
@@ -251,11 +257,12 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
         app.MapGet("/logs", (HttpRequest request) =>
         {
             if (auth.FindUser(Slug, request) is not { } user) return Results.Unauthorized();
+            var language = Languages.FromRequest(request);
             lock (_gate)
             {
                 return Results.Ok(_logs
                     .Where(l => l.OwnerId == user.Name)
-                    .Select(l => new { l.Id, l.Stardate, l.Title })
+                    .Select(l => new { l.Id, l.Stardate, Title = l.Title[language] })
                     .ToList());
             }
         });
@@ -264,27 +271,92 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
         app.MapGet("/logs/{id:int}", (int id, HttpRequest request) =>
         {
             if (auth.FindUser(Slug, request) is null) return Results.Unauthorized();
+            var language = Languages.FromRequest(request);
             lock (_gate)
             {
-                return _logs.FirstOrDefault(l => l.Id == id) is { } log
-                    ? Results.Ok(log)
-                    : Results.NotFound();
+                var log = _logs.FirstOrDefault(l => l.Id == id) ?? CrewLogFor(id);
+                return Results.Ok(log.ToJson(language));
             }
         });
     }
+
+    /// <summary>Same ID, same joke log until the next start or reset.</summary>
+    private PersonalLog CrewLogFor(int id)
+    {
+        var mixed = unchecked(((uint)id * 2654435761u) ^ _seed);
+        var (owner, stardate, title, notes) = CrewLogs[(int)(mixed % (uint)CrewLogs.Length)];
+        return new PersonalLog(id, owner, stardate, title, notes);
+    }
+
+    private static readonly (string Owner, string Stardate, Text Title, Text Notes)[] CrewLogs =
+    [
+        ("data", "47302.6", new("Humour, attempt 4,211", "Humor, Versuch 4.211"),
+            new("I told Commander La Forge a joke about a Ferengi, a Vulcan and a tribble. He did not laugh. I have adjusted my timing by 0.3 seconds and will try again tomorrow.",
+                "Ich habe Commander La Forge einen Witz über einen Ferengi, einen Vulkanier und einen Tribble erzählt. Er hat nicht gelacht. Ich habe mein Timing um 0,3 Sekunden angepasst und versuche es morgen erneut.")),
+        ("barclay", "47309.1", new("Things I did not say", "Was ich nicht gesagt habe"),
+            new("Wanted to tell Commander La Forge that the refit was rushed. Practised it eleven times on the holodeck. In the real meeting I said 'sounds great, sir'. The holodeck Geordi was much more understanding.",
+                "Ich wollte Commander La Forge sagen, dass das Update überhastet war, und habe es elfmal auf dem Holodeck geübt. Im echten Meeting habe ich dann „klingt super, Sir“ gesagt. Der Holodeck-Geordi war viel verständnisvoller.")),
+        ("worf", "47311.4", new("Complaint", "Beschwerde"),
+            new("Someone has replaced my prune juice with ordinary apple juice. Again. This is the third time. I will find them.",
+                "Jemand hat meinen Pflaumensaft durch gewöhnlichen Apfelsaft ersetzt. Schon wieder, zum dritten Mal. Ich werde ihn finden.")),
+        ("troi", "47312.8", new("Chocolate", "Schokolade"),
+            new("My session notes are confidential, so this log is only about chocolate. Today's sundae had four kinds. I sense that I regret nothing.",
+                "Meine Sitzungsnotizen sind vertraulich, also geht es in diesem Logbuch nur um Schokolade. Der Eisbecher heute hatte vier Sorten. Ich spüre, dass ich nichts bereue.")),
+        ("picard", "47315.0", new("Replicator", "Replikator"),
+            new("Ordered: tea, Earl Grey, hot. Received: tea, Earl Grey, lukewarm. Third time this week. Mr. Barclay apologised nine times and fled.",
+                "Bestellt: Tee, Earl Grey, heiß. Bekommen: Tee, Earl Grey, lauwarm. Zum dritten Mal diese Woche. Mr. Barclay hat sich neunmal entschuldigt und ist geflohen.")),
+        ("geordi", "47316.3", new("Lights on deck 8", "Licht auf Deck 8"),
+            new("Since the refit, the lights on deck 8 flicker at 61 hertz. Through my VISOR it looks like a disco. Nobody else can see it, so I'm the only one dancing.",
+                "Seit dem Update flackert das Licht auf Deck 8 mit 61 Hertz. Durch mein VISOR sieht das aus wie in einer Disco. Außer mir sieht es keiner, also tanze ich allein.")),
+        ("guinan", "47319.7", new("Closing time", "Sperrstunde"),
+            new("A man who looked exactly like Data ordered a drink and left a generous tip. Data never tips. I've made a note.",
+                "Ein Mann, der genau wie Data aussah, hat einen Drink bestellt und großzügig Trinkgeld gegeben. Data gibt nie Trinkgeld. Ich habe es mir gemerkt.")),
+        ("beverly", "47320.1", new("Medical log, unofficial", "Ärztliches Logbuch, inoffiziell"),
+            new("Treated Lt. Barclay for refit-related stress. Prescription: sleep, fewer holodeck simulations of his colleagues and no coffee after 22:00. He took notes. In triplicate.",
+                "Lt. Barclay wegen Update-Stress behandelt. Verordnung: Schlaf, weniger Holodeck-Simulationen seiner Kollegen und kein Kaffee nach 22 Uhr. Er hat mitgeschrieben, in dreifacher Ausfertigung.")),
+        ("obrien", "47321.0", new("Transporter room 3", "Transporterraum 3"),
+            new("Commander Riker asked again whether the transporter could 'tidy up' his beard during transport. No. Transporters are not barbers. Filed under 'strange requests'. That folder is getting full.",
+                "Commander Riker hat wieder gefragt, ob der Transporter beim Beamen seinen Bart „etwas in Form bringen“ könnte. Nein, Transporter sind keine Friseure. Abgelegt unter „Seltsame Anfragen“. Der Ordner wird langsam voll.")),
+        ("spot", "47321.2", new("Feeding schedule (dictated)", "Fütterungsplan (diktiert)"),
+            new("Mrrrow. Mrow. Mrrrrrow. [Transcribed from audio. Speaker identified as: Spot.]",
+                "Mrrrau. Mrau. Mrrrrrau. [Aus einer Audioaufnahme transkribiert. Erkannter Sprecher: Spot.]")),
+    ];
 
     public void Reset()
     {
         lock (_gate)
         {
+            _seed = (uint)Random.Shared.Next();
             _logs =
             [
-                new(1001, DemoAuth.Player, "47310.2", "First week on the refit crew",
-                    "Lt. Barclay let me rewrite the log indexer. He says it's the most important job on the ship. I think he was being nice."),
-                new(1002, DemoAuth.Player, "47318.9", "Nobody listens",
-                    "Told Geordi the new core timings looked off. He said 'later, Wes.' It's always later."),
-                new(FlagLogId, Riker, "47320.5", "Personal — do not share",
-                    $"Forty minutes of trombone practice. The bridge of 'Night Bird' is finally coming together. Note to self: {flags.GetFlag(Slug)}"),
+                new(1001, DemoAuth.Player, "47310.2",
+                    new("First week on the refit crew", "Erste Woche im Update-Team"),
+                    new("Lt. Barclay let me rewrite the log indexer. He says it's the most important job on the ship. I think he was being nice.",
+                        "Lt. Barclay hat mich den Logbuch-Index neu schreiben lassen. Er sagt, das sei der wichtigste Job auf dem Schiff. Ich glaube, er wollte nur nett sein.")),
+                new(1002, DemoAuth.Player, "47318.9",
+                    new("Nobody listens", "Keiner hört zu"),
+                    new("Told Geordi the timings of the new computer software looked off. He said 'later, Wes.' It's always later.",
+                        "Ich habe Geordi gesagt, dass mit den Timings der neuen Bordcomputer-Software etwas nicht stimmt. Er meinte nur: „Später, Wes.“ Es ist immer später.")),
+                new(FlagLogId, Riker, "47320.5",
+                    new("Personal — do not share", "Privat – nicht weitergeben"),
+                    new($"Forty minutes of trombone practice. The bridge of 'Night Bird' is finally coming together. Note to self: {flags.GetFlag(Slug)}",
+                        $"Vierzig Minuten Posaune geübt. Die Bridge von „Night Bird“ sitzt endlich. Notiz an mich: {flags.GetFlag(Slug)}")),
+                new(1004, Riker, "47320.9",
+                    new("Poker night", "Pokerabend"),
+                    new("Won 300 credits from Geordi and lost 400 to Dr. Crusher. Data folded a royal flush because 'the probability suggested you were not bluffing, Commander.' I was bluffing.",
+                        "300 Credits von Geordi gewonnen und 400 an Dr. Crusher verloren. Data hat einen Royal Flush weggelegt, weil „die Wahrscheinlichkeit dafür sprach, dass Sie nicht bluffen, Commander“. Ich habe geblufft.")),
+                new(1005, Riker, "47321.1",
+                    new("Re: the chair", "Betreff: der Stuhl"),
+                    new("Counselor Troi asked again why I swing my leg over the chair instead of sitting down like a normal person. I told her it's tactical. It is not tactical. I just like it.",
+                        "Counselor Troi hat wieder gefragt, warum ich das Bein über den Stuhl schwinge, statt mich wie ein normaler Mensch hinzusetzen. Ich habe gesagt, das sei taktisch. Ist es nicht, ich mag es einfach.")),
+                new(1006, Riker, "47321.3",
+                    new("Beard, day 14", "Bart, Tag 14"),
+                    new("Still undecided. The Captain hasn't said a word, which is either approval or the most disapproving silence in Starfleet history. Worf says it makes me look 'almost Klingon'. I'm keeping it.",
+                        "Immer noch unentschlossen. Der Captain hat kein Wort gesagt, und das ist entweder Zustimmung oder das missbilligendste Schweigen der Sternenflottengeschichte. Worf meint, ich sehe damit „fast klingonisch“ aus. Der Bart bleibt.")),
+                new(1007, Riker, "47321.4",
+                    new("Cooking for the senior staff", "Kochabend für die Führungsoffiziere"),
+                    new("Made my famous eggs again. Worf ate them and called them 'acceptable'. Everyone else suddenly had urgent duties. Next time: gagh omelette.",
+                        "Wieder meine berühmten Eier gemacht. Worf hat sie gegessen und „annehmbar“ genannt. Alle anderen hatten plötzlich dringende Termine. Nächstes Mal: Gagh-Omelett.")),
             ];
         }
     }

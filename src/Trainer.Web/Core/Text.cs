@@ -17,3 +17,22 @@ public sealed record Text(string En, string De)
 
     public bool IsComplete => !string.IsNullOrWhiteSpace(En) && !string.IsNullOrWhiteSpace(De);
 }
+
+public static class Languages
+{
+    public static string Code(Language language) => language == Language.De ? "de" : "en";
+
+    /// <summary>Picks the language from the request's <c>Accept-Language</c> header (English by default).</summary>
+    public static Language FromRequest(HttpRequest request)
+    {
+        var preferred = request.GetTypedHeaders().AcceptLanguage
+            .OrderByDescending(l => l.Quality ?? 1)
+            .Select(l => l.Value.Value ?? "");
+        foreach (var tag in preferred)
+        {
+            if (tag.StartsWith("de", StringComparison.OrdinalIgnoreCase)) return Language.De;
+            if (tag.StartsWith("en", StringComparison.OrdinalIgnoreCase)) return Language.En;
+        }
+        return Language.En;
+    }
+}

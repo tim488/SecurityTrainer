@@ -15,7 +15,9 @@ public sealed record ConsoleExchange(DateTimeOffset At, ConsoleRequest Request, 
 /// <summary>
 /// Backend of the request console (SPEC §5.2): sends requests server-side to the
 /// app's own address, never follows redirects, only allows <c>/api/labs/</c> paths,
-/// and keeps the last 10 exchanges per lab in memory.
+/// and keeps the last 10 exchanges per lab in memory. Unless the player typed one,
+/// an <c>Accept-Language</c> header for the current UI language is added on the
+/// wire only, so lab data matches the EN | DE switch without cluttering the console.
 /// </summary>
 public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer server)
 {
@@ -33,12 +35,12 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
 
     public void ClearHistory(string slug) => _history.TryRemove(slug, out _);
 
-    public async Task<ConsoleExchange> SendAsync(string slug, ConsoleRequest request, CancellationToken ct = default)
+    public async Task<ConsoleExchange> SendAsync(string slug, ConsoleRequest request, Language language = Language.En, CancellationToken ct = default)
     {
         ConsoleExchange exchange;
         try
         {
-            exchange = new ConsoleExchange(DateTimeOffset.Now, request, await SendCoreAsync(request, ct), null);
+            exchange = new ConsoleExchange(DateTimeOffset.Now, request, await SendCoreAsync(request, language, ct), null);
         }
         catch (Exception ex) when (ex is ArgumentException or HttpRequestException or InvalidOperationException or TaskCanceledException)
         {
@@ -54,7 +56,7 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
         return exchange;
     }
 
-    private async Task<ConsoleResponse> SendCoreAsync(ConsoleRequest request, CancellationToken ct)
+    private async Task<ConsoleResponse> SendCoreAsync(ConsoleRequest request, Language language, CancellationToken ct)
     {
         var method = request.Method.Trim().ToUpperInvariant();
         if (!Methods.Contains(method))
@@ -78,6 +80,9 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
                 message.Content.Headers.TryAddWithoutValidation(name, value);
             }
         }
+
+        if (!request.Headers.Keys.Any(k => string.Equals(k, "Accept-Language", StringComparison.OrdinalIgnoreCase)))
+            message.Headers.TryAddWithoutValidation("Accept-Language", Languages.Code(language));
 
         var client = httpClientFactory.CreateClient(HttpClientName);
         using var response = await client.SendAsync(message, ct);

@@ -81,7 +81,7 @@
     {
         _method = method;
         _path = path;
-        _headers = string.Join("\n", headers.Select(h => $"{h.Key}: {h.Value}"));
+        _headers = FormatHeaders(headers);
         _body = body ?? "";
     }
 
@@ -90,13 +90,16 @@
         _sending = true;
         try
         {
-            await Sender.SendAsync(Slug, new ConsoleRequest(_method, _path, ParseHeaders(_headers), _body));
+            await Sender.SendAsync(Slug, new ConsoleRequest(_method, _path, ParseHeaders(_headers), _body), Lang);
         }
         finally
         {
             _sending = false;
         }
     }
+
+    private static string FormatHeaders(IEnumerable<KeyValuePair<string, string>> headers) =>
+        string.Join("\n", headers.Select(h => $"{h.Key}: {h.Value}"));
 
     private static Dictionary<string, string> ParseHeaders(string text)
     {

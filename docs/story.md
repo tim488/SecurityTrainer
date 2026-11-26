@@ -89,9 +89,9 @@ The German version is `docs/story.de.md`; keep both in step.
      entries do.
   2. `GET /logs/{id}` verifies that the caller is logged in. I have not observed
      it verifying anything else.
-  3. Commander Riker's most recent log directly follows yours in the sequence.
-     Requesting it with your own token would be instructive. I would prefer that
-     the Commander not learn I suggested this.
+  3. Commander Riker's logs start directly after yours. Requesting the first one
+     with your own token would be instructive. I would prefer that the Commander
+     not learn I suggested this.
 - Calling card (Lore):
   > Hello, Wesley. Reading the Commander's diary? So was I. Forty minutes on
   > trombone technique. Riveting. But one log at a time is so slow. Somewhere on

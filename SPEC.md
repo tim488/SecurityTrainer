@@ -81,8 +81,9 @@ Rules:
 
 The app is fully bilingual: **English and German**, switched with `EN | DE` in the
 top right. Everything the player reads is translated: UI, story, scenario, hints,
-fix feedback and explanation. Code snippets, HTTP requests and API responses stay
-English. The German is written for native speakers, not translated word for word;
+fix feedback and explanation. Lab API data (log entries, manifests, …) follows
+the request's `Accept-Language` header. The request console adds it for the
+current language when sending (unless the player typed one) and does not show it. Code snippets and JSON field names stay English. The German is written for native speakers, not translated word for word;
 the style rules (names from the German dub, "du" vs. "Sie", character voices) are
 at the top of `docs/story.de.md`.
 
@@ -247,7 +248,9 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
   an ensign reports she can read anyone's personal log.
 - *Vulnerable:* `GET /logs/{id}` returns any log, no ownership check
   (`GET /logs` correctly lists only your own).
-- *Flag:* Wesley owns logs 1001, 1002. Riker's log 1003 has the flag in `Notes`.
+- *Flag:* Wesley owns logs 1001, 1002. Riker owns 1003–1007; 1003 has the flag in `Notes`.
+  Any other ID returns one of ten joke logs from the rest of the crew (random,
+  but stable per ID until the next start or reset).
 - *Exploit:* `GET /logs/1003` with Wesley's token.
 - ✅ Query by `Id` **and** `OwnerId == currentUser.Id`, `404` if not found
 - ❌ GUID IDs (obscurity; IDs leak via URLs, logs, shared links) · ❌ Hide other
