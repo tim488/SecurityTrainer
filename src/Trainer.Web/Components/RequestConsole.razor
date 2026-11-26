@@ -45,7 +45,7 @@
             @if (exchange.Response is { } response)
             {
                 <pre class="response-headers">@string.Join("\n", response.Headers.Select(h => $"{h.Key}: {h.Value}"))</pre>
-                <pre class="response-body">@response.Body</pre>
+                <CodeBlock Class="response-body" Code="@response.Body" Language="@(LooksLikeJson(response.Body) ? "json" : "plaintext")" />
             }
             else
             {
@@ -97,6 +97,8 @@
             _sending = false;
         }
     }
+
+    private static bool LooksLikeJson(string body) => body.TrimStart() is ['{' or '[', ..];
 
     private static string FormatHeaders(IEnumerable<KeyValuePair<string, string>> headers) =>
         string.Join("\n", headers.Select(h => $"{h.Key}: {h.Value}"));

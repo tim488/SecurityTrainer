@@ -28,7 +28,8 @@ public enum Difficulty
 public record LabStory(int Act, int Order, Text Briefing, Text CallingCard, Text Debrief);
 
 /// <param name="Code">The snippet; code is not translated.</param>
-/// <param name="BarclayLine">Barclay's story line for a wrong option; hidden by "Skip story".</param>
-public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback, Text? BarclayLine = null);
+/// <param name="BarclayLine">Barclay suggesting this option; every option has one, so it gives nothing away. Hidden by "Skip story".</param>
+/// <param name="Language">highlight.js language of <paramref name="Code"/> (csharp, razor, json, sql, …).</param>
+public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback, Text? BarclayLine = null, string Language = "csharp");
 
 public record RequestTemplate(string Method, string Path, Dictionary<string, string> Headers, string? Body);

@@ -1,11 +1,22 @@
 @using Markdig
+@inject IJSRuntime JS
 
-@((MarkupString)Markdown.ToHtml(Text ?? "", Pipeline))
+<div class="markdown" @ref="_root">@((MarkupString)Markdown.ToHtml(Text ?? "", Pipeline))</div>
 
 @code {
     // Raw HTML is disabled: lab content is rendered as Markdown only.
     private static readonly MarkdownPipeline Pipeline =
         new MarkdownPipelineBuilder().DisableHtml().UseAutoLinks().UsePipeTables().Build();
 
+    private ElementReference _root;
+
     [Parameter] public string? Text { get; set; }
+
+    // Fenced code blocks are coloured in the browser after every render
+    // (already highlighted blocks are skipped).
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try { await JS.InvokeVoidAsync("trainerHighlight.within", _root); }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
+    }
 }

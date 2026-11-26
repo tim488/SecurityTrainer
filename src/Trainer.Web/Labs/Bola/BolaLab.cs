@@ -10,7 +10,7 @@ public sealed record PersonalLog(int Id, string OwnerId, string Stardate, Text T
 /// <summary>
 /// 1.1 Broken Object Level Authorization (SPEC §6): <c>GET /logs/{id}</c> returns
 /// any log to any logged-in user. Riker's log 1003 holds the flag. Any other ID
-/// returns one of ten joke logs from the rest of the crew, picked at random per ID.
+/// returns the next of ten joke logs from the rest of the crew, in turn.
 /// Log text follows the request's <c>Accept-Language</c> (English or German).
 /// </summary>
 public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
@@ -20,7 +20,7 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
 
     private readonly Lock _gate = new();
     private List<PersonalLog> _logs = [];
-    private uint _seed;
+    private int _nextCrewLog;
 
     public string Slug => "bola";
     public Text Title => new("Someone Else's Personal Log", "Ein fremdes Logbuch");
@@ -152,7 +152,10 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
             """, IsCorrect: true,
             new("Correct. The query itself only matches logs owned by the caller, so every request is checked " +
                 "against the object it asks for. Returning 404 (not 403) also avoids confirming that log 1003 exists.",
-                "Richtig. Die Abfrage sucht nur in den Logbüchern des Aufrufers, also wird bei jeder Anfrage der Besitzer geprüft. Und weil 404 statt 403 zurückkommt, verrät die API nicht einmal, dass Logbuch 1003 existiert.")),
+                "Richtig. Die Abfrage sucht nur in den Logbüchern des Aufrufers, also wird bei jeder Anfrage der Besitzer geprüft. Und weil 404 statt 403 zurückkommt, verrät die API nicht einmal, dass Logbuch 1003 existiert."),
+            BarclayLine: new(
+                "Or w-we just check who owns the log, in every query? That's p-probably too simple, isn't it?",
+                "Oder w-wir prüfen einfach bei jeder Abfrage, wem das Logbuch gehört? D-das ist bestimmt zu einfach, oder?")),
 
         new("guid-ids", """
             public class PersonalLog
@@ -186,7 +189,8 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 "Die Oberfläche ist keine Sicherheitsgrenze. Du hast die API in diesem Lab direkt aufgerufen, und die gibt weiterhin jedem jedes Logbuch heraus."),
             BarclayLine: new(
                 "The log viewer only shows your own logs anyway. M-maybe we just make really, really sure it only shows those?",
-                "Die Ansicht zeigt doch sowieso nur die eigenen Logbücher. V-vielleicht sorgen wir einfach dafür, dass das auch so bleibt?")),
+                "Die Ansicht zeigt doch sowieso nur die eigenen Logbücher. V-vielleicht sorgen wir einfach dafür, dass das auch so bleibt?"),
+            Language: "razor"),
 
         new("authorize-attribute", """
             builder.Services.AddAuthorizationBuilder()
@@ -274,17 +278,17 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
             var language = Languages.FromRequest(request);
             lock (_gate)
             {
-                var log = _logs.FirstOrDefault(l => l.Id == id) ?? CrewLogFor(id);
+                var log = _logs.FirstOrDefault(l => l.Id == id) ?? NextCrewLog(id);
                 return Results.Ok(log.ToJson(language));
             }
         });
     }
 
-    /// <summary>Same ID, same joke log until the next start or reset.</summary>
-    private PersonalLog CrewLogFor(int id)
+    /// <summary>Loops through the joke logs: each unknown ID gets the next one. Call inside the lock.</summary>
+    private PersonalLog NextCrewLog(int id)
     {
-        var mixed = unchecked(((uint)id * 2654435761u) ^ _seed);
-        var (owner, stardate, title, notes) = CrewLogs[(int)(mixed % (uint)CrewLogs.Length)];
+        var (owner, stardate, title, notes) = CrewLogs[_nextCrewLog];
+        _nextCrewLog = (_nextCrewLog + 1) % CrewLogs.Length;
         return new PersonalLog(id, owner, stardate, title, notes);
     }
 
@@ -326,7 +330,7 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
     {
         lock (_gate)
         {
-            _seed = (uint)Random.Shared.Next();
+            _nextCrewLog = 0;
             _logs =
             [
                 new(1001, DemoAuth.Player, "47310.2",

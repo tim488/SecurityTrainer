@@ -1,0 +1,41 @@
+@inject IJSRuntime JS
+
+@* Shows the plain code first (prerendering), then the highlighted version. *@
+<pre class="@Class"><code class="hljs language-@Language">@Content</code></pre>
+
+@code {
+    [Parameter, EditorRequired] public string Code { get; set; } = "";
+
+    /// <summary>highlight.js language: csharp, json, xml, sql, razor (shown as xml), plaintext, …</summary>
+    [Parameter] public string Language { get; set; } = "csharp";
+
+    [Parameter] public string? Class { get; set; }
+
+    private string? _html;
+    private string? _highlightedFor;
+
+    private string Key => Language + "\n" + Code;
+
+    // One expression on one line, so no Razor whitespace ends up inside <pre>.
+    private MarkupString Content => new(_html ?? System.Net.WebUtility.HtmlEncode(Code));
+
+    protected override void OnParametersSet()
+    {
+        if (Key != _highlightedFor) _html = null;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_html is not null || Key == _highlightedFor) return;
+        _highlightedFor = Key;
+        try
+        {
+            _html = await JS.InvokeAsync<string>("trainerHighlight.code", Code, Language);
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            // No highlighting available: the plain code stays visible.
+        }
+    }
+}

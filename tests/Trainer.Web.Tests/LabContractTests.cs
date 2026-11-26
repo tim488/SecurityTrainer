@@ -36,11 +36,12 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
     }
 
     [Theory, MemberData(nameof(Slugs))]
-    public void Every_wrong_option_has_a_barclay_line(string slug)
+    public void Every_option_has_a_barclay_line(string slug)
     {
         var lab = Registry.Find(slug)!;
 
-        Assert.All(lab.FixOptions.Where(o => !o.IsCorrect), o => Assert.True(o.BarclayLine?.IsComplete, o.Id));
+        // Including the correct one, otherwise the missing line gives the answer away.
+        Assert.All(lab.FixOptions, o => Assert.True(o.BarclayLine?.IsComplete, o.Id));
         Assert.Equal(3, lab.Hints.Count);
     }
 

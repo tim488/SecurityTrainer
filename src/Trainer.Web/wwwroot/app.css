@@ -29,6 +29,8 @@ pre { background: var(--panel-2); padding: 0.75rem; border-radius: var(--radius)
 table { border-collapse: collapse; margin: 0.75rem 0; }
 th, td { border: 1px solid #36425e; padding: 0.4rem 0.75rem; text-align: left; vertical-align: top; }
 th { background: var(--panel-2); }
+/* highlight.js: keep our own code block background and spacing. */
+pre code.hljs { background: transparent; padding: 0; overflow-x: visible; }
 
 button, select, input, textarea {
     font: inherit;
@@ -55,7 +57,6 @@ label { display: block; margin: 0.5rem 0; }
 .lang-switch button:last-child { border-radius: 0 6px 6px 0; border-left: none; }
 .lang-switch button.active { background: var(--accent); border-color: var(--accent); color: #1a1300; font-weight: 600; }
 .content { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
-.footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 1rem; }
 .muted { color: var(--muted); }
 .success { color: var(--ok); }
 .error { color: var(--bad); }

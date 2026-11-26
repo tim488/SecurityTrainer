@@ -8,7 +8,8 @@ The German version is `docs/story.de.md`; keep both in step.
 - **Beat:** what happens in the story at this point, in one line. The text is written to match it.
 - **TODO:** a placeholder, written lab by lab as each lab is built.
 - **Calling card points to:** the next system Lore attacks, which is the next lab.
-- **Barclay lines:** one per wrong fix option, keyed by the option's `Id` (see SPEC §5.1).
+- **Barclay lines:** one per fix option, the correct one too, keyed by the option's `Id`
+  (see SPEC §5.1). They all sound equally unsure, so they give nothing away.
 - Where each element appears in the app, and what "Skip story" hides, is defined in SPEC §3.3.
 - Limits: opening scene ≤ 120 words, briefing ≤ 100 words, debrief ≤ 60 words.
   The story never gives away the exploit.
@@ -41,7 +42,7 @@ The German version is `docs/story.de.md`; keep both in step.
 - **Wesley Crusher**: the player (lab user `wesley`). Eager, underestimated, clever.
 - **Captain Picard**: briefings as Captain's log entries, debriefs. Calls him "Mr. Crusher".
 - **Lt. Commander Data**: hints, as precise sensor observations. Quietly conflicted about his brother.
-- **Lt. Barclay**: wrote much of the refit and feels guilty about it. Voices the wrong fix options.
+- **Lt. Barclay**: wrote much of the refit and feels guilty about it. Suggests every fix option, right or wrong.
 - **Lore**: calling cards. Charming, cruel, mocks "the boy".
 - **Commander Riker**: first officer. His account is Lore's favourite target (lab user `riker`).
 
@@ -98,6 +99,7 @@ The German version is `docs/story.de.md`; keep both in step.
   > this ship there is a list of everyone aboard. I think I'll read that next.
   > — L.
 - Barclay lines:
+  - `owner-check`: "Or w-we just check who owns the log, in every query? That's p-probably too simple, isn't it?"
   - `guid-ids`: "W-what if the log numbers weren't numbers? Long random ones.
     Nobody could guess those. C-could they?"
   - `hide-in-ui`: "The log viewer only shows your own logs anyway. M-maybe we just

@@ -39,26 +39,26 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     }
 
     [Fact]
-    public async Task Unknown_ids_return_a_crew_joke_log_that_stays_the_same_per_id()
+    public async Task Unknown_ids_loop_through_the_crew_joke_logs()
     {
+        Get<LabRegistry>().Find(Slug)!.Reset();
         var client = Client(DemoAuth.Player);
         var flag = Get<FlagService>().GetFlag(Slug);
 
-        var owners = new HashSet<string>();
-        foreach (var id in new[] { 1, 999, 1008, 1050, 4711, 9999, 123456 })
+        var titles = new List<string>();
+        for (var i = 0; i < 11; i++)
         {
+            var id = 5000 + i * 37;
             var log = await client.GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/{id}");
-            var again = await client.GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/{id}");
 
             Assert.Equal(id, log.GetProperty("id").GetInt32());
-            Assert.Equal(log.GetProperty("notes").GetString(), again.GetProperty("notes").GetString());
+            Assert.DoesNotContain(log.GetProperty("ownerId").GetString(), new[] { "wesley", "riker" });
             Assert.DoesNotContain(flag, log.GetProperty("notes").GetString());
-            owners.Add(log.GetProperty("ownerId").GetString()!);
+            titles.Add(log.GetProperty("title").GetString()!);
         }
 
-        Assert.DoesNotContain("wesley", owners);
-        Assert.DoesNotContain("riker", owners);
-        Assert.True(owners.Count > 1, "Different IDs should give different crew logs.");
+        Assert.Equal(10, titles.Take(10).Distinct().Count()); // all ten, no repeats
+        Assert.Equal(titles[0], titles[10]);                  // then it starts over
     }
 
     [Fact]

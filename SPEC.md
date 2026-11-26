@@ -51,7 +51,7 @@ for story content, with the German version in **`docs/story.de.md`**. This spec 
 |---|---|---|
 | **Wesley Crusher** | You. Acting ensign, prodigy, underestimated. Grows into the role. | The player; lab user `wesley` |
 | **Captain Picard** | Your commanding officer. Measured, expects results. Calls you "Mr. Crusher". | Briefings as Captain's log entries, debriefs |
-| **Lt. Barclay** | Nervous engineer who wrote much of the refit. Means well. | Wrong fix options ("C-couldn't we just hide the button, sir?") |
+| **Lt. Barclay** | Nervous engineer who wrote much of the refit. Means well. | Suggests every fix option, right or wrong ("C-couldn't we just hide the button, sir?") |
 | **Lt. Commander Data** | Science officer. Precise, literal, slightly too thorough. Conflicted about his brother. | Hints ("I have observed 47 requests to `/logs/*` in the last 3.2 hours…") |
 | **Lore** | Data's android brother. Charming, cruel, holds a grudge against Wesley. Wants the ship. | Calling card next to each flag, teasing the next chapter |
 | **Riker** | First officer; Lore's favourite victim account. | Lab user `riker` |
@@ -64,7 +64,7 @@ for story content, with the German version in **`docs/story.de.md`**. This spec 
 | **Briefing** (≤ 100 words) | Picard, Captain's log | Lab page, step Exploit, above the scenario; folded up once the flag is submitted | `LabStory.Briefing` |
 | **Hints** | Data, sensor observations | Lab page, step Exploit, above the request console, revealed one at a time | `ILab.Hints` |
 | **Calling card** | Lore | Next to the flag, once it is revealed | `LabStory.CallingCard` |
-| **Barclay's line** | Barclay | Under each wrong option in the fix quiz | `FixOption.BarclayLine` |
+| **Barclay's line** | Barclay | On every option in the fix quiz, the correct one too (so it gives nothing away) | `FixOption.BarclayLine` |
 | **Debrief** (≤ 60 words) | Picard | After the correct fix | `LabStory.Debrief` |
 | **Act ending** | scene | Home page, under an act once all its labs are completed (any order) | `Core/Story/Acts.cs` |
 | **Finale** | scene | Home page, once all labs are completed | `Core/Story/Acts.cs` |
@@ -177,7 +177,8 @@ public interface ILab
 public record Text(string En, string De);    // every player-facing string
 public record LabStory(int Act, int Order, Text Briefing, Text CallingCard, Text Debrief);
 public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback,
-                        Text? BarclayLine = null); // story line for wrong options
+                        Text? BarclayLine = null,   // story line, on every option
+                        string Language = "csharp"); // highlight.js language of Code
 public record RequestTemplate(string Method, string Path, Dictionary<string,string> Headers, string? Body);
 ```
 
@@ -187,7 +188,8 @@ from `docs/story.md`.
 
 `FixOption.Id` is a short kebab-case name of the approach, unique within the lab
 (e.g. `owner-check`, `guid-ids`, `hide-in-ui`). `Feedback` is the technical
-reason; `BarclayLine` is flavour and hidden by "Skip story".
+reason; `BarclayLine` is flavour and hidden by "Skip story". Every option has a
+Barclay line, the correct one too, and they all sound equally unsure.
 
 ### 5.2 Request console
 
@@ -229,8 +231,9 @@ interop in try/catch; the app works without it (progress is lost on reload).
 
 ### 5.7 Fix quiz
 
-Options in random order, highlighted with highlight.js served from `wwwroot`
-(offline). Wrong options must be **plausible** real-world mistakes: incomplete,
+Options in random order, highlighted with highlight.js 11.9 served from
+`wwwroot/lib/highlight` (offline, BSD-3-Clause). Markdown code blocks and JSON
+responses in the request console are highlighted too. Wrong options must be **plausible** real-world mistakes: incomplete,
 client-side only, obscurity, or blocklists.
 
 ## 6. Labs
@@ -249,8 +252,8 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Vulnerable:* `GET /logs/{id}` returns any log, no ownership check
   (`GET /logs` correctly lists only your own).
 - *Flag:* Wesley owns logs 1001, 1002. Riker owns 1003–1007; 1003 has the flag in `Notes`.
-  Any other ID returns one of ten joke logs from the rest of the crew (random,
-  but stable per ID until the next start or reset).
+  Any other ID returns the next of ten joke logs from the rest of the crew, in
+  turn (back to the first after the tenth, and on reset).
 - *Exploit:* `GET /logs/1003` with Wesley's token.
 - ✅ Query by `Id` **and** `OwnerId == currentUser.Id`, `404` if not found
 - ❌ GUID IDs (obscurity; IDs leak via URLs, logs, shared links) · ❌ Hide other
@@ -403,7 +406,7 @@ Guidelines:
 - At least 3 fix options; wrong ones are mistakes developers actually make.
 - Host-affecting labs use the simulation layer (§5.5).
 - Story: write it in `docs/story.md` first (briefing as Picard's log, hints in
-  Data's voice, a Barclay line per wrong fix, one calling card from Lore), then
+  Data's voice, a Barclay line per fix option, one calling card from Lore), then
   copy it into the lab. Keep it short and never spoil the exploit.
 - Write every text in English and German (`docs/story.de.md` for the story).
   UI strings use `L("English", "Deutsch")` in components.
@@ -415,7 +418,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 - Exactly one fix option is correct.
 - `Reset()` restores the initial data.
 - Story is complete (briefing, calling card, debrief, a `BarclayLine` on every
-  wrong option) and `(Act, Order)` is unique.
+  option) and `(Act, Order)` is unique.
 - Every text exists in English and German.
 
 ## 9. Acceptance criteria
