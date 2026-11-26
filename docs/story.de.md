@@ -181,6 +181,34 @@ von hier.
   > dass Sie Ihren eigenen Admiralsrang auch wieder abgegeben haben. So große Beförderungen im
   > Feld sieht die Sternenflotte nicht gern.
 
+### 2.2 `client-secrets`: Offene Frequenz
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47326.0. Sternenbasis 74 hat uns eine Rechnung geschickt:
+  > vierhundert isolineare Prozessorkerne, zwei Shuttle-Triebwerke und eine Kiste saurianischer
+  > Brandy, alles in den letzten zehn Stunden von der Enterprise bestellt. Der Quartiermeister hat
+  > nichts davon bestellt. Unterschrieben wurden die Bestellungen mit unserem eigenen Schlüssel
+  > für das Lager, und den sollte nur die neue Bestell-App des Quartiermeisters kennen. Ich habe
+  > Mr. Crusher gebeten herauszufinden, wer ihn sonst noch kennt.
+- Hinweise (Data):
+  1. Die Bestell-App ist eine Blazor-WebAssembly-App. Alles, was sie zum Laufen braucht, lädt sie zuerst in den Browser. Dazu gehört auch ihre Konfiguration aus `appsettings.json`, die als ganz normale statische Datei ausgeliefert wird.
+  2. `GET /static/appsettings.json` verlangt kein Token. Bei statischen Dateien ist das selten anders. Den Abschnitt `Starbase` finde ich besonders aufschlussreich.
+  3. Die API der Sternenbasis erwartet den Schlüssel im Header `X-Api-Key`. Wenn Sie ihn bei `GET /starbase/requisitions` mitschicken, sehen Sie, was in unserem Namen bestellt wurde.
+- Visitenkarte (Lore):
+  > Saurianischer Brandy, Wesley. Für die Siegesfeier. Du bist nicht eingeladen, du bist zu jung.
+  > Einkaufen war lustig, aber ein Lagerschlüssel reicht mir nicht. Ich will den Ersten Offizier.
+  > Wusstest du, dass sein Zugangscode nur vier Ziffern hat? Vier. Meine Einkaufslisten sind
+  > länger. — L.
+- Barclay:
+  - `bff-proxy`: „U-und wenn die App gar nicht direkt mit der Sternenbasis redet? Sie fragt unseren Server, und der fragt die Sternenbasis. Ist ein Umweg, ich weiß. T-tut mir leid.“
+  - `base64-key`: „W-wir könnten den Schlüssel codieren. Base64. Dann liegt er nicht einfach so im Klartext rum. Base64 liest doch k-keiner. Oder?“
+  - `csharp-constant`: „Konfigurationsdateien kann jeder lesen, Sir. I-ich schreibe den Schlüssel einfach in den Code, als Konstante. Der wird ja kompiliert, also ist er sicher.“
+  - `cors`: „Ich b-bitte Sternenbasis 74, CORS einzuschalten. Nur unsere Domain ist erlaubt. D-dafür ist CORS doch da, oder? Um andere draußen zu halten?“
+- Nachbesprechung:
+  > Gute Arbeit, Mr. Crusher. Der Lagerschlüssel liegt jetzt auf dem Server des Schiffs, und
+  > die App fragt unseren Server statt direkt die Sternenbasis. Der alte Schlüssel ist gesperrt,
+  > und die Bestellungen sind storniert. Bis auf den Brandy. Der war schon geliefert, und keiner
+  > will mir sagen, wohin.
+
 ### Ende von Akt 2
 - TODO. Lore verrät sich, weil er eine Verkürzung benutzt („gibt's“, „hab'“), die
   Data nie benutzen würde.

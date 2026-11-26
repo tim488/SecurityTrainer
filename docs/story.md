@@ -230,14 +230,32 @@ The German version is `docs/story.de.md`; keep both in step.
   > have given back your own admiralty as well. Starfleet frowns on field promotions this large.
 
 ### 2.2 `client-secrets`: Open Frequency
-- Beat: Starbase supply reports requisitions the Enterprise never placed. Lore
-  used the API key shipped inside the quartermaster's app.
+- Beat: Starbase supply reports requisitions the Enterprise never placed (processor cores, shuttle engines, Saurian brandy). Lore used the API key shipped inside the quartermaster's app.
 - Calling card points to: Riker's four-digit access code (→ 2.3).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `base64-key` TODO · `csharp-constant` TODO · `cors` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47326.0. Starbase 74 has sent us a bill: four hundred isolinear
+  > processor cores, two shuttle engines and a case of Saurian brandy, all ordered by the
+  > Enterprise in the last ten hours. The quartermaster ordered none of it. The orders were
+  > signed with our own supply key, which only the quartermaster's new requisition app
+  > should know. I have asked Mr. Crusher to find out who else knows it.
+- Hints (Data):
+  1. The requisition app is a Blazor WebAssembly app. Everything it needs to run, it first downloads into the browser. That includes its configuration from `appsettings.json`, which is served as an ordinary static file.
+  2. `GET /static/appsettings.json` requires no token. Static files rarely do. I find the section named `Starbase` particularly informative.
+  3. The Starbase API expects the key in an `X-Api-Key` header. If you add it to `GET /starbase/requisitions`, you will see what was ordered in our name.
+- Calling card (Lore):
+  > Saurian brandy, Wesley. For the victory party. You're not invited, you're too young.
+  > Shopping was fun, but a supply key isn't enough for me. I want the First Officer. Did
+  > you know his access code has only four digits? Four. My shopping lists are longer. — L.
+- Barclay lines:
+  - `bff-proxy`: "W-what if the app doesn't talk to the Starbase at all? It asks our server, and our server asks the Starbase. It's an extra hop, I know. S-sorry."
+  - `base64-key`: "We could encode the key. Base64. Then it's not just lying there in plain text. N-nobody reads Base64. Do they?"
+  - `csharp-constant`: "Config files are easy to read, sir. I'll move the key into the code. A constant. It g-gets compiled, so it's safe."
+  - `cors`: "I'll ask Starbase 74 to turn on CORS. Only our domain is allowed. Th-that's what CORS is for, right? Keeping others out?"
+- Debrief:
+  > Good work, Mr. Crusher. The supply key now lives on the ship's server, and the app asks
+  > our server instead of Starbase 74. The old key has been revoked, and the orders are
+  > cancelled. All except the brandy. That had already been delivered, and nobody will tell
+  > me where.
 
 ### 2.3 `brute-force`: Four-Digit Airlock
 - Beat: Lore resets Riker's access code without touching his communicator.

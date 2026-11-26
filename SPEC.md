@@ -303,7 +303,9 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Vulnerable:* the quartermaster's Blazor WASM requisition app ships
   `wwwroot/appsettings.json` with the Starbase supply API key (simulated at
   `GET /static/appsettings.json`).
-- *Flag:* `GET /starbase/requisitions` with `X-Api-Key: <key>`.
+- *Flag:* the `trackingCode` of Lore's order in `GET /starbase/requisitions` with
+  `X-Api-Key: <key>`. `GET /static/index.html` is the app's start page. The key is
+  random and changes on reset.
 - ✅ Keep the key on the server; the client calls the ship's backend, which calls
   the Starbase API (BFF)
 - ❌ Base64/obfuscate the key · ❌ Move it into a C# constant (the WASM DLL is
