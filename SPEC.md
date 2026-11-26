@@ -28,31 +28,35 @@ deploy it or expose it to a network.
 
 ### 3.1 Setting
 
-You are the new security chief aboard the **USS Enterprise-D**. Starfleet
+You are **Wesley Crusher**, acting ensign and teenage prodigy aboard the
+**USS Enterprise-D**, whom nobody on the bridge takes fully seriously. Starfleet
 rushed the computer core's software refit to make the launch date, and it
 shows. Systems misbehave, crew data leaks between decks, and someone keeps
-leaving calling cards in the ship's computer, signed with a single letter: **Q**.
+leaving calling cards in the ship's computer: **Lore**, Data's android brother,
+who wants the ship and has a score to settle with Wesley.
+
+The full script (briefings, hints, calling cards, debriefs) lives in
+`docs/story.md`.
 
 ### 3.2 Cast
 
 | Character | Role | Used for |
 |---|---|---|
-| **Captain Picard** | Your commanding officer. Measured, expects results. "Make it so." | Briefings as Captain's log entries, debriefs |
+| **Wesley Crusher** | You. Acting ensign, prodigy, underestimated. Grows into the role. | The player; lab user `wesley` |
+| **Captain Picard** | Your commanding officer. Measured, expects results. Calls you "Mr. Crusher". | Briefings as Captain's log entries, debriefs |
 | **Lt. Barclay** | Nervous engineer who wrote much of the refit. Means well. | Wrong fix options ("C-couldn't we just hide the button, sir?") |
-| **Lt. Commander Data** | Science officer. Precise, literal, slightly too thorough. | Hints ("I have observed 47 requests to `/logs/*` in the last 3.2 hours…") |
-| **Q** | Omnipotent trickster, delighted by human incompetence. | Calling card next to each flag, teasing the next chapter |
-| **Geordi, Riker** | Crew accounts used as lab users. You play as Geordi. | — |
+| **Lt. Commander Data** | Science officer. Precise, literal, slightly too thorough. Conflicted about his brother. | Hints ("I have observed 47 requests to `/logs/*` in the last 3.2 hours…") |
+| **Lore** | Data's android brother. Charming, cruel, holds a grudge against Wesley. Wants the ship. | Calling card next to each flag, teasing the next chapter |
+| **Riker** | First officer; Lore's favourite victim account. | Lab user `riker` |
 
 ### 3.3 How the story appears
 
 - **Briefing** — Captain's log entry from Picard (≤ 100 words) before the technical scenario.
 - **Hints** — written as Data's sensor observations.
-- **Calling card** — the flag sits next to a note from Q.
+- **Calling card** — the flag sits next to a taunting note from Lore.
 - **Fix quiz** — wrong options are presented as Barclay's suggestions.
 - **Debrief** — short epilogue (≤ 60 words) after the lab is completed.
-- **Act epilogues** — completing an act unlocks a hearing in Q's courtroom (see §3.4).
-- **Rank** — derived from completed labs: Cadet → Ensign →
-  Lieutenant → Commander → Captain. Shown on the home page.
+- **Act epilogues** — completing an act unlocks a confrontation with Lore (see §3.4).
 
 Rules: the story is flavour. Scenario, goal and explanation must stand on their
 own, and a **"Skip story"** toggle hides all story elements. The story never
@@ -60,29 +64,30 @@ gives away the exploit. The Star Trek theme is for personal use only.
 
 ### 3.4 Story arc
 
-Q arrives on the bridge and puts humanity on trial: if the crew can't secure
-their own ship, humans are barred from the stars. Each of Q's moves is a step
-an attacker would really take: **look around → take over identities → reach
-the core**. Difficulty rises with it. Every calling card points at the next
-system Q will attack, which becomes the next lab.
+Lore has slipped into the refitted computer core. He wants the ship, and he
+wants Wesley, who helped stop him once before, to watch him take it. Each of
+Lore's moves is a step an attacker would really take: **look around → take over
+identities → reach the core**. Difficulty rises with it. Every calling card
+points at the next system Lore will attack, which becomes the next lab. The
+full outline is in `docs/story.md`.
 
-| # | Lab | What Q does | His calling card points to… |
+| # | Lab | What Lore does | His calling card points to… |
 |---|---|---|---|
-| 1.1 | `bola` | Reads Riker's personal log | "Such a *public* ship. Who else is on board?" → crew roster |
-| 1.2 | `bfla` | Exports the full crew roster | "I wonder what's in the cargo hold." → manifest |
-| 1.3 | `sql-injection` | Finds the classified prototype | "Reading is dull. Let's try *being* someone." |
-| — | Act 1 hearing | Q: "You let a stranger read your diaries. Guilty, so far." | |
-| 2.1 | `mass-assignment` | Promotes himself to admiral | "Rank is nice. Keys are nicer." → storefront config |
-| 2.2 | `client-secrets` | Places requisitions with a leaked key | "Riker's access code has only four digits. *Four.*" |
-| 2.3 | `brute-force` | Resets Riker's access code | "He'll change it, of course. Unless he gives me his session." |
-| 2.4 | `open-redirect` | Phishes Riker's session | "Now, where do you keep the *really* interesting things?" |
-| — | Act 2 hearing | Q, wearing Riker's uniform: "Identity is just a string to you." | |
-| 3.1 | `path-traversal` | Climbs into the ship's archive | "Your computer can't even tell its users apart." |
-| 3.2 | `shared-state` | Reads command codes across sessions | "Who needs codes when the badge checker doesn't look?" |
-| 3.3 | `jwt` | Forges an admiral's clearance | "The computer core trusts anyone who asks nicely." |
-| 3.4 | `ssrf` | Pulls the core credentials | "One last trial. Your officers read every review…" |
-| 3.5 | `blazor-xss` | Hides in a review to steal the moderator's token. You catch *his* token instead. | — |
-| — | Verdict | Q, grudgingly: "The court finds humanity… adequate. For now." | |
+| 1.1 | `bola` | Reads Riker's personal log | crew roster |
+| 1.2 | `bfla` | Exports the full crew roster | cargo manifest |
+| 1.3 | `sql-injection` | Finds the classified prototype | becoming someone else |
+| — | Act 1 ending | Lore appears on the viewscreen and recognises Wesley | |
+| 2.1 | `mass-assignment` | Promotes himself to admiral | storefront config |
+| 2.2 | `client-secrets` | Places requisitions with a leaked key | Riker's four-digit access code |
+| 2.3 | `brute-force` | Resets Riker's access code | Riker's session |
+| 2.4 | `open-redirect` | Phishes Riker's session | the ship's archive |
+| — | Act 2 ending | Lore impersonates Data on comms; Wesley notices Data never uses contractions | |
+| 3.1 | `path-traversal` | Climbs into the ship's archive | users the computer can't tell apart |
+| 3.2 | `shared-state` | Reads command codes across sessions | the badge checker that doesn't check |
+| 3.3 | `jwt` | Forges an admiral's clearance | the core that trusts anyone who asks |
+| 3.4 | `ssrf` | Pulls the core credentials | the Ten Forward reviews he now moderates |
+| 3.5 | `blazor-xss` | Hides in the review moderator account. Wesley steals *his* token, Data locks him out. | his parting note as he's locked out |
+| — | Finale | Lore escapes into the dark; a faint signature remains in the core | |
 
 ## 4. User flow
 
@@ -113,7 +118,7 @@ securityTrainer/
     ├── Program.cs              host setup, registers labs
     ├── Core/
     │   ├── ILab.cs · LabRegistry.cs · FlagService.cs · DemoAuth.cs
-    │   ├── Story/              cast, acts, epilogues, ranks
+    │   ├── Story/              cast, acts, epilogues
     │   └── Simulation/         virtual filesystem, fake network, victim bots
     ├── Components/
     │   ├── Pages/Home.razor · Pages/LabPage.razor
@@ -154,7 +159,7 @@ in the lab folder as C# constants or embedded `.md` files.
 ### 5.2 Request console
 
 - Method (GET/POST/PUT/DELETE), path, headers, JSON body; prefilled from
-  `DefaultRequest` including Geordi's token.
+  `DefaultRequest` including Wesley's token.
 - Sent server-side via `HttpClient` to the app's own base address. Shows status,
   headers and formatted body. Redirects are **not** followed.
 - Only paths under `/api/labs/` are allowed. Last 10 requests per lab are kept
@@ -164,7 +169,7 @@ in the lab folder as C# constants or embedded `.md` files.
 
 ### 5.3 Demo auth
 
-Each lab seeds users (`geordi`, `riker`, …) with random opaque tokens generated at
+Each lab seeds users (`wesley`, `riker`, …) with random opaque tokens generated at
 startup; `DemoAuth` maps tokens to users. Tokens are unguessable, so the only
 way in is the vulnerability being taught. (The JWT lab uses JWTs instead.)
 
@@ -202,24 +207,24 @@ suggestions.
 
 ### Act 1 — "Uninvited Guest" (v1)
 
-*Q looks around: reading data he shouldn't see.*
+*Lore looks around: reading data he shouldn't see.*
 
 **1.1 Someone Else's Personal Log** — `bola` · API · Easy
-- *Briefing:* Q appeared on the bridge, called our computer "a toddler's toy" and put
-  humanity on trial. An hour later, an ensign reports she can read anyone's personal log.
+- *Briefing:* An unknown signature appeared in the core an hour after the refit. Now
+  an ensign reports she can read anyone's personal log.
 - *Vulnerable:* `GET /logs/{id}` returns any log, no ownership check
   (`GET /logs` correctly lists only your own).
-- *Flag:* Geordi owns logs 1001, 1002. Riker's log 1003 has the flag in `Notes`.
-- *Exploit:* `GET /logs/1003` with Geordi's token.
+- *Flag:* Wesley owns logs 1001, 1002. Riker's log 1003 has the flag in `Notes`.
+- *Exploit:* `GET /logs/1003` with Wesley's token.
 - ✅ Query by `Id` **and** `OwnerId == currentUser.Id`, `404` if not found
 - ❌ GUID IDs (obscurity; IDs leak via URLs, logs, shared links) · ❌ Hide other
   logs in the UI (API still open) · ❌ `[Authorize]` (authentication ≠ authorization)
 
 **1.2 Bridge Access** — `bfla` · API · Easy
-- *Briefing:* Q broadcast the full crew roster on all frequencies. "Lovely bridge."
+- *Briefing:* The full crew roster was broadcast on all frequencies. Nobody sent it.
 - *Vulnerable:* `GET /admin/crew/export` only requires an authenticated
   user. The Blazor UI hides the admin menu for non-admins.
-- *Flag:* in the export. *Exploit:* call it with Geordi's token.
+- *Flag:* in the export. *Exploit:* call it with Wesley's token.
 - ✅ `RequireAuthorization` with an `Admin` role policy on the admin route group
 - ❌ Hide the menu (already done, didn't help) · ❌ Unguessable route name
   (obscurity) · ❌ Check the `Referer` is the admin page (client-controlled)
@@ -236,10 +241,10 @@ suggestions.
 
 ### Act 2 — "Borrowed Identities" (v1.1)
 
-*Q stops reading and starts becoming someone else.*
+*Lore stops reading and starts becoming someone else.*
 
 **2.1 Field Promotion** — `mass-assignment` · API · Easy
-- *Briefing:* The crew database now lists Q as an admiral. He promoted himself.
+- *Briefing:* The crew database now lists an admiral nobody has heard of. He promoted himself.
 - *Vulnerable:* `PUT /profile` binds the body straight to the `User` entity
   (`Id`, `DisplayName`, `Email`, `IsAdmin`, `Credits`) and copies everything.
 - *Flag:* `GET /admin/secret` returns it if `IsAdmin`.
@@ -261,7 +266,7 @@ suggestions.
   clients ignore CORS)
 
 **2.3 Four-Digit Airlock** — `brute-force` · API · Medium
-- *Briefing:* Q reset Riker's access code without ever touching his communicator.
+- *Briefing:* Lore reset Riker's access code without ever touching his communicator.
 - *Vulnerable:* `POST /password-reset/confirm { user, code }` with a 4-digit code
   and no attempt limit.
 - *Flag:* returned on success. *Exploit:* request a reset for Riker, then use the
@@ -273,7 +278,7 @@ suggestions.
   (parallel requests)
 
 **2.4 Wrong Coordinates** — `open-redirect` · API · Medium
-- *Briefing:* Riker logged in via a link from "Starfleet Support". Now Q has his account.
+- *Briefing:* Riker logged in via a link from "Starfleet Support". Now Lore has his account.
 - *Vulnerable:* `GET /login/continue?returnUrl=` redirects to `returnUrl` with a
   one-time `code` appended (mobile app handoff).
 - *Victim bot:* `POST /support/messages { "link": ... }` makes Riker follow the
@@ -284,16 +289,16 @@ suggestions.
 - ❌ `StartsWith("/")` (`//evil.example`) · ❌ `Contains("enterprise.local")`
   (`enterprise.local.evil.example`) · ❌ URL-encode `returnUrl`
 
-### Act 3 — "The Trial" (v1.2)
+### Act 3 — "Into the Core" (v1.2)
 
-*Q goes for the core of the ship.*
+*Lore goes for the core of the ship.*
 
 **3.1 Jefferies Tube** — `path-traversal` · API · Medium
-- *Briefing:* Data found crew evaluations in Q's latest note. They only exist in the ship's archive.
+- *Briefing:* Data found crew evaluations in Lore's latest note. They only exist in the ship's archive.
 - *Vulnerable:* `GET /receipts/download?file=1001.pdf` uses
   `Path.Combine("/data/receipts", file)` over the virtual filesystem.
-- *Flag:* in `/data/exports/payroll.pdf`.
-- *Exploit:* `file=../exports/payroll.pdf` (or an absolute path: `Path.Combine`
+- *Flag:* in `/data/exports/crew-evaluations.pdf`.
+- *Exploit:* `file=../exports/crew-evaluations.pdf` (or an absolute path: `Path.Combine`
   discards the root).
 - ✅ Look up receipts by ID; or `Path.GetFullPath` and verify the result is inside the root
 - ❌ `file.Replace("../", "")` (`....//`) · ❌ Require a `.pdf` extension (the
@@ -303,13 +308,13 @@ suggestions.
 - *Briefing:* Crew members get each other's replicator orders. Randomly.
 - *Vulnerable:* `CheckoutState` is registered as a **Singleton** in Blazor Server.
   A Riker bot places an order every few seconds, storing his command code in it.
-- *Flag:* Riker's command code. *Exploit:* `GET /checkout/summary` as Geordi.
+- *Flag:* Riker's command code. *Exploit:* `GET /checkout/summary` as Wesley.
 - ✅ Register as Scoped (per circuit) and keep data keyed to the user
 - ❌ `lock` around access (thread safety ≠ isolation) · ❌ Clear the state after
   each checkout (race) · ❌ Make it an immutable record (the reference is still shared)
 
 **3.3 Forged Clearance** — `jwt` · API · Hard
-- *Briefing:* Q logged into the bridge console as an admiral who doesn't exist.
+- *Briefing:* Lore logged into the bridge console as an admiral who doesn't exist.
 - *Vulnerable:* JWT bearer config with `RequireSignedTokens = false` and
   `ValidateIssuerSigningKey = false`.
 - *Flag:* `GET /admin/bridge`. *Exploit:* in the JWT editor set
@@ -333,8 +338,8 @@ suggestions.
   (still reaches internal hosts and leaks data)
 
 **3.5 Subspace Message** — `blazor-xss` · Blazor · Hard (finale)
-- *Briefing:* Q's last note: "Your officers read every Ten Forward review. So do I."
-  Time to turn his own trick against him.
+- *Briefing:* Lore's last note brags that he now moderates the Ten Forward
+  reviews. Time to turn his own trick against him.
 - *Vulnerable:* reviews render with `@((MarkupString)review.Text)` so the crew
   can use bold text. `POST /reviews` stores them.
 - *Simulation:* a sandboxed iframe on the lab page shows the moderator's view,
@@ -360,7 +365,7 @@ Guidelines:
 - At least 3 fix options; wrong ones are mistakes developers actually make.
 - Host-affecting labs use the simulation layer (§5.5).
 - Story: briefing as Picard's log, hints in Data's voice, wrong fixes in
-  Barclay's, one calling card from Q. Keep it short and never spoil the exploit.
+  Barclay's, one calling card from Lore. Keep it short and never spoil the exploit.
 
 ## 8. Testing
 
@@ -373,7 +378,7 @@ xUnit project `tests/Trainer.Web.Tests` using `WebApplicationFactory`. Per lab:
 ## 9. Acceptance criteria
 
 - `dotnet run` starts the app on `http://localhost:5000`; not reachable from other machines.
-- Home shows the labs grouped by act, with status and rank.
+- Home shows the labs grouped by act, with status.
 - Every lab is solvable end-to-end in the browser: read → exploit → flag → fix → debrief.
 - Progress survives a reload; Reset clears it. "Skip story" hides all story elements.
 - Flags differ on every start.
