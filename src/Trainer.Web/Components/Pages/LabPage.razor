@@ -1,0 +1,85 @@
+@page "/labs/{Slug}"
+@inherits ProgressAwareComponent
+@inject RequestSender Sender
+
+@if (_lab is null)
+{
+    <PageTitle>Lab not found</PageTitle>
+    <h1>Lab not found</h1>
+    <p>There is no lab called <code>@Slug</code>. <a href="/">Back to the case board</a>.</p>
+    return;
+}
+
+<PageTitle>@_lab.Title</PageTitle>
+
+<p><a href="/">&larr; Case board</a></p>
+<h1>@_lab.Title</h1>
+<p class="card-meta">
+    <span class="tag">@_lab.Category</span>
+    <span class="tag difficulty-@_lab.Difficulty.ToString().ToLowerInvariant()">@_lab.Difficulty</span>
+    <span class="tag status">@Progress.StatusOf(_lab.Slug).ToString().ToLowerInvariant()</span>
+    <button class="link-button" @onclick="ResetLab">Reset lab</button>
+</p>
+
+<nav class="steps">
+    <button class="@StepClass(Step.Read)" @onclick="() => _step = Step.Read">1. Read</button>
+    <button class="@StepClass(Step.Exploit)" @onclick="() => _step = Step.Exploit">2. Exploit</button>
+    <button class="@StepClass(Step.Fix)" disabled="@(!LabProgress.FlagSubmitted)"
+            title="@(LabProgress.FlagSubmitted ? null : "Submit the flag first")"
+            @onclick="() => _step = Step.Fix">3. Fix</button>
+</nav>
+
+@switch (_step)
+{
+    case Step.Read:
+        <section>
+            <StoryPanel Speaker="Captain's log" Text="@_lab.Story.Briefing" Kind="briefing" />
+            <MarkdownView Text="@_lab.ScenarioMarkdown" />
+            <HintList Slug="@_lab.Slug" Hints="_lab.Hints" />
+            <button class="primary" @onclick="() => _step = Step.Exploit">Continue to exploit &rarr;</button>
+        </section>
+        break;
+
+    case Step.Exploit:
+        <section>
+            <RequestConsole @key="_resetCount" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
+            <FlagInput Slug="@_lab.Slug" CallingCard="@_lab.Story.CallingCard" OnAccepted="() => _step = Step.Fix" />
+        </section>
+        break;
+
+    case Step.Fix:
+        <section>
+            <FixQuiz @key="_resetCount" Lab="_lab" />
+        </section>
+        break;
+}
+
+@code {
+    private enum Step { Read, Exploit, Fix }
+
+    [Parameter] public string Slug { get; set; } = "";
+
+    private ILab? _lab;
+    private Step _step = Step.Read;
+    private int _resetCount;
+
+    private LabProgress LabProgress => Progress.Get(_lab!.Slug);
+
+    protected override void OnParametersSet()
+    {
+        var lab = Registry.Find(Slug);
+        if (!ReferenceEquals(lab, _lab)) _step = Step.Read;
+        _lab = lab;
+    }
+
+    private string StepClass(Step step) => step == _step ? "step active" : "step";
+
+    private async Task ResetLab()
+    {
+        _lab!.Reset();
+        Sender.ClearHistory(_lab.Slug);
+        await Progress.ClearAsync(_lab.Slug);
+        _resetCount++;
+        _step = Step.Read;
+    }
+}

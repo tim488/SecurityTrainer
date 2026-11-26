@@ -1,0 +1,106 @@
+@inject RequestSender Sender
+
+<div class="console">
+    <h3>Request console</h3>
+    <form @onsubmit="Send" @onsubmit:preventDefault>
+        <div class="console-line">
+            <select @bind="_method" aria-label="Method">
+                @foreach (var m in RequestSender.Methods)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+            <input class="console-path" @bind="_path" aria-label="Path" spellcheck="false" />
+            <button type="submit" class="primary" disabled="@_sending">@(_sending ? "Sending…" : "Send")</button>
+        </div>
+        <label>
+            Headers <span class="muted">(one <code>Name: value</code> per line)</span>
+            <textarea rows="3" @bind="_headers" spellcheck="false"></textarea>
+        </label>
+        <label>
+            Body <span class="muted">(JSON, ignored for GET)</span>
+            <textarea rows="4" @bind="_body" spellcheck="false"></textarea>
+        </label>
+        <button type="button" class="link-button" @onclick="LoadDefault">Restore default request</button>
+    </form>
+
+    @foreach (var exchange in Sender.History(Slug))
+    {
+        <details class="exchange" open="@ReferenceEquals(exchange, Sender.History(Slug)[0])">
+            <summary>
+                <code>@exchange.Request.Method @exchange.Request.Path</code>
+                &rarr;
+                @if (exchange.Response is { } r)
+                {
+                    <span class="status-code status-@(r.StatusCode / 100)xx">@r.StatusCode @r.ReasonPhrase</span>
+                }
+                else
+                {
+                    <span class="error">error</span>
+                }
+                <span class="muted">@exchange.At.ToString("HH:mm:ss")</span>
+                <button type="button" class="link-button" @onclick="() => LoadExchange(exchange)">Edit &amp; resend</button>
+            </summary>
+            @if (exchange.Response is { } response)
+            {
+                <pre class="response-headers">@string.Join("\n", response.Headers.Select(h => $"{h.Key}: {h.Value}"))</pre>
+                <pre class="response-body">@response.Body</pre>
+            }
+            else
+            {
+                <p class="error">@exchange.Error</p>
+            }
+        </details>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter, EditorRequired] public RequestTemplate DefaultRequest { get; set; } = default!;
+
+    private string _method = "GET";
+    private string _path = "";
+    private string _headers = "";
+    private string _body = "";
+    private bool _sending;
+
+    protected override void OnInitialized() => LoadDefault();
+
+    private void LoadDefault() =>
+        Load(DefaultRequest.Method, DefaultRequest.Path, DefaultRequest.Headers, DefaultRequest.Body);
+
+    private void LoadExchange(ConsoleExchange exchange) =>
+        Load(exchange.Request.Method, exchange.Request.Path, exchange.Request.Headers, exchange.Request.Body);
+
+    private void Load(string method, string path, IReadOnlyDictionary<string, string> headers, string? body)
+    {
+        _method = method;
+        _path = path;
+        _headers = string.Join("\n", headers.Select(h => $"{h.Key}: {h.Value}"));
+        _body = body ?? "";
+    }
+
+    private async Task Send()
+    {
+        _sending = true;
+        try
+        {
+            await Sender.SendAsync(Slug, new ConsoleRequest(_method, _path, ParseHeaders(_headers), _body));
+        }
+        finally
+        {
+            _sending = false;
+        }
+    }
+
+    private static Dictionary<string, string> ParseHeaders(string text)
+    {
+        var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var colon = line.IndexOf(':');
+            if (colon > 0) headers[line[..colon].Trim()] = line[(colon + 1)..].Trim();
+        }
+        return headers;
+    }
+}

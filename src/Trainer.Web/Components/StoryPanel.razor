@@ -1,0 +1,21 @@
+@inherits ProgressAwareComponent
+
+@* Story elements are flavour only; the global "Skip story" toggle hides them all. *@
+@if (!SkipStory && !string.IsNullOrWhiteSpace(Text))
+{
+    <aside class="story story-@Kind">
+        @if (!string.IsNullOrEmpty(Speaker))
+        {
+            <div class="story-speaker">@Speaker</div>
+        }
+        <MarkdownView Text="@Text" />
+    </aside>
+}
+
+@code {
+    [Parameter] public string? Speaker { get; set; }
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>briefing, hint, calling-card, barclay, debrief, epilogue</summary>
+    [Parameter] public string Kind { get; set; } = "briefing";
+}

@@ -1,0 +1,11 @@
+@using Markdig
+
+@((MarkupString)Markdown.ToHtml(Text ?? "", Pipeline))
+
+@code {
+    // Raw HTML is disabled: lab content is rendered as Markdown only.
+    private static readonly MarkdownPipeline Pipeline =
+        new MarkdownPipelineBuilder().DisableHtml().UseAutoLinks().Build();
+
+    [Parameter] public string? Text { get; set; }
+}

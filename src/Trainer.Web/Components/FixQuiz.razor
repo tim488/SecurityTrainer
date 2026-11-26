@@ -1,0 +1,74 @@
+@inherits ProgressAwareComponent
+
+@* TODO: syntax-highlight the snippets with highlight.js served from wwwroot (SPEC §5.7). *@
+<div class="quiz">
+    <h3>Which change fixes it?</h3>
+    <StoryPanel Speaker="Lt. Barclay" Text="@BarclayNote" Kind="barclay" />
+
+    @foreach (var option in _options)
+    {
+        <label class="option @OptionClass(option)">
+            <input type="radio" name="fix-@Lab.Slug" value="@option.Id"
+                   checked="@(_selected == option.Id)" disabled="@Solved"
+                   @onchange="() => _selected = option.Id" />
+            <pre><code class="language-csharp">@option.Code</code></pre>
+            @if (Solved || _wrong.Contains(option.Id))
+            {
+                <p class="feedback">@(option.IsCorrect ? "✔ " : "✘ ")@option.Feedback</p>
+            }
+        </label>
+    }
+
+    @if (!Solved)
+    {
+        <button class="primary" disabled="@(_selected is null)" @onclick="Submit">Check answer</button>
+        <span class="muted">Attempts: @Progress.Get(Lab.Slug).Attempts</span>
+    }
+    else
+    {
+        <div class="explanation">
+            <h3>Explanation</h3>
+            <MarkdownView Text="@Lab.ExplanationMarkdown" />
+        </div>
+        <StoryPanel Speaker="Debrief" Text="@Lab.Story.Debrief" Kind="debrief" />
+        <p class="success">Lab completed. <a href="/">Back to the case board</a></p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public ILab Lab { get; set; } = default!;
+
+    // TODO: Barclay's line comes with the rewritten story.
+    private const string? BarclayNote = null;
+
+    private List<FixOption> _options = [];
+    private readonly HashSet<string> _wrong = [];
+    private string? _selected;
+
+    private bool Solved => Progress.Get(Lab.Slug).FixAnsweredCorrectly;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _options = Lab.FixOptions.ToList();
+        Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_options));
+    }
+
+    private string OptionClass(FixOption option) =>
+        Solved ? (option.IsCorrect ? "correct" : "wrong")
+        : _wrong.Contains(option.Id) ? "wrong"
+        : _selected == option.Id ? "selected" : "";
+
+    private async Task Submit()
+    {
+        var option = _options.FirstOrDefault(o => o.Id == _selected);
+        if (option is null) return;
+
+        if (!option.IsCorrect) _wrong.Add(option.Id);
+        await Progress.UpdateAsync(Lab.Slug, p =>
+        {
+            p.Attempts++;
+            if (option.IsCorrect) p.FixAnsweredCorrectly = true;
+        });
+    }
+}

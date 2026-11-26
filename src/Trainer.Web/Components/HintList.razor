@@ -1,0 +1,27 @@
+@inherits ProgressAwareComponent
+
+@if (Hints.Count > 0)
+{
+    <div class="hints">
+        <h3>Hints</h3>
+        <ol>
+            @foreach (var hint in Hints.Take(Revealed))
+            {
+                <li><MarkdownView Text="@hint" /></li>
+            }
+        </ol>
+        @if (Revealed < Hints.Count)
+        {
+            <button @onclick="RevealNext">Reveal hint @(Revealed + 1) of @Hints.Count</button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyList<string> Hints { get; set; } = [];
+
+    private int Revealed => Math.Min(Progress.Get(Slug).HintsRevealed, Hints.Count);
+
+    private Task RevealNext() => Progress.UpdateAsync(Slug, p => p.HintsRevealed = Math.Min(p.HintsRevealed + 1, Hints.Count));
+}

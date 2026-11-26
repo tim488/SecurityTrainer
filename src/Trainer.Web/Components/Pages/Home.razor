@@ -1,0 +1,35 @@
+@page "/"
+@inherits ProgressAwareComponent
+
+<PageTitle>Security Trainer</PageTitle>
+
+<h1>Case board</h1>
+
+<p class="muted">@Completed of @Registry.Labs.Count labs completed</p>
+
+@foreach (var act in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
+{
+    <section class="act">
+        @* TODO: act titles and epilogues come with the story (docs/story.md). *@
+        <h2>@(act.Key == 0 ? "Training (placeholder)" : $"Act {act.Key}")</h2>
+        <div class="cards">
+            @foreach (var lab in act.OrderBy(l => l.Story.Order))
+            {
+                var status = Progress.StatusOf(lab.Slug);
+                <a class="card status-@status.ToString().ToLowerInvariant()" href="@($"labs/{lab.Slug}")">
+                    <span class="card-order">@lab.Story.Act.@lab.Story.Order</span>
+                    <span class="card-title">@lab.Title</span>
+                    <span class="card-meta">
+                        <span class="tag">@lab.Category</span>
+                        <span class="tag difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@lab.Difficulty</span>
+                        <span class="tag status">@status.ToString().ToLowerInvariant()</span>
+                    </span>
+                </a>
+            }
+        </div>
+    </section>
+}
+
+@code {
+    private int Completed => Registry.Labs.Count(l => Progress.Get(l.Slug).IsCompleted);
+}

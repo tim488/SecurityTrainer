@@ -1,0 +1,41 @@
+@inherits ProgressAwareComponent
+@inject FlagService Flags
+
+<div class="flag-input">
+    <h3>Submit the flag</h3>
+    @if (Progress.Get(Slug).FlagSubmitted)
+    {
+        <p class="success">Flag accepted.</p>
+        <StoryPanel Speaker="A calling card" Text="@CallingCard" Kind="calling-card" />
+        <button class="primary" @onclick="OnAccepted">Continue to fix &rarr;</button>
+    }
+    else
+    {
+        <form @onsubmit="Submit" @onsubmit:preventDefault>
+            <input @bind="_value" placeholder="FLAG{...}" aria-label="Flag" autocomplete="off" spellcheck="false" />
+            <button type="submit" class="primary">Submit</button>
+        </form>
+        @if (_wrong)
+        {
+            <p class="error">That is not the flag for this lab.</p>
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter] public string? CallingCard { get; set; }
+    [Parameter] public EventCallback OnAccepted { get; set; }
+
+    private string _value = "";
+    private bool _wrong;
+
+    private async Task Submit()
+    {
+        _wrong = !Flags.Check(Slug, _value);
+        if (_wrong) return;
+
+        await Progress.UpdateAsync(Slug, p => p.FlagSubmitted = true);
+        _value = "";
+    }
+}
