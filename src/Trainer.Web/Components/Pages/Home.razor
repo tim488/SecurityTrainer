@@ -1,6 +1,7 @@
 @page "/"
 @using Trainer.Web.Core.Story
 @inherits ProgressAwareComponent
+@inject RequestSender Sender
 
 <PageTitle>Security Trainer</PageTitle>
 
@@ -18,10 +19,10 @@
     </div>
 </div>
 
-@if (Completed == 0)
-{
-    <StoryPanel Text="@L(Acts.OpeningScene)" Kind="epilogue" />
-}
+
+@* Every scene reached so far stays on the page. Only the newest one is open; the others are folded up. *@
+<StoryPanel Speaker="@L("Prologue", "Prolog")" Text="@L(Acts.OpeningScene)" Kind="epilogue"
+            Foldable="true" Collapsed="@(NewestScene != OpeningKey)" />
 
 @foreach (var group in Registry.Missions.GroupBy(m => m.Story.Act).OrderBy(g => g.Key))
 {
@@ -79,20 +80,74 @@
         </div>
         @if (act is not null && done == group.Count())
         {
-            <StoryPanel Text="@L(act.Ending)" Kind="epilogue" />
+            <StoryPanel Speaker="@L($"End of act {act.Number}", $"Ende des {act.Number}. Akts")" Text="@L(act.Ending)" Kind="epilogue"
+                        Foldable="true" Collapsed="@(NewestScene != ActKey(act))" />
         }
     </section>
 }
 
 @if (Registry.Missions.Count > 0 && Completed == Registry.Missions.Count)
 {
-    <StoryPanel Text="@L(Acts.Finale)" Kind="epilogue" />
+    <StoryPanel Speaker="Finale" Text="@L(Acts.Finale)" Kind="epilogue"
+                Foldable="true" Collapsed="@(NewestScene != FinaleKey)" />
+}
+
+@if (_confirmReset)
+{
+    @* Asks first: a reset can't be undone. *@
+    <div class="reset-confirm" role="alertdialog" aria-labelledby="reset-question">
+        <p id="reset-question">@L("Reset all missions? Your progress is deleted from this browser and every mission starts fresh. Language and story mode stay as they are.",
+                                   "Alle Missionen zurücksetzen? Dein Fortschritt wird aus diesem Browser gelöscht und jede Mission beginnt von vorn. Sprache und Story-Modus bleiben, wie sie sind.")</p>
+        <div class="actions">
+            <button type="button" class="small danger" @onclick="ResetAll">@L("Reset everything", "Alles zurücksetzen")</button>
+            <button type="button" class="small" @onclick="() => _confirmReset = false">@L("Cancel", "Abbrechen")</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="actions board-footer">
+        <button type="button" class="small" @onclick="() => _confirmReset = true">@L("Reset all progress", "Fortschritt zurücksetzen")</button>
+    </div>
 }
 
 @code {
     private int Completed => Registry.Missions.Count(m => Progress.Get(m.Slug).IsCompleted);
 
     private bool StoryMode => Progress.Settings.StoryMode;
+
+    private bool _confirmReset;
+
+    /// <summary>Starts the whole game over: browser progress, each mission's server state and the request history.</summary>
+    private async Task ResetAll()
+    {
+        foreach (var mission in Registry.Missions)
+        {
+            mission.Reset();
+            Sender.ClearHistory(mission.Slug);
+        }
+        await Progress.ClearAllAsync(Registry.Missions.Select(m => m.Slug));
+        _confirmReset = false;
+    }
+
+    private const string OpeningKey = "opening", FinaleKey = "finale";
+    private static string ActKey(Act act) => $"act-{act.Number}";
+
+    /// <summary>The scene the player reached last: the finale, else the latest finished act's ending, else the opening.</summary>
+    private string NewestScene
+    {
+        get
+        {
+            if (Acts.Finale is not null && Registry.Missions.Count > 0 && Completed == Registry.Missions.Count)
+                return FinaleKey;
+            var finished = Registry.Missions.GroupBy(m => m.Story.Act)
+                .Where(g => g.All(m => Progress.Get(m.Slug).IsCompleted))
+                .Select(g => Acts.Find(g.Key))
+                .Where(a => a?.Ending is not null)
+                .MaxBy(a => a!.Number);
+            return finished is null ? OpeningKey : ActKey(finished);
+        }
+    }
 
     private static string Number(IMission mission) => $"{mission.Story.Act}.{mission.Story.Order}";
 }

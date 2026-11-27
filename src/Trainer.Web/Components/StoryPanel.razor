@@ -2,9 +2,9 @@
 
 @if (!string.IsNullOrWhiteSpace(Text))
 {
-    @if (Collapsed)
+    @if (Foldable || Collapsed)
     {
-        <details class="story story-@Kind">
+        <details class="story story-@Kind" open="@(!Collapsed)">
             <summary class="story-speaker">@(Speaker ?? L("Story", "Story"))</summary>
             <MarkdownView Text="@Text" />
         </details>
@@ -30,4 +30,7 @@
 
     /// <summary>Render folded up (click the speaker to open it).</summary>
     [Parameter] public bool Collapsed { get; set; }
+
+    /// <summary>Render open, but let the player fold it up by clicking the speaker.</summary>
+    [Parameter] public bool Foldable { get; set; }
 }

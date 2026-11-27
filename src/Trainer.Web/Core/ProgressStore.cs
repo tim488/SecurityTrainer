@@ -105,6 +105,21 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
         Changed?.Invoke();
     }
 
+    /// <summary>Forgets the progress of all given missions, here and in the browser. Settings (language, story mode) stay.</summary>
+    public async Task ClearAllAsync(IEnumerable<string> slugs)
+    {
+        foreach (var slug in slugs)
+        {
+            _missions[slug] = new MissionProgress();
+            foreach (var key in new[] { MissionKeyPrefix + slug, OldKeyPrefix + slug })
+            {
+                try { await js.InvokeVoidAsync("localStorage.removeItem", key); }
+                catch (Exception ex) when (IsInteropFailure(ex)) { }
+            }
+        }
+        Changed?.Invoke();
+    }
+
     public async Task SetLanguageAsync(Language language)
     {
         Settings.Language = language;

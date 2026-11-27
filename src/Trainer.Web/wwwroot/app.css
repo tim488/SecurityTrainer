@@ -101,6 +101,7 @@ button.primary, .button.primary { background: var(--orange); }
 .mission-done-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 /* Smaller pill for actions inside a list or a line of text. */
 button.small, .button.small { font-size: 0.85rem; padding: 0.2rem 0.8rem; }
+button.danger { background: var(--red); }
 /* A row of buttons under a page's text: what to do next. */
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1rem; }
 
@@ -120,7 +121,7 @@ button.small, .button.small { font-size: 0.85rem; padding: 0.2rem 0.8rem; }
     overflow: hidden;
     max-width: 1320px;
     margin: 0 auto;
-    padding: 12px 12px 0;
+    padding: 12px;   /* all round: the column, the content and its scrollbar end above the window edge */
 }
 .frame-elbow { grid-column: 1; grid-row: 1; position: relative; background: var(--orange); border-top-left-radius: 56px; min-height: 64px; }
 .frame-elbow::after {
@@ -142,7 +143,7 @@ button.small, .button.small { font-size: 0.85rem; padding: 0.2rem 0.8rem; }
 .lang-switch button:last-child { border-radius: 0 999px 999px 0; padding-right: 1rem; }
 .lang-switch button.active { background: var(--sky); color: var(--on-colour); }
 
-.frame-side { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; gap: var(--gap); width: var(--side); padding: var(--gap) 0 12px; }
+.frame-side { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; gap: var(--gap); width: var(--side); padding: var(--gap) 0 0; }
 .side-block {
     display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end;
     min-height: 64px; padding: 0.3rem 0.6rem;
@@ -170,7 +171,7 @@ a.side-block:hover { filter: brightness(1.12); }
 }
 
 @media (max-width: 720px) {
-    .frame { --side: 28px; --inner: 18px; --arm: 22px; --brand: 1.3rem; padding: 8px 8px 0; }
+    .frame { --side: 28px; --inner: 18px; --arm: 22px; --brand: 1.3rem; padding: 8px; }
     .frame-elbow { border-top-left-radius: 32px; min-height: 48px; }
     .frame-elbow::after { border-top-left-radius: 16px; }
     .side-label, .side-no { display: none; }
@@ -215,6 +216,9 @@ a.side-block:hover { filter: brightness(1.12); }
 .mission-facts .status-next { color: var(--sky); }
 .board-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
 .board-bar p { margin: 0; }
+.board-footer { justify-content: flex-end; }
+.reset-confirm { background: var(--panel); border-left: 6px solid var(--red); padding: 0.75rem 1.25rem; border-radius: 0 16px 16px 0; }
+.reset-confirm p { margin: 0 0 0.5rem; }
 .act-count { color: var(--lilac); font-size: 1.1rem; }
 .act h2 { margin: 0 0 1rem; }
 .card-title { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; line-height: 1.2; }

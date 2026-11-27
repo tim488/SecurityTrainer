@@ -46,9 +46,10 @@ Each mission has the same pieces, in this order:
    unsure, so they give nothing away.
 5. **Debrief**: Picard again, at most 60 words.
 
-The opening scene (at most 120 words) shows on the home page until the first mission
-is completed. Each act ending shows once all its missions are done; the finale follows
-3.5 directly. **The story never gives away the exploit.**
+The opening scene (at most 120 words) shows on the missions page from the start. Each
+act ending shows once all its missions are done; the finale follows 3.5 directly. Every
+scene reached stays on the page so players can re-read it: the newest one is open, the
+older ones are folded up. **The story never gives away the exploit.**
 
 ## The arc
 

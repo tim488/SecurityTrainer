@@ -50,6 +50,26 @@ public class ProgressStoreTests
     }
 
     [Fact]
+    public async Task Clearing_all_forgets_every_mission_but_keeps_the_settings()
+    {
+        var storage = new FakeLocalStorage
+        {
+            ["securityTrainer.mission.bola"] = Solved,
+            ["securityTrainer.mission.jwt"] = Solved,
+            ["securityTrainer.settings"] = """{"language":"De","storyMode":false}""",
+        };
+        var store = Store(storage);
+        await store.LoadAsync(["bola", "jwt"]);
+
+        await store.ClearAllAsync(["bola", "jwt"]);
+
+        Assert.False(store.Get("bola").IsCompleted);
+        Assert.False(store.Get("jwt").IsCompleted);
+        Assert.Equal(["securityTrainer.settings"], storage.Keys);
+        Assert.Equal(Language.De, store.Settings.Language);
+    }
+
+    [Fact]
     public async Task Progress_saved_under_the_old_lab_keys_is_moved()
     {
         var storage = new FakeLocalStorage { ["securityTrainer.lab.bola"] = Solved };
