@@ -21,13 +21,14 @@
             <textarea rows="8" @bind="_payload" spellcheck="false"></textarea>
         </label>
     </div>
-    <label>
-        @L("Signature", "Signatur")
-        <select @bind="_signature">
-            <option value="keep">@L("Keep the original signature", "Ursprüngliche Signatur behalten")</option>
-            <option value="drop">@L("Remove the signature (empty third part)", "Signatur entfernen (leerer dritter Teil)")</option>
-        </select>
-    </label>
+    @* Radio buttons rather than a dropdown, so both choices are visible next to Encode. *@
+    <fieldset class="jwt-signature">
+        <legend>@L("Signature", "Signatur")</legend>
+        <label><input type="radio" name="jwt-signature" value="keep" checked="@(_signature == "keep")" @onchange="@(() => _signature = "keep")" />
+            @L("Keep the original signature", "Ursprüngliche Signatur behalten")</label>
+        <label><input type="radio" name="jwt-signature" value="drop" checked="@(_signature == "drop")" @onchange="@(() => _signature = "drop")" />
+            @L("Remove the signature (empty third part)", "Signatur entfernen (leerer dritter Teil)")</label>
+    </fieldset>
     <div class="tool-actions">
         <button type="button" class="primary" @onclick="Encode">@L("Encode", "Codieren")</button>
         <button type="button" disabled="@(_encoded is null)" @onclick="Use">@L("Use as bearer token in the console", "Als Bearer-Token in die Konsole übernehmen")</button>

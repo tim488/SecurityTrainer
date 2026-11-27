@@ -318,4 +318,9 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
 .jwt-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 0 1rem; }
 .tool-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
 .jwt-output { word-break: break-all; }
+
+/* JWT editor: signature choice as two visible radio buttons. */
+.jwt-signature { border: 1px solid var(--line); border-radius: var(--radius); padding: 0.4rem 0.75rem 0.5rem; margin: 0.5rem 0; }
+.jwt-signature legend { padding: 0 0.3rem; color: var(--muted); }
+.jwt-signature label { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0; }
 .moderator-frame { width: 100%; height: 320px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }

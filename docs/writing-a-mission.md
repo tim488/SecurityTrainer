@@ -74,7 +74,11 @@ anonymous callers are rejected, and `Reset()` restores the data. The contract te
 in `MissionContractTests.cs` check story completeness, both languages and the fix options
 for every registered mission automatically.
 
-## 6. Check by hand
+## 6. Smoke test and a check by hand
 
-`dotnet run --project src/Trainer.Web`, open the mission, and play it once in each
-language: exploit, flag, all fix options, debrief.
+Add the mission to the `missions` list in `tests/smoke/playthrough.js` (slug, correct fix
+option, an `exploit` that returns the flag) and run the smoke test (`/smoke-test`).
+
+Then `dotnet run --project src/Trainer.Web`, open the mission, and play it once in each
+language yourself: exploit, flag, all fix options, debrief. The smoke test only picks the
+right answer; read the wrong options' feedback too.

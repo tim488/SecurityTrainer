@@ -38,6 +38,12 @@ mission overview. For a workshop where everyone should start in free play, run w
 dotnet test
 ```
 
+The smoke test plays all 12 missions in a real browser, in English and German, and catches
+what unit tests can't, such as a page that crashes when it re-renders. It runs through
+Claude Code with the Playwright MCP server: ask Claude for a smoke test, or run the
+`/smoke-test` skill (`.claude/skills/smoke-test/SKILL.md`). The playthrough itself is
+`tests/smoke/playthrough.js`.
+
 ## Terms
 
 One word everywhere: a **mission** is one exercise, with its story, vulnerable API, flag,
@@ -60,6 +66,8 @@ all use it.
 - `docs/writing-a-mission.md`: how to add a mission
 
 Progress is stored in your browser's `localStorage`. Use **Reset** on a mission to start it over.
+It belongs to the exact address you opened: `localhost:5000`, `127.0.0.1:5000` and another
+port each start from zero, and so does a private window. Stick to one address.
 Mission data lives in the running app and is shared by everyone who uses that instance, so
 **Reset** also resets the mission for them. Each player should run their own copy.
 
