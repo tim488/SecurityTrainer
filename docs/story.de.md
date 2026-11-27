@@ -343,5 +343,33 @@ von hier.
   > entzogen. Man sagt mir, auf Ihrem gefälschten Ausweis stand weiterhin „Fähnrich auf Probe“.
   > Bescheiden. Das gefällt mir.
 
+### 3.4 `ssrf`: Ein Ping an den Hauptcomputer
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47333.0. Ein ferengischer Händler, DaiMon Tarr, bietet uns unsere
+  > eigenen Zugangsdaten zum Hauptcomputer an. Gegen eine angemessene Gebühr. Bekommen hat er sie in
+  > einer Subraumnachricht, unterschrieben von Lore. Diese Zugangsdaten liegen auf keiner Konsole, nur
+  > der Hauptcomputer selbst kann sie lesen. Ich habe Mr. Crusher gebeten herauszufinden, wie Lore den
+  > Computer dazu gebracht hat, sie herauszugeben. Mr. Worf habe ich gebeten, dem Ferengi nicht zu
+  > antworten.
+- Hinweise (Data):
+  1. `POST /link-preview` ruft jede URL ab, die Sie angeben, und zwar aus dem Netz des Schiffs heraus. Danach meldet es den Titel und die ersten paar hundert Zeichen. Mit einer öffentlichen Seite funktioniert das wie erwartet.
+  2. Aus dem Netz des Schiffs heraus erreicht der Computer Hosts, an die Sie nicht herankommen, zum Beispiel `http://inventory.internal/`. Bemerkenswert finde ich, dass die Vorschau dabei keinen Unterschied macht.
+  3. Wie viele Cloud-Systeme stellt der Hauptcomputer seine eigenen Zugangsdaten unter einer link-lokalen Metadaten-Adresse bereit: `http://169.254.169.254/latest/`. Er antwortet jedem, der von innen fragt. Die Link-Vorschau fragt von innen.
+- Visitenkarte (Lore):
+  > Die Ferengi zahlen gut, Wesley, aber ihr Geld brauch' ich nicht. Ich wollte nur, dass ihr alle
+  > woanders hinschaut. Während ihr mit dem Hauptcomputer beschäftigt wart, hab' ich mir einen kleinen
+  > Job in Zehn Vorne besorgt. Ich moderiere jetzt das Kommentarbrett und lese jedes Wort, das eure
+  > Crew schreibt. Jedes einzelne. Schreib mir doch mal was Nettes. — L.
+- Barclay:
+  - `allowlist-resolve`: „V-vielleicht besucht die Vorschau nur Seiten, die wir kennen? Eine kurze Liste. Und wir prüfen vorher, wohin der Name wirklich zeigt, b-bevor wir hingehen?“
+  - `string-blocklist`: „W-wir sperren einfach die gefährlichen Adressen. `localhost`, `127.0.0.1`, die Metadaten-Adresse. I-ich hab' sie alle aufgeschrieben. Alle, glaube ich.“
+  - `require-https`: „Der Metadaten-Dienst spricht nur einfaches http. W-wenn wir nur https erlauben, kommt also keiner mehr hin. D-das ist doch schlau, oder? Fühlt sich schlau an.“
+  - `title-only`: „U-und wenn wir nur den Titel zeigen? Gar keinen Inhalt. Zugangsdaten haben doch keinen Titel. O-oder?“
+- Nachbesprechung:
+  > Gut gemacht, Mr. Crusher. Die Link-Vorschau ruft jetzt nur noch freigegebene öffentliche Seiten ab
+  > und prüft vorher, wohin sie wirklich führen. Die Zugangsdaten des Hauptcomputers sind geändert.
+  > DaiMon Tarr hat seinen Preis zweimal gesenkt. Mr. Worf hat eine Antwort entworfen. Ich habe sie
+  > nicht abgeschickt.
+
 ### Finale
 - TODO

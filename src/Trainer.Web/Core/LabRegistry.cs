@@ -7,6 +7,7 @@ using Trainer.Web.Labs.OpenRedirect;
 using Trainer.Web.Labs.PathTraversal;
 using Trainer.Web.Labs.SharedState;
 using Trainer.Web.Labs.SqlInjection;
+using Trainer.Web.Labs.Ssrf;
 
 namespace Trainer.Web.Core;
 
@@ -34,6 +35,7 @@ public sealed class LabRegistry : IDisposable
             new PathTraversalLab(flags, auth),
             new SharedStateLab(flags, auth),
             new JwtLab(flags),
+            new SsrfLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();

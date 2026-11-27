@@ -387,8 +387,11 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Premise:* Someone is offering the ship's core credentials to a Ferengi trader. The sender's signature is Lore's.
 - *Vulnerable:* `POST /link-preview { "url": ... }` fetches any URL to build a
   subspace message preview.
-- *Fake network:* `http://169.254.169.254/latest/credentials` (cloud metadata),
-  `http://inventory.internal/`.
+- *Fake network* (`Core/Simulation/FakeNetwork.cs`): `memory-alpha.example`,
+  `starbase74.example` (public), `http://inventory.internal/`,
+  `http://169.254.169.254/latest/credentials` (cloud metadata, also reachable as
+  `metadata.internal` and `http://2852039166/`), `redirect.example/?to=` (open
+  redirector). The preview follows up to 3 redirects, like `HttpClient`.
 - *Flag:* in the metadata credentials. *Exploit:* preview the metadata URL.
 - ✅ Hostname allowlist; resolve and reject private/link-local addresses; no redirects
 - ❌ Block `localhost`, `127.0.0.1`, `169.254.169.254` as strings (decimal IPs,

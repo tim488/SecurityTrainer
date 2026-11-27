@@ -406,14 +406,32 @@ The German version is `docs/story.de.md`; keep both in step.
   > forged badge still said "acting ensign". Modest. I approve.
 
 ### 3.4 `ssrf`: Ping the Core
-- Beat: someone is offering the ship's core credentials to a Ferengi trader.
-  The sender's signature is Lore's. He pulled them through the core itself.
+- Beat: the Ferengi trader DaiMon Tarr offers to sell back the core credentials, which Lore pulled through the core's own link preview.
 - Calling card points to: the Ten Forward comment board, which Lore now moderates (→ 3.5).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `string-blocklist` TODO · `require-https` TODO · `title-only` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47333.0. A Ferengi trader, DaiMon Tarr, is offering to sell us our
+  > own core access credentials. For a reasonable fee. He received them in a subspace message
+  > signed by Lore. Those credentials are not stored on any console; only the core itself can
+  > read them. I have asked Mr. Crusher to find out how Lore made the core hand them over. I
+  > have asked Mr. Worf not to reply to the Ferengi.
+- Hints (Data):
+  1. `POST /link-preview` fetches whatever URL you give it, from inside the ship's network, and reports the title and the first few hundred characters. With a public page it works as expected.
+  2. From inside the ship's network, the core can reach hosts that you cannot, for example `http://inventory.internal/`. I find it noteworthy that the preview makes no distinction.
+  3. Like many cloud systems, the core serves its own credentials on a link-local metadata address, `http://169.254.169.254/latest/`. It answers anyone who asks from inside. The link preview asks from inside.
+- Calling card (Lore):
+  > The Ferengi pay well, Wesley, but I don't need their money. I needed you all looking the
+  > other way. While you were busy with the core, I took a little job in Ten Forward. I moderate
+  > the comment board now, and I read every word your crew writes. Every single one. Write me
+  > something nice. — L.
+- Barclay lines:
+  - `allowlist-resolve`: "M-maybe the preview only visits sites we know? A short list. And we check where the name really points, b-before we go there?"
+  - `string-blocklist`: "We just block the dangerous addresses. `localhost`, `127.0.0.1`, the metadata one. I-I wrote them all down. All of them, I think."
+  - `require-https`: "The metadata service only speaks plain http. So if we only allow https, it can't be reached. Th-that's clever, right? It feels clever."
+  - `title-only`: "W-what if we only show the title? No content at all. Credentials don't have a title. Do they?"
+- Debrief:
+  > Well done, Mr. Crusher. The link preview now fetches only approved public sites, and it
+  > checks where they really lead first. The core credentials have been changed. DaiMon Tarr has
+  > lowered his price twice. Mr. Worf has drafted a reply. I have not sent it.
 
 ### 3.5 `blazor-xss`: Subspace Message (finale)
 - Beat: the sting. Lore hides in the comment moderator account and reads every

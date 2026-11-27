@@ -26,7 +26,10 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+// Friendly "not found" pages for the UI only. Lab APIs must return their real status codes
+// (a re-executed POST would otherwise fail antiforgery and show up as 400 in the console).
+app.UseWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api"),
+    branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
 
 app.UseAntiforgery();
 
