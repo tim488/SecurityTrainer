@@ -4,12 +4,14 @@ A lab (shown to players as a "mission") is one folder with one partial class in 
 files: `<Name>Lab.cs` for endpoints and data, `<Name>Lab.Text.cs` for everything the
 player reads. This guide walks through adding one.
 
+Terms: *lab* is the technical exercise (code, API, tests), *mission* is how the story
+presents it. Use "lab" in code and "mission" in player-facing text and story logic.
+
 ## 1. Story first
 
-Draft the text in `docs/story.md` (English) and `docs/story.de.md` (German) first.
-Once it is in the lab, the lab is the final version; polish it there.
-Follow "How to read this file" at the top of `story.md` and the writing rules at the
-top of `story.de.md`. You need:
+Decide the mission's place in the arc and write its text, following
+`docs/story-guide.md` (cast, voices, the arc table and the writing rules for both
+languages). Add a row to the arc table. You need:
 
 - a **briefing**: a Captain's log from Picard, at most 100 words, without giving away the exploit
 - three **hints** from Data: precise, formal, no contractions, each a bit more concrete

@@ -21,6 +21,7 @@ public sealed partial class ClientSecretsLab(FlagService flags, DemoAuth auth) :
     public string Category => "Blazor";
     public Difficulty Difficulty => Difficulty.Easy;
 
+    // The empty X-Api-Key header shows players where the key goes, so they only have to find it.
     public RequestTemplate DefaultRequest => new(
         "GET",
         $"{LabRegistry.ApiPrefix}{Slug}/starbase/requisitions",

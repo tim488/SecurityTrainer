@@ -5,7 +5,7 @@ public sealed record Act(int Number, Text Title, Text? Ending = null);
 
 /// <summary>
 /// Act titles, opening scene, act endings and finale.
-/// Text comes from docs/story.md (English) and docs/story.de.md (German).
+/// The arc and the writing rules are in docs/story-guide.md.
 /// </summary>
 public static class Acts
 {
