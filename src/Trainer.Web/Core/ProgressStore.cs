@@ -66,9 +66,11 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
         foreach (var slug in slugs)
         {
             if (_missions.ContainsKey(slug)) continue;
-            _missions[slug] = await ReadAsync<MissionProgress>(MissionKeyPrefix + slug)
+            var loaded = await ReadAsync<MissionProgress>(MissionKeyPrefix + slug)
                 ?? await MigrateAsync(slug)
                 ?? new MissionProgress();
+            // A reset or update that happened while this was loading wins over the stored value.
+            _missions.TryAdd(slug, loaded);
             changed = true;
         }
 

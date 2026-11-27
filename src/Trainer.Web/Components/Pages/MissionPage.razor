@@ -74,7 +74,9 @@
 @switch (_step)
 {
     case Step.Exploit:
-        <section>
+        @* One key for the whole step: Reset bumps it, and everything inside starts fresh.
+           Keys on the tools themselves would be siblings with the same value, which Blazor rejects. *@
+        <section @key="_resetCount">
             @* The briefing folds up once the flag is in, to keep the page short. *@
             <StoryPanel Speaker="@L("Captain's log", "Logbuch des Captains")" Text="@L(_mission.Story.Briefing)" Kind="briefing"
                         Collapsed="MissionProgress.FlagSubmitted" />
@@ -82,24 +84,24 @@
             <HintList Slug="@_mission.Slug" Hints="_mission.Hints" />
             @if (_mission is IHasModeratorView moderator && _mission.Tools.Contains(MissionTool.ModeratorView))
             {
-                <ModeratorView @key="_resetCount" Src="@moderator.ModeratorViewUrl" />
+                <ModeratorView Src="@moderator.ModeratorViewUrl" />
             }
             @if (_mission.Tools.Contains(MissionTool.Repeater))
             {
-                <Repeater @key="_resetCount" Slug="@_mission.Slug" DefaultRequest="_mission.DefaultRequest" />
+                <Repeater Slug="@_mission.Slug" DefaultRequest="_mission.DefaultRequest" />
             }
-            <RequestConsole @key="_resetCount" @ref="_console" Slug="@_mission.Slug" DefaultRequest="_mission.DefaultRequest" />
+            <RequestConsole @ref="_console" Slug="@_mission.Slug" DefaultRequest="_mission.DefaultRequest" />
             @if (_mission.Tools.Contains(MissionTool.JwtEditor))
             {
-                <JwtEditor @key="_resetCount" InitialToken="@BearerToken(_mission.DefaultRequest)" OnUse="UseToken" />
+                <JwtEditor InitialToken="@BearerToken(_mission.DefaultRequest)" OnUse="UseToken" />
             }
             <FlagInput Slug="@_mission.Slug" CallingCard="@L(_mission.Story.CallingCard)" OnAccepted="() => _step = Step.Fix" />
         </section>
         break;
 
     case Step.Fix:
-        <section>
-            <FixQuiz @key="_resetCount" Mission="_mission" />
+        <section @key="_resetCount">
+            <FixQuiz Mission="_mission" />
         </section>
         break;
 }

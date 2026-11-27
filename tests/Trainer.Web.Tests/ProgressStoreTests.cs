@@ -36,6 +36,20 @@ public class ProgressStoreTests
     }
 
     [Fact]
+    public async Task A_reset_while_loading_is_not_undone_by_the_load()
+    {
+        var storage = new FakeLocalStorage { ["securityTrainer.mission.bola"] = Solved };
+        var store = Store(storage);
+        // The player clicks Reset just after the saved progress was read, before it is applied.
+        storage.AfterGet = key => { if (key == "securityTrainer.mission.bola") store.ClearAsync("bola").GetAwaiter().GetResult(); };
+
+        await store.LoadAsync(["bola"]);
+
+        Assert.False(store.Get("bola").IsCompleted);
+        Assert.False(storage.ContainsKey("securityTrainer.mission.bola"));
+    }
+
+    [Fact]
     public async Task Progress_saved_under_the_old_lab_keys_is_moved()
     {
         var storage = new FakeLocalStorage { ["securityTrainer.lab.bola"] = Solved };
@@ -51,6 +65,9 @@ public class ProgressStoreTests
     /// <summary>The browser's localStorage, in memory: getItem, setItem and removeItem.</summary>
     private sealed class FakeLocalStorage : Dictionary<string, string>, IJSRuntime
     {
+        /// <summary>Runs after getItem has read its value, to simulate something happening mid-load.</summary>
+        public Action<string>? AfterGet { get; set; }
+
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) =>
             InvokeAsync<TValue>(identifier, CancellationToken.None, args);
 
@@ -60,7 +77,10 @@ public class ProgressStoreTests
             object? result = null;
             switch (identifier)
             {
-                case "localStorage.getItem": result = TryGetValue(key, out var value) ? value : null; break;
+                case "localStorage.getItem":
+                    result = TryGetValue(key, out var value) ? value : null;
+                    AfterGet?.Invoke(key);
+                    break;
                 case "localStorage.setItem": this[key] = (string)args[1]!; break;
                 case "localStorage.removeItem": Remove(key); break;
                 default: throw new NotSupportedException(identifier);
