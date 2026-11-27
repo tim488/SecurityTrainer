@@ -2,6 +2,7 @@ using Trainer.Web.Labs.Bfla;
 using Trainer.Web.Labs.Bola;
 using Trainer.Web.Labs.ClientSecrets;
 using Trainer.Web.Labs.MassAssignment;
+using Trainer.Web.Labs.OpenRedirect;
 using Trainer.Web.Labs.SqlInjection;
 
 namespace Trainer.Web.Core;
@@ -26,6 +27,7 @@ public sealed class LabRegistry
             new SqlInjectionLab(flags, auth),
             new MassAssignmentLab(flags, auth),
             new ClientSecretsLab(flags, auth),
+            new OpenRedirectLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();

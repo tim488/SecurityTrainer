@@ -32,7 +32,10 @@ Each item says what I did, so you can keep it or change it.
 
 ## Not built yet
 
-- Missions 2.3 `brute-force` through 3.5 `blazor-xss`, the Act 2 and Act 3 endings, and
-  the finale. Also the tools they need: Repeater (2.3), JWT editor (3.3), moderator
-  view (3.5), and the victim bots.
+- **Mission 2.3 `brute-force` ("Four-Digit Airlock") is left for you to write.** While
+  I was writing it, an automatic safety check stopped my response, and I'm not allowed
+  to produce that content again. The slot is kept: SPEC §6 and `docs/story.md` still
+  describe it, and Lore's calling card in 2.2 points to it. Until it exists, Act 2 has
+  three missions, and the Act 2 ending shows once those three are done. The Repeater
+  tool from SPEC §5.2 was only needed for 2.3, so it isn't built either.
 - `docs/writing-a-lab.md` (SPEC §7).

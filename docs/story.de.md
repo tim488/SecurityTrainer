@@ -209,9 +209,52 @@ von hier.
   > und die Bestellungen sind storniert. Bis auf den Brandy. Der war schon geliefert, und keiner
   > will mir sagen, wohin.
 
+### 2.4 `open-redirect`: Falsche Koordinaten
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47327.9. Commander Riker hat heute Morgen eine Nachricht vom
+  > Sternenflotten-Support bekommen: Er möge sich nach dem Software-Update bitte neu anmelden. Er
+  > hat auf den Link geklickt, sich auf unserer eigenen Anmeldeseite angemeldet und nicht weiter
+  > darüber nachgedacht. Eine Stunde später hat sein Konto die Tore des Shuttlehangars auf Deck 13
+  > geöffnet. Der Commander war zu der Zeit im Fitnessraum. Ich habe Mr. Crusher gebeten
+  > herauszufinden, wohin dieser Link wirklich geführt hat.
+- Hinweise (Data):
+  1. `GET /login/continue` schickt Sie zu `returnUrl` und hängt einen Einmal-`code` an. Bei Ihrem eigenen Request sehen Sie das im Header `Location`. Mir fällt auf, dass der Code nie prüft, wohin `returnUrl` zeigt.
+  2. Commander Riker klickt keine Links zu fremden Adressen. Einem Link auf unsere eigene Anmeldeseite vertraut er dagegen völlig. Mit `POST /support/messages` stellen Sie ihm einen solchen Link als Sternenflotten-Support zu.
+  3. Alles, was bei `https://evil.example` ankommt, erscheint in `GET /attacker/inbox`. Ein Link auf unsere Anmeldeseite mit `returnUrl=https://evil.example/` wäre deshalb aufschlussreich. Es ist mir unangenehm, wie gut das funktionieren würde.
+- Visitenkarte (Lore):
+  > Hast ihn erwischt, was? Kluger Junge. Ich hab' drei Versuche gebraucht, du nur einen. Fast bin
+  > ich stolz. Aber ich hab' genug davon, mir fremde Gesichter zu leihen. Ich will wissen, was
+  > darunter steckt. Tief im Bordcomputer gibt's ein Archiv, in dem diese Crew alles aufhebt, was
+  > sie lieber vergessen würde. Da fang' ich an. — L.
+- Barclay:
+  - `local-redirect`: „K-könnten wir nur Adressen auf unserem eigenen Schiff erlauben? Also lokale? I-ich glaube, dafür gibt's eine Hilfsfunktion. Es gibt immer eine Hilfsfunktion.“
+  - `starts-with-slash`: „Lokale Adressen fangen mit einem Schrägstrich an. A-also prüfen wir auf den Schrägstrich. Ein Zeichen, fertig.“
+  - `contains-domain`: „W-wir prüfen einfach, ob `enterprise.local` irgendwo in der Adresse steht. Wenn sie uns gehört, steht das doch drin. Oder?“
+  - `strip-scheme`: „Ohne `https://` kein anderer Planet. I-ich entferne das einfach. Ohne Schema kann der Link doch nirgendwo hin. O-oder?“
+- Nachbesprechung:
+  > Gut gemacht, Mr. Crusher. Die Anmeldeseite schickt jetzt nur noch auf Seiten dieses Schiffs
+  > zurück. Commander Riker hat den Sternenflotten-Support gebeten, ihm keine Links mehr zu schicken.
+  > Der Support sagt, er habe ihm nie welche geschickt. Der Commander nimmt das persönlich.
+
 ### Ende von Akt 2
-- TODO. Lore verrät sich, weil er eine Verkürzung benutzt („gibt's“, „hab'“), die
-  Data nie benutzen würde.
+
+> Die Stimme über Kom klingt ruhig und präzise. „Brücke, hier spricht Data. Ich habe den
+> Eindringling im Hauptcomputer isoliert. Um ihn endgültig zu stoppen, muss die Firewall des
+> Hauptcomputers für neunzig Sekunden abgeschaltet werden.“
+>
+> Picard nickt Worf zu. Worfs Hand wandert zur Konsole.
+>
+> „Bitte beeilen Sie sich, Captain. Lang hält's nicht mehr.“
+>
+> Wesley sieht auf. „Sir, Data würde nie ‚hält's‘ sagen.“
+>
+> Auf der Brücke wird es still. Worfs Hand bleibt über der Konsole stehen.
+>
+> Über die Leitung lacht jemand. Es ist Datas Stimme, aber nicht Datas Lachen. „Kluger Junge.
+> Dann behaltet eure Firewall. Ich komm' auf einem anderen Weg rein.“
+>
+> Die Verbindung bricht ab. An seiner Konsole dreht sich der echte Data um. „Captain, ich war die
+> ganze Zeit hier.“
 
 ---
 

@@ -89,7 +89,45 @@ public static class Acts
                     """)),
         new(2, new("Borrowed Identities", "Falsche Identitäten"),
             new("Lore stops reading and starts becoming someone else.",
-                "Lore gibt sich als jemand anderes aus.")),
+                "Lore gibt sich als jemand anderes aus."),
+            Ending: new(
+                En: """
+                    The voice on comms is calm and precise. "Bridge, this is Data. I have isolated the intruder in
+                    the computer core. To finish the job, I need the core firewall lowered for ninety seconds."
+
+                    Picard nods to Worf. Worf's hand moves to the console.
+
+                    "Quickly, please, Captain. It won't hold him for long."
+
+                    Wesley looks up. "Sir. Data doesn't say 'won't'."
+
+                    The bridge goes quiet. Worf's hand stops above the panel.
+
+                    On the comm line, someone laughs. It is Data's voice, but not Data's laugh. "Clever boy. Keep
+                    your firewall, then. I'll find another way in."
+
+                    The channel closes. At the ops station, the real Data turns around. "Captain, I have been here
+                    the entire time."
+                    """,
+                De: """
+                    Die Stimme über Kom klingt ruhig und präzise. „Brücke, hier spricht Data. Ich habe den
+                    Eindringling im Hauptcomputer isoliert. Um ihn endgültig zu stoppen, muss die Firewall des
+                    Hauptcomputers für neunzig Sekunden abgeschaltet werden.“
+
+                    Picard nickt Worf zu. Worfs Hand wandert zur Konsole.
+
+                    „Bitte beeilen Sie sich, Captain. Lang hält's nicht mehr.“
+
+                    Wesley sieht auf. „Sir, Data würde nie ‚hält's‘ sagen.“
+
+                    Auf der Brücke wird es still. Worfs Hand bleibt über der Konsole stehen.
+
+                    Über die Leitung lacht jemand. Es ist Datas Stimme, aber nicht Datas Lachen. „Kluger Junge.
+                    Dann behaltet eure Firewall. Ich komm' auf einem anderen Weg rein.“
+
+                    Die Verbindung bricht ab. An seiner Konsole dreht sich der echte Data um. „Captain, ich war die
+                    ganze Zeit hier.“
+                    """)),
         new(3, new("Into the Core", "Ins Herz des Schiffs"),
             new("Lore goes for the core of the ship.",
                 "Lore greift nach dem Hauptcomputer.")),

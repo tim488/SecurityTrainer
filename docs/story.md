@@ -267,19 +267,53 @@ The German version is `docs/story.de.md`; keep both in step.
 - Debrief: TODO
 
 ### 2.4 `open-redirect`: Wrong Coordinates
-- Beat: Riker follows a link from "Starfleet Support" and Lore takes over his account.
+- Beat: Riker follows a link from "Starfleet Support" to the ship's own login page, which forwards his one-time code to Lore.
 - Calling card points to: the ship's archive (→ Act 3).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `starts-with-slash` TODO · `contains-domain` TODO · `url-encode` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47327.9. This morning Commander Riker received a message from
+  > Starfleet Support asking him to log in again after the refit. He clicked the link,
+  > logged in on our own login page and thought no more of it. An hour later his account
+  > opened the shuttle bay doors on deck 13. The Commander was in the gym at the time. I
+  > have asked Mr. Crusher to find out where that link really led.
+- Hints (Data):
+  1. `GET /login/continue` sends you to `returnUrl` and appends a one-time `code`. You can see this in the `Location` header of your own request. I note that the code never checks where `returnUrl` points.
+  2. Commander Riker does not click links to unknown addresses. A link to our own login page, however, he trusts completely. `POST /support/messages` delivers one to him as Starfleet Support.
+  3. Anything that arrives at `https://evil.example` appears in `GET /attacker/inbox`. A link to our login page with `returnUrl=https://evil.example/` would therefore be instructive. I find it uncomfortable how well this would work.
+- Calling card (Lore):
+  > Got him, didn't you? Clever boy. It took me three tries, you needed one. I'm almost proud.
+  > But I'm tired of borrowing faces, Wesley. I want what's underneath. Deep in the core there's
+  > an archive where this crew keeps everything it would rather forget. I'll start there. — L.
+- Barclay lines:
+  - `local-redirect`: "C-could we only allow addresses on our own ship? Local ones? I-I think there's a helper for that. There's always a helper."
+  - `starts-with-slash`: "Local addresses start with a slash. S-so we check for the slash. One character. Done."
+  - `contains-domain`: "We just check that the address says `enterprise.local` somewhere. If it's ours, it says so. R-right?"
+  - `strip-scheme`: "No `https://`, no other planet. I'll just r-remove it. Without the scheme it can't go anywhere. C-can it?"
+- Debrief:
+  > Well done, Mr. Crusher. The login page now only sends people back to pages on this ship.
+  > Commander Riker has asked Starfleet Support to stop sending him links. Starfleet Support
+  > says it never sent him any. He is taking it personally.
 
 ### Act 2 ending
 - Shown once all Act 2 labs are completed.
 - Beat: Lore impersonates Data on comms and asks the bridge to lower the core
   firewall. Wesley notices he used a contraction, which Data never does.
-- TODO: text
+
+> The voice on comms is calm and precise. "Bridge, this is Data. I have isolated the intruder in
+> the computer core. To finish the job, I need the core firewall lowered for ninety seconds."
+>
+> Picard nods to Worf. Worf's hand moves to the console.
+>
+> "Quickly, please, Captain. It won't hold him for long."
+>
+> Wesley looks up. "Sir. Data doesn't say 'won't'."
+>
+> The bridge goes quiet. Worf's hand stops above the panel.
+>
+> On the comm line, someone laughs. It is Data's voice, but not Data's laugh. "Clever boy. Keep
+> your firewall, then. I'll find another way in."
+>
+> The channel closes. At the ops station, the real Data turns around. "Captain, I have been here
+> the entire time."
 
 ---
 

