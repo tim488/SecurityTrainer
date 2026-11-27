@@ -42,7 +42,7 @@
                 {
                     @* The title stays hidden until the mission opens: Lore's calling card names it first. *@
                     <div class="card locked" aria-disabled="true">
-                        <span class="card-order"><svg class="card-mark card-lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="8" rx="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>@number</span>
+                        <span class="card-order"><svg class="card-mark card-icon card-lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="8" rx="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>@number</span>
                         <span class="card-body">
                             <span class="card-title">@L("Locked", "Gesperrt")</span>
                             <span class="lab-facts">
@@ -59,7 +59,7 @@
                     <span class="card-order">
                         @if (status == LabStatus.Solved)
                         {
-                            <span class="card-mark" aria-hidden="true">✓</span>
+                            <svg class="card-mark card-icon card-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8" /></svg>
                         }
                         @number
                     </span>

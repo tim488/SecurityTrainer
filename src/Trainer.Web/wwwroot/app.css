@@ -75,8 +75,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sky); outli
 textarea { width: 100%; display: block; margin-top: 0.25rem; }
 label { display: block; margin: 0.5rem 0; }
 
-/* Pill buttons in flat colours. */
-button {
+/* Pill buttons in flat colours (links styled as buttons share them). */
+button, .button {
     font-family: var(--display);
     font-size: 1rem;
     font-weight: 600;
@@ -89,10 +89,15 @@ button {
     padding: 0.35rem 1.1rem;
     cursor: pointer;
 }
-button:hover:not(:disabled) { filter: brightness(1.12); }
-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+button:hover:not(:disabled), .button:hover { filter: brightness(1.12); }
+button:focus-visible, .button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.button { display: inline-block; text-decoration: none; }
 button:disabled { opacity: 0.4; cursor: not-allowed; }
-button.primary { background: var(--orange); }
+button.primary, .button.primary { background: var(--orange); }
+/* End of a mission: the result, then where to go next. */
+.mission-done { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin-top: 1rem; }
+.mission-done p { margin: 0; }
+.mission-done-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 button.link-button {
     font: inherit; text-transform: none; letter-spacing: normal;
     background: none; color: var(--info); padding: 0 0.25rem; border-radius: 0; text-decoration: underline;
@@ -182,7 +187,9 @@ a.side-block:hover { filter: brightness(1.12); }
 }
 .card-order:has(.card-mark) { flex-direction: column; justify-content: space-between; align-items: flex-end; }
 .card-mark { font-size: 1.2rem; }
-.card-lock { width: 1.1rem; height: 1.1rem; fill: currentColor; }
+.card-icon { width: 1.1rem; height: 1.1rem; }
+.card-lock { fill: currentColor; }
+.card-check { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .card.status-exploited .card-order { --status: var(--orange); }
 .card.status-solved .card-order { --status: var(--ok); }
 .card-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; padding: 0.6rem 0.9rem; background: var(--panel-2); border-radius: 0 var(--radius) var(--radius) 0; }

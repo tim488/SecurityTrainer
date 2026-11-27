@@ -29,13 +29,16 @@
             <MarkdownView Text="@L(Lab.ExplanationMarkdown)" />
         </div>
         <StoryPanel Speaker="@L("Debrief", "Nachbesprechung")" Text="@L(Lab.Story.Debrief)" Kind="debrief" />
-        <p class="success">@L("Mission completed.", "Mission abgeschlossen.")
-            @if (NextMission is { } next && !ReferenceEquals(next, Lab))
-            {
-                <a href="@($"labs/{next.Slug}")">@L("Next mission", "Nächste Mission"): @next.Story.Act.@next.Story.Order @L(next.Title)</a>
-                <span> · </span>
-            }
-            <a href="/">@L("Back to the missions", "Zurück zu den Missionen")</a></p>
+        <div class="mission-done">
+            <p class="success">@L("Mission completed.", "Mission abgeschlossen.")</p>
+            <div class="mission-done-actions">
+                @if (NextMission is { } next && !ReferenceEquals(next, Lab))
+                {
+                    <a class="button primary" href="@($"labs/{next.Slug}")">@L("Next mission", "Nächste Mission"): @next.Story.Act.@next.Story.Order @L(next.Title)</a>
+                }
+                <a class="button" href="/">@L("Back to the missions", "Zurück zu den Missionen")</a>
+            </div>
+        </div>
     }
 </div>
 
