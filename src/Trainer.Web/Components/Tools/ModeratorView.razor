@@ -1,0 +1,15 @@
+@inherits ProgressAwareComponent
+
+@* The victim's screen (SPEC §6, 3.5). Sandboxed: scripts run, but with an opaque origin,
+   so nothing inside can touch this app's page, storage or cookies. *@
+<div class="console tool">
+    <h3>@L("Moderator view", "Moderatoransicht")</h3>
+    <p class="muted">@L("What Lore sees on the moderator screen. Simulated, refreshes every 5 seconds, runs in a sandboxed frame.",
+        "Was Lore auf dem Moderatorbildschirm sieht. Simuliert, lädt alle 5 Sekunden neu und läuft in einem abgeschotteten Frame.")</p>
+    <iframe class="moderator-frame" sandbox="allow-scripts" src="@($"{Src}&lang={Languages.Code(Lang)}")"
+            title="@L("Moderator view", "Moderatoransicht")"></iframe>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Src { get; set; } = "";
+}

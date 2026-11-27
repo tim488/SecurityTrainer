@@ -1,4 +1,5 @@
 using Trainer.Web.Labs.Bfla;
+using Trainer.Web.Labs.BlazorXss;
 using Trainer.Web.Labs.Bola;
 using Trainer.Web.Labs.ClientSecrets;
 using Trainer.Web.Labs.Jwt;
@@ -36,6 +37,7 @@ public sealed class LabRegistry : IDisposable
             new SharedStateLab(flags, auth),
             new JwtLab(flags),
             new SsrfLab(flags, auth),
+            new BlazorXssLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();

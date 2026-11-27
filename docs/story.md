@@ -433,18 +433,51 @@ The German version is `docs/story.de.md`; keep both in step.
   > checks where they really lead first. The core credentials have been changed. DaiMon Tarr has
   > lowered his price twice. Mr. Worf has drafted a reply. I have not sent it.
 
-### 3.5 `blazor-xss`: Subspace Message (finale)
-- Beat: the sting. Lore hides in the comment moderator account and reads every
-  comment. Wesley plants a comment that steals Lore's own `modToken`.
-- The token reveals where in the core Lore is hiding. Barclay recognises the
-  partition, and Data locks his brother out.
-- Calling card (Lore, as he's locked out): TODO
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Barclay lines: `regex-strip-script` TODO · `browser-validation` TODO · `block-onerror` TODO
-- Debrief: TODO. Picard credits Barclay as well as Wesley.
+### 3.5 `blazor-xss`: Subspace Message
+- Beat: the sting. Lore moderates the Ten Forward comment board and reads every comment. Wesley plants a comment that makes Lore's own screen send his `modToken`. The token reveals Lore's partition in the core; Barclay recognises it, and Data locks his brother out.
+- Calling card points to: a parting threat as he's locked out (→ finale).
+- Briefing:
+  > Captain's log, stardate 47334.4. Lore has stopped hiding. He moderates the Ten Forward
+  > comment board and reads every comment the crew writes, as he likes to remind us. Mr. Data
+  > believes Lore's moderator session will tell us where in the core he is hiding. Mr. Crusher
+  > has proposed a trap: a comment that Lore will read himself. I have approved it. Mr. Crusher,
+  > the bridge is yours. Figuratively.
+- Hints (Data):
+  1. Comments are rendered with `MarkupString`, so HTML in a comment becomes real HTML on the moderator's screen. A comment containing `<b>` is shown in bold. I have tested this. It is very bold.
+  2. `<script>` tags inserted this way do not run. Event handler attributes do, for example `onerror` on an image whose source cannot be loaded.
+  3. A handler that loads `/api/labs/blazor-xss/collect?t=` with `modToken` appended would leave the token in `GET /collected`. My brother has always been curious. Today, that will be his undoing.
+- Calling card (Lore):
+  > Clever. Clever, clever boy. You baited me with my own curiosity. Father would have liked
+  > you. I never did. Enjoy your little ship, Wesley. I'm not finished. I'm only… somewhere
+  > else. — L.
+- Barclay lines:
+  - `encode-output`: "W-what if we just show the text as text? Razor does that by itself. We'd lose the bold. P-people do love the bold."
+  - `regex-strip-script`: "Scripts are the dangerous part. One regex, sir, and every `<script>` is gone. I t-tested it on three comments."
+  - `browser-validation`: "We c-could check the comment in the form before it's sent. Red border, error message, the works. Nobody gets past a red border."
+  - `block-onerror`: "So `onerror` is the problem? And `javascript:`. I'll block both. Th-that's all of them. Probably."
+- Debrief:
+  > Outstanding work, Mr. Crusher. Comments are now encoded, so the board shows text, not orders.
+  > Lore is locked out of the core. Mr. Barclay recognised the partition he was hiding in within
+  > seconds; he wrote it, after all. I have put you both forward for a commendation. Mr. Barclay
+  > has not stopped apologising.
 
 ### Finale
 - Shown once all labs are completed.
-- Beat: the ship is secure and Wesley earns the bridge's respect. Lore escapes into the dark.
-- Sequel stinger: a final, faint signature in the core. TODO: text
+- Beat: the ship is secure and Wesley earns the bridge's respect (he is asked to make
+  the toast, which nobody asked him to do in the opening scene). Lore escapes into the dark.
+- Sequel stinger: a final, faint signature in the core.
+
+> The core is quiet for the first time since the refit. In Ten Forward, Guinan pours a drink
+> nobody ordered and slides it to the end of the bar.
+>
+> "For the one who caught him," she says.
+>
+> Riker raises his glass. Worf nods, which for Worf is a speech. Barclay comes out from behind
+> his plant. Data stands at the window, looking at the stars, and says nothing for a long time.
+>
+> "He is not gone," he says at last. "But he is no longer here."
+>
+> Picard puts a hand on Wesley's shoulder. "Mr. Crusher. Would you make the toast?"
+>
+> Deep in the core, in a partition nobody has named, a faint signature flickers once. Then it
+> is still.

@@ -47,6 +47,10 @@
                         Collapsed="LabProgress.FlagSubmitted" />
             <MarkdownView Text="@L(_lab.ScenarioMarkdown)" />
             <HintList Slug="@_lab.Slug" Hints="_lab.Hints" />
+            @if (_lab is IHasModeratorView moderator && _lab.Tools.Contains(LabTool.ModeratorView))
+            {
+                <ModeratorView @key="_resetCount" Src="@moderator.ModeratorViewUrl" />
+            }
             <RequestConsole @key="_resetCount" @ref="_console" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
             @if (_lab.Tools.Contains(LabTool.JwtEditor))
             {

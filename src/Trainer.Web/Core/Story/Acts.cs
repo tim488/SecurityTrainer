@@ -47,8 +47,40 @@ public static class Acts
             Die Musik spielt weiter, und sonst hat niemand etwas bemerkt. Wesley stellt sein Glas ab.
             """);
 
-    /// <summary>Shown once all labs are completed. Null until written.</summary>
-    public static readonly Text? Finale = null;
+    /// <summary>Shown once all labs are completed.</summary>
+    public static readonly Text? Finale = new(
+        En: """
+            The core is quiet for the first time since the refit. In Ten Forward, Guinan pours a drink
+            nobody ordered and slides it to the end of the bar.
+
+            "For the one who caught him," she says.
+
+            Riker raises his glass. Worf nods, which for Worf is a speech. Barclay comes out from behind
+            his plant. Data stands at the window, looking at the stars, and says nothing for a long time.
+
+            "He is not gone," he says at last. "But he is no longer here."
+
+            Picard puts a hand on Wesley's shoulder. "Mr. Crusher. Would you make the toast?"
+
+            Deep in the core, in a partition nobody has named, a faint signature flickers once. Then it
+            is still.
+            """,
+        De: """
+            Zum ersten Mal seit dem Update ist es im Hauptcomputer still. In Zehn Vorne schenkt Guinan
+            einen Drink ein, den keiner bestellt hat, und schiebt ihn ans Ende der Bar.
+
+            „Für den, der ihn erwischt hat“, sagt sie.
+
+            Riker hebt sein Glas. Worf nickt, und für Worf ist das eine Rede. Barclay kommt hinter seiner
+            Zimmerpalme hervor. Data steht am Fenster, sieht hinaus zu den Sternen und sagt lange nichts.
+
+            „Er ist nicht fort“, sagt er schließlich. „Aber er ist nicht mehr hier.“
+
+            Picard legt Wesley eine Hand auf die Schulter. „Mr. Crusher, würden Sie den Toast ausbringen?“
+
+            Tief im Hauptcomputer, in einer Partition ohne Namen, flackert eine schwache Signatur auf. Dann
+            ist sie still.
+            """);
 
     public static readonly IReadOnlyList<Act> All =
     [

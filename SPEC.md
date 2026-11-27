@@ -403,12 +403,15 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
   reads every comment. Time to set a trap.
 - *Vulnerable:* comments render with `@((MarkupString)comment.Text)` so the crew
   can use bold text. `POST /comments` stores them.
-- *Simulation:* a sandboxed iframe on the lab page shows the moderator's view,
-  which holds a `modToken`, and offers a collect URL that logs to `GET /collect`.
+- *Simulation:* a sandboxed iframe (`sandbox="allow-scripts"`) on the lab page shows
+  the moderator's view: `GET /moderator?key=…` (the key keeps the console out), which
+  holds `window.modToken` and inserts each comment with `innerHTML`, like `MarkupString`.
+  It reloads every 5 s. `GET /collect?…` records any request's query; `GET /collected`
+  lists them.
 - *Flag:* the `modToken`. *Exploit:* `<img src=x onerror="...">` that sends it to
   the collect URL. (`<script>` does not run via `MarkupString`, which is a useful hint.)
 - ✅ Render `@comment.Text` (auto-encoded), or sanitize with an allowlist sanitizer
-  if formatting is needed
+  if formatting is needed (`encode-output`)
 - ❌ Strip `<script>` with a regex · ❌ Validate in the browser before submit ·
   ❌ Block `onerror` and `javascript:` (`onload`, `onfocus`, …)
 

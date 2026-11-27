@@ -371,5 +371,45 @@ von hier.
   > DaiMon Tarr hat seinen Preis zweimal gesenkt. Mr. Worf hat eine Antwort entworfen. Ich habe sie
   > nicht abgeschickt.
 
+### 3.5 `blazor-xss`: Subraumnachricht
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47334.4. Lore versteckt sich nicht mehr. Er moderiert das
+  > Kommentarbrett von Zehn Vorne und liest jeden Kommentar der Crew, woran er uns gern erinnert.
+  > Mr. Data glaubt, dass Lores Moderator-Sitzung verrät, wo im Hauptcomputer er sich versteckt.
+  > Mr. Crusher hat eine Falle vorgeschlagen: einen Kommentar, den Lore selbst lesen wird. Ich habe
+  > zugestimmt. Mr. Crusher, die Brücke gehört Ihnen. Im übertragenen Sinne.
+- Hinweise (Data):
+  1. Kommentare werden mit `MarkupString` dargestellt. HTML in einem Kommentar wird also auf dem Bildschirm des Moderators zu echtem HTML. Ein Kommentar mit `<b>` erscheint fett. Ich habe es getestet. Er ist sehr fett.
+  2. `<script>`-Tags, die auf diesem Weg eingefügt werden, laufen nicht. Event-Handler-Attribute dagegen schon, zum Beispiel `onerror` an einem Bild, dessen Quelle sich nicht laden lässt.
+  3. Ein Handler, der `/api/labs/blazor-xss/collect?t=` mit angehängtem `modToken` lädt, würde das Token in `GET /collected` hinterlassen. Mein Bruder war schon immer neugierig. Heute wird ihm das zum Verhängnis.
+- Visitenkarte (Lore):
+  > Schlau. Schlau, schlau, der Junge. Du hast mich mit meiner eigenen Neugier geködert. Vater
+  > hätte dich gemocht. Ich nie. Viel Spaß mit deinem kleinen Schiff, Wesley. Ich bin nicht fertig.
+  > Ich bin nur … woanders. — L.
+- Barclay:
+  - `encode-output`: „U-und wenn wir den Text einfach als Text anzeigen? Razor macht das von selbst. Dann ist das Fett weg. D-dabei lieben die Leute das Fett.“
+  - `regex-strip-script`: „Skripte sind der gefährliche Teil. Eine Regex, Sir, und jedes `<script>` ist weg. I-ich hab's an drei Kommentaren getestet.“
+  - `browser-validation`: „W-wir könnten den Kommentar im Formular prüfen, bevor er abgeschickt wird. Roter Rahmen, Fehlermeldung, das volle Programm. An einem roten Rahmen kommt keiner vorbei.“
+  - `block-onerror`: „Also ist `onerror` das Problem? Und `javascript:`. Ich sperre beides. D-das sind alle. Wahrscheinlich.“
+- Nachbesprechung:
+  > Hervorragende Arbeit, Mr. Crusher. Kommentare werden jetzt codiert, das Brett zeigt also Text und
+  > keine Befehle mehr. Lore ist aus dem Hauptcomputer ausgesperrt. Mr. Barclay hat die Partition, in
+  > der er sich versteckt hatte, in Sekunden erkannt. Er hat sie schließlich selbst geschrieben. Ich
+  > habe Sie beide für eine Belobigung vorgeschlagen. Mr. Barclay entschuldigt sich seitdem ununterbrochen.
+
 ### Finale
-- TODO
+
+> Zum ersten Mal seit dem Update ist es im Hauptcomputer still. In Zehn Vorne schenkt Guinan
+> einen Drink ein, den keiner bestellt hat, und schiebt ihn ans Ende der Bar.
+>
+> „Für den, der ihn erwischt hat“, sagt sie.
+>
+> Riker hebt sein Glas. Worf nickt, und für Worf ist das eine Rede. Barclay kommt hinter seiner
+> Zimmerpalme hervor. Data steht am Fenster, sieht hinaus zu den Sternen und sagt lange nichts.
+>
+> „Er ist nicht fort“, sagt er schließlich. „Aber er ist nicht mehr hier.“
+>
+> Picard legt Wesley eine Hand auf die Schulter. „Mr. Crusher, würden Sie den Toast ausbringen?“
+>
+> Tief im Hauptcomputer, in einer Partition ohne Namen, flackert eine schwache Signatur auf. Dann
+> ist sie still.
