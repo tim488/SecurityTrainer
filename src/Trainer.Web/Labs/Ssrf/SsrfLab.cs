@@ -69,7 +69,7 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         public record PreviewRequest(string Url);
 
         app.MapPost("/link-preview", async (PreviewRequest request, HttpClient http) =>
@@ -84,6 +84,29 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
             });
         })
         .RequireAuthorization();
+        ```
+
+        ```csharp controller
+        public record PreviewRequest(string Url);
+
+        [ApiController]
+        [Route("link-preview")]
+        [Authorize]
+        public class LinkPreviewController(HttpClient http) : ControllerBase
+        {
+            [HttpPost]
+            public async Task<IActionResult> Preview(PreviewRequest request)
+            {
+                var html = await http.GetStringAsync(request.Url);   // follows redirects
+
+                return Ok(new
+                {
+                    request.Url,
+                    Title = ExtractTitle(html),
+                    Snippet = html[..Math.Min(html.Length, 400)],
+                });
+            }
+        }
         ```
         """;
 
@@ -163,7 +186,33 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
                 "Richtig. Nur eine kurze Liste bekannter öffentlicher Hosts ist erlaubt, ihre Adressen werden nach der DNS-Auflösung geprüft, und Weiterleitungen werden nicht verfolgt. So lässt sich kein Request ins Netz des Schiffs umlenken. Ganz dicht ist es erst, wenn du die Adresse auch beim Verbindungsaufbau noch einmal prüfst (`SocketsHttpHandler.ConnectCallback`), denn sonst hilft DNS-Rebinding."),
             BarclayLine: new(
                 "M-maybe the preview only visits sites we know? A short list. And we check where the name really points, b-before we go there?",
-                "V-vielleicht besucht die Vorschau nur Seiten, die wir kennen? Eine kurze Liste. Und wir prüfen vorher, wohin der Name wirklich zeigt, b-bevor wir hingehen?")),
+                "V-vielleicht besucht die Vorschau nur Seiten, die wir kennen? Eine kurze Liste. Und wir prüfen vorher, wohin der Name wirklich zeigt, b-bevor wir hingehen?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("link-preview")]
+            [Authorize]
+            public class LinkPreviewController(IHttpClientFactory factory) : ControllerBase
+            {
+                private static readonly string[] AllowedHosts = ["memory-alpha.example", "starbase74.example"];
+
+                [HttpPost]
+                public async Task<IActionResult> Preview(PreviewRequest request)
+                {
+                    if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var url)
+                        || url.Scheme != Uri.UriSchemeHttps
+                        || !AllowedHosts.Contains(url.IdnHost, StringComparer.OrdinalIgnoreCase))
+                        return BadRequest("Previews are not available for this site.");
+
+                    var addresses = await Dns.GetHostAddressesAsync(url.IdnHost);
+                    if (addresses.Any(a => IPAddress.IsLoopback(a) || IsPrivateOrLinkLocal(a)))
+                        return BadRequest("Previews are not available for this site.");
+
+                    var http = factory.CreateClient("previews");   // AllowAutoRedirect = false
+                    var html = await http.GetStringAsync(url);
+                    return Ok(new { request.Url, Title = ExtractTitle(html) });
+                }
+            }
+            """),
 
         new("string-blocklist", """
             string[] blocked = ["localhost", "127.0.0.1", "169.254.169.254", ".internal"];
@@ -183,7 +232,26 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
                 "Adressen lassen sich auf viele Arten schreiben. `http://2852039166/` ist 169.254.169.254 als eine einzige Zahl, ein DNS-Name kann überallhin zeigen, und eine öffentliche Seite kann auf den Metadaten-Dienst weiterleiten, und `HttpClient` folgt dem. Die String-Prüfung sieht davon nichts."),
             BarclayLine: new(
                 "We just block the dangerous addresses. `localhost`, `127.0.0.1`, the metadata one. I-I wrote them all down. All of them, I think.",
-                "W-wir sperren einfach die gefährlichen Adressen. `localhost`, `127.0.0.1`, die Metadaten-Adresse. I-ich hab' sie alle aufgeschrieben. Alle, glaube ich.")),
+                "W-wir sperren einfach die gefährlichen Adressen. `localhost`, `127.0.0.1`, die Metadaten-Adresse. I-ich hab' sie alle aufgeschrieben. Alle, glaube ich."),
+            ControllerCode: """
+            [ApiController]
+            [Route("link-preview")]
+            [Authorize]
+            public class LinkPreviewController(HttpClient http) : ControllerBase
+            {
+                private static readonly string[] Blocked = ["localhost", "127.0.0.1", "169.254.169.254", ".internal"];
+
+                [HttpPost]
+                public async Task<IActionResult> Preview(PreviewRequest request)
+                {
+                    if (Blocked.Any(b => request.Url.Contains(b, StringComparison.OrdinalIgnoreCase)))
+                        return BadRequest("Internal addresses are not allowed.");
+
+                    var html = await http.GetStringAsync(request.Url);
+                    return Ok(new { request.Url, Title = ExtractTitle(html), Snippet = html[..Math.Min(html.Length, 400)] });
+                }
+            }
+            """),
 
         new("require-https", """
             app.MapPost("/link-preview", async (PreviewRequest request, HttpClient http) =>
@@ -201,7 +269,24 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
                 "Das Schema sagt, wie gesprochen wird, aber nicht, wohin. Interne Dienste sprechen auch https (`https://inventory.internal/`), und der Hauptcomputer erreicht sie weiterhin von innen."),
             BarclayLine: new(
                 "The metadata service only speaks plain http. So if we only allow https, it can't be reached. Th-that's clever, right? It feels clever.",
-                "Der Metadaten-Dienst spricht nur einfaches http. W-wenn wir nur https erlauben, kommt also keiner mehr hin. D-das ist doch schlau, oder? Fühlt sich schlau an.")),
+                "Der Metadaten-Dienst spricht nur einfaches http. W-wenn wir nur https erlauben, kommt also keiner mehr hin. D-das ist doch schlau, oder? Fühlt sich schlau an."),
+            ControllerCode: """
+            [ApiController]
+            [Route("link-preview")]
+            [Authorize]
+            public class LinkPreviewController(HttpClient http) : ControllerBase
+            {
+                [HttpPost]
+                public async Task<IActionResult> Preview(PreviewRequest request)
+                {
+                    if (!request.Url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        return BadRequest("Only https links get a preview.");
+
+                    var html = await http.GetStringAsync(request.Url);
+                    return Ok(new { request.Url, Title = ExtractTitle(html), Snippet = html[..Math.Min(html.Length, 400)] });
+                }
+            }
+            """),
 
         new("title-only", """
             app.MapPost("/link-preview", async (PreviewRequest request, HttpClient http) =>
@@ -217,7 +302,22 @@ public sealed partial class SsrfLab(FlagService flags, DemoAuth auth) : ILab
                 "Der Request erreicht weiterhin jeden internen Host. Titel interner Seiten, Fehlermeldungen und Antwortzeiten verraten trotzdem etwas, und manche internen Endpunkte *tun* etwas, wenn man sie aufruft. Die Antwort zu verstecken ist nicht dasselbe, wie gar nicht erst zu fragen."),
             BarclayLine: new(
                 "W-what if we only show the title? No content at all. Credentials don't have a title. Do they?",
-                "U-und wenn wir nur den Titel zeigen? Gar keinen Inhalt. Zugangsdaten haben doch keinen Titel. O-oder?")),
+                "U-und wenn wir nur den Titel zeigen? Gar keinen Inhalt. Zugangsdaten haben doch keinen Titel. O-oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("link-preview")]
+            [Authorize]
+            public class LinkPreviewController(HttpClient http) : ControllerBase
+            {
+                [HttpPost]
+                public async Task<IActionResult> Preview(PreviewRequest request)
+                {
+                    var html = await http.GetStringAsync(request.Url);
+
+                    return Ok(new { request.Url, Title = ExtractTitle(html) });   // no snippet
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(

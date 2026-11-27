@@ -80,7 +80,7 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         app.MapGet("/cargo", async (string? search, CargoDb db) =>
         {
             var items = await db.CargoItems
@@ -91,6 +91,25 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
             return Results.Ok(items);
         })
         .RequireAuthorization();
+        ```
+
+        ```csharp controller
+        [ApiController]
+        [Route("cargo")]
+        [Authorize]
+        public class CargoController(CargoDb db) : ControllerBase
+        {
+            [HttpGet]
+            public async Task<IActionResult> Search(string? search)
+            {
+                var items = await db.CargoItems
+                    .FromSqlRaw("SELECT * FROM CargoItems WHERE Name LIKE '%" + search +
+                                "%' AND IsClassified = 0")
+                    .ToListAsync();
+
+                return Ok(items);
+            }
+        }
         ```
         """;
 
@@ -162,7 +181,26 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 "Richtig. EF Core macht aus der LINQ-Abfrage SQL mit einem Parameter. Der Suchbegriff wird also immer als Daten geschickt und kann die Abfrage nie verändern. Wenn du doch rohes SQL brauchst, macht `FromSql($\"... {search} ...\")` dasselbe."),
             BarclayLine: new(
                 "W-we could just use LINQ, like everywhere else? Then there's no SQL string to b-break. Unless that's cheating.",
-                "W-wir könnten einfach LINQ nehmen, wie überall sonst? Dann gibt's keinen SQL-String, den man k-kaputt machen kann. Oder ist das geschummelt?")),
+                "W-wir könnten einfach LINQ nehmen, wie überall sonst? Dann gibt's keinen SQL-String, den man k-kaputt machen kann. Oder ist das geschummelt?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("cargo")]
+            [Authorize]
+            public class CargoController(CargoDb db) : ControllerBase
+            {
+                [HttpGet]
+                public async Task<IActionResult> Search(string? search)
+                {
+                    search ??= "";
+
+                    var items = await db.CargoItems
+                        .Where(c => c.Name.Contains(search) && !c.IsClassified)
+                        .ToListAsync();
+
+                    return Ok(items);
+                }
+            }
+            """),
 
         new("escape-quotes", """
             app.MapGet("/cargo", async (string? search, CargoDb db) =>
@@ -184,7 +222,27 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 "Das stoppt genau diesen Angriff, aber Escapen von Hand ist fehleranfällig. Es hilft nur innerhalb von Strings in Anführungszeichen, nicht bei Zahlen oder Spaltennamen. Außerdem sind die Regeln in jeder Datenbank etwas anders, und du musst bei jeder einzelnen Abfrage daran denken. Parameter trennen Code und Daten dagegen zuverlässig."),
             BarclayLine: new(
                 "If the quote is the problem, w-we double it. Two quotes. SQL likes that. I-I read it somewhere.",
-                "Wenn das Anführungszeichen das Problem ist, d-dann verdoppeln wir es eben. Zwei Anführungszeichen, das mag SQL. Hab' ich irgendwo gelesen.")),
+                "Wenn das Anführungszeichen das Problem ist, d-dann verdoppeln wir es eben. Zwei Anführungszeichen, das mag SQL. Hab' ich irgendwo gelesen."),
+            ControllerCode: """
+            [ApiController]
+            [Route("cargo")]
+            [Authorize]
+            public class CargoController(CargoDb db) : ControllerBase
+            {
+                [HttpGet]
+                public async Task<IActionResult> Search(string? search)
+                {
+                    var safe = (search ?? "").Replace("'", "''");
+
+                    var items = await db.CargoItems
+                        .FromSqlRaw("SELECT * FROM CargoItems WHERE Name LIKE '%" + safe +
+                                    "%' AND IsClassified = 0")
+                        .ToListAsync();
+
+                    return Ok(items);
+                }
+            }
+            """),
 
         new("keyword-blocklist", """
             string[] blocked = ["--", ";", "OR", "/*"];
@@ -208,7 +266,30 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 "Eine Sperrliste ist immer einen Trick zu spät dran. Ein `UNION SELECT` braucht keines dieser Wörter, und ein Anführungszeichen, das du am Ende absichtlich wieder schließt, auch nicht. Dafür wird eine ganz normale Suche nach „Photonentorpedos“ abgelehnt, weil darin `or` steckt."),
             BarclayLine: new(
                 "We could block the dangerous bits. `--`, `OR`, semicolons. N-nobody needs those in a cargo search. Right?",
-                "W-wir könnten die gefährlichen Teile sperren: `--`, `OR`, Semikolons. Die braucht doch k-keiner für eine Frachtsuche. Oder?")),
+                "W-wir könnten die gefährlichen Teile sperren: `--`, `OR`, Semikolons. Die braucht doch k-keiner für eine Frachtsuche. Oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("cargo")]
+            [Authorize]
+            public class CargoController(CargoDb db) : ControllerBase
+            {
+                private static readonly string[] Blocked = ["--", ";", "OR", "/*"];
+
+                [HttpGet]
+                public async Task<IActionResult> Search(string? search)
+                {
+                    if (Blocked.Any(b => (search ?? "").Contains(b, StringComparison.OrdinalIgnoreCase)))
+                        return BadRequest("Invalid search.");
+
+                    var items = await db.CargoItems
+                        .FromSqlRaw("SELECT * FROM CargoItems WHERE Name LIKE '%" + search +
+                                    "%' AND IsClassified = 0")
+                        .ToListAsync();
+
+                    return Ok(items);
+                }
+            }
+            """),
 
         new("string-format", """
             app.MapGet("/cargo", async (string? search, CargoDb db) =>
@@ -227,7 +308,25 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 "`string.Format` ist immer noch String-Verkettung, nur ordentlicher aufgeschrieben. Der Suchbegriff landet weiterhin im SQL-Text, und derselbe Angriff funktioniert unverändert."),
             BarclayLine: new(
                 "What if we build the query with `string.Format` instead of plus signs? It l-looks a lot more professional.",
-                "Und wenn wir die Abfrage mit `string.Format` bauen statt mit Pluszeichen? D-das sieht viel professioneller aus.")),
+                "Und wenn wir die Abfrage mit `string.Format` bauen statt mit Pluszeichen? D-das sieht viel professioneller aus."),
+            ControllerCode: """
+            [ApiController]
+            [Route("cargo")]
+            [Authorize]
+            public class CargoController(CargoDb db) : ControllerBase
+            {
+                [HttpGet]
+                public async Task<IActionResult> Search(string? search)
+                {
+                    var sql = string.Format(
+                        "SELECT * FROM CargoItems WHERE Name LIKE '%{0}%' AND IsClassified = 0", search);
+
+                    var items = await db.CargoItems.FromSqlRaw(sql).ToListAsync();
+
+                    return Ok(items);
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(

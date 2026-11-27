@@ -73,12 +73,23 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         app.MapGet("/logs/{id:int}", async (int id, LogDb db) =>
             await db.Logs.FindAsync(id) is { } log
                 ? Results.Ok(log)
                 : Results.NotFound())
            .RequireAuthorization();
+        ```
+        ```csharp controller
+        [ApiController]
+        [Route("logs")]
+        [Authorize]
+        public class LogsController(LogDb db) : ControllerBase
+        {
+            [HttpGet("{id:int}")]
+            public async Task<IActionResult> Get(int id) =>
+                await db.Logs.FindAsync(id) is { } log ? Ok(log) : NotFound();
+        }
         ```
         """;
 
@@ -155,7 +166,25 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 "Richtig. Die Abfrage sucht nur in den Logbüchern des Aufrufers, also wird bei jeder Anfrage der Besitzer geprüft. Und weil 404 statt 403 zurückkommt, verrät die API nicht einmal, dass Logbuch 1003 existiert."),
             BarclayLine: new(
                 "Or w-we just check who owns the log, in every query? That's p-probably too simple, isn't it?",
-                "Oder w-wir prüfen einfach bei jeder Abfrage, wem das Logbuch gehört? D-das ist bestimmt zu einfach, oder?")),
+                "Oder w-wir prüfen einfach bei jeder Abfrage, wem das Logbuch gehört? D-das ist bestimmt zu einfach, oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("logs")]
+            [Authorize]
+            public class LogsController(LogDb db) : ControllerBase
+            {
+                [HttpGet("{id:int}")]
+                public async Task<IActionResult> Get(int id)
+                {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    var log = await db.Logs
+                        .FirstOrDefaultAsync(l => l.Id == id && l.OwnerId == userId);
+
+                    return log is null ? NotFound() : Ok(log);
+                }
+            }
+            """),
 
         new("guid-ids", """
             public class PersonalLog
@@ -175,7 +204,24 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 "Das ist Verschleierung, keine Autorisierung. GUIDs sind schwer zu erraten, sickern aber leicht durch, zum Beispiel über URLs, den Browserverlauf, Logs, geteilte Links oder andere API-Antworten. Wer die ID hat, kann das Logbuch weiterhin lesen."),
             BarclayLine: new(
                 "W-what if the log numbers weren't numbers? Long random ones. Nobody could guess those. C-could they?",
-                "U-und wenn die IDs gar keine Zahlen wären, sondern lange Zufallswerte? D-die errät doch keiner. Oder?")),
+                "U-und wenn die IDs gar keine Zahlen wären, sondern lange Zufallswerte? D-die errät doch keiner. Oder?"),
+            ControllerCode: """
+            public class PersonalLog
+            {
+                public Guid Id { get; set; } = Guid.NewGuid();   // was: int
+                // ...
+            }
+
+            [ApiController]
+            [Route("logs")]
+            [Authorize]
+            public class LogsController(LogDb db) : ControllerBase
+            {
+                [HttpGet("{id:guid}")]
+                public async Task<IActionResult> Get(Guid id) =>
+                    await db.Logs.FindAsync(id) is { } log ? Ok(log) : NotFound();
+            }
+            """),
 
         new("hide-in-ui", """
             @* LogList.razor *@
@@ -206,7 +252,21 @@ public sealed class BolaLab(FlagService flags, DemoAuth auth) : ILab
                 "Anmeldung und Rollen regeln, wer den Endpunkt aufrufen darf, aber nicht, welche Logbücher er lesen darf. Wesley gehört zur Crew, kommt also durch die Policy und bekommt trotzdem Rikers Logbuch."),
             BarclayLine: new(
                 "I'll put an `[Authorize]` on it, sir. That's what it's for, isn't it? Authorizing?",
-                "Ich k-könnte ein `[Authorize]` draufsetzen, Sir. Dafür ist das doch da, oder? Zum … Autorisieren?")),
+                "Ich k-könnte ein `[Authorize]` draufsetzen, Sir. Dafür ist das doch da, oder? Zum … Autorisieren?"),
+            ControllerCode: """
+            builder.Services.AddAuthorizationBuilder()
+                .AddPolicy("Crew", p => p.RequireRole("crew"));
+
+            [ApiController]
+            [Route("logs")]
+            [Authorize(Policy = "Crew")]
+            public class LogsController(LogDb db) : ControllerBase
+            {
+                [HttpGet("{id:int}")]
+                public async Task<IActionResult> Get(int id) =>
+                    await db.Logs.FindAsync(id) is { } log ? Ok(log) : NotFound();
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(

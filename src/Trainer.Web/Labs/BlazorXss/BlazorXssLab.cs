@@ -222,7 +222,26 @@ public sealed class BlazorXssLab(FlagService flags, DemoAuth auth) : ILab, IHasM
                 "HTML hat Dutzende Event-Handler. `<svg onload=...>`, `<details open ontoggle=...>` oder `<img src=x onmouseover=...>` laufen alle ohne `onerror` und ohne `javascript:`."),
             BarclayLine: new(
                 "So `onerror` is the problem? And `javascript:`. I'll block both. Th-that's all of them. Probably.",
-                "Also ist `onerror` das Problem? Und `javascript:`. Ich sperre beides. D-das sind alle. Wahrscheinlich.")),
+                "Also ist `onerror` das Problem? Und `javascript:`. Ich sperre beides. D-das sind alle. Wahrscheinlich."),
+            ControllerCode: """
+            [ApiController]
+            [Route("comments")]
+            [Authorize]
+            public class CommentsController(CommentDb db) : ControllerBase
+            {
+                private static readonly string[] Blocked = ["onerror", "javascript:"];
+
+                [HttpPost]
+                public IActionResult Post(CommentRequest request)
+                {
+                    if (Blocked.Any(b => request.Text.Contains(b, StringComparison.OrdinalIgnoreCase)))
+                        return BadRequest("That comment is not allowed.");
+
+                    db.Add(new Comment(User.Identity!.Name!, request.Text));
+                    return Ok();
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(

@@ -70,7 +70,7 @@ public sealed class JwtLab(FlagService flags) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         builder.Services.AddAuthentication().AddJwtBearer(o =>
         {
             o.TokenValidationParameters = new TokenValidationParameters
@@ -89,6 +89,30 @@ public sealed class JwtLab(FlagService flags) : ILab
 
         app.MapGet("/admin/bridge", () => Results.Ok(BridgeConsole.Open()))
            .RequireAuthorization(p => p.RequireRole("admin"));
+        ```
+        ```csharp controller
+        builder.Services.AddAuthentication().AddJwtBearer(o =>
+        {
+            o.TokenValidationParameters = new TokenValidationParameters
+            {
+                RequireSignedTokens = false,        // "the old consoles send unsigned tokens"
+                ValidateIssuerSigningKey = false,
+                IssuerSigningKey = new SymmetricSecurityKey(signingKey),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+            };
+        });
+
+        [ApiController]
+        public class BridgeController : ControllerBase
+        {
+            [HttpGet("me"), Authorize]
+            public IActionResult Me() => Ok(User.Claims.Select(c => new { c.Type, c.Value }));
+
+            [HttpGet("admin/bridge"), Authorize(Roles = "admin")]
+            public IActionResult Bridge() => Ok(BridgeConsole.Open());
+        }
         ```
         """;
 

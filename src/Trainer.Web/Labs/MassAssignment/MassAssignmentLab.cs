@@ -68,7 +68,7 @@ public sealed class MassAssignmentLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         public class User
         {
             public int Id { get; set; }
@@ -89,6 +89,34 @@ public sealed class MassAssignmentLab(FlagService flags, DemoAuth auth) : ILab
             return Results.Ok(user);
         })
         .RequireAuthorization();
+        ```
+        ```csharp controller
+        public class User
+        {
+            public int Id { get; set; }
+            public string? DisplayName { get; set; }
+            public string? Email { get; set; }
+            public bool IsAdmin { get; set; }
+            public int Credits { get; set; }
+        }
+
+        [ApiController]
+        [Route("profile")]
+        [Authorize]
+        public class ProfileController(CrewDb db) : ControllerBase
+        {
+            [HttpPut]
+            public async Task<IActionResult> Update(User input)
+            {
+                var user = await db.Users.FindAsync(User.GetUserId());
+
+                input.Id = user!.Id;                        // never change the key
+                db.Entry(user).CurrentValues.SetValues(input);
+                await db.SaveChangesAsync();
+
+                return Ok(user);
+            }
+        }
         ```
         """;
 
@@ -171,7 +199,28 @@ public sealed class MassAssignmentLab(FlagService flags, DemoAuth auth) : ILab
                 "Richtig. Der Endpunkt bindet an einen eigenen Request-Typ, der nur die beiden bearbeitbaren Felder hat, und übernimmt genau diese. `isAdmin` und `credits` im Body werden einfach ignoriert, und Felder, die später zu `User` dazukommen, sind auch geschützt."),
             BarclayLine: new(
                 "C-could the profile page get its own little class? Just name and email? It's a lot of typing for two fields, sir.",
-                "K-könnte die Profilseite eine eigene kleine Klasse kriegen? Nur Name und E-Mail? Ist ziemlich viel Tipparbeit für zwei Felder, Sir.")),
+                "K-könnte die Profilseite eine eigene kleine Klasse kriegen? Nur Name und E-Mail? Ist ziemlich viel Tipparbeit für zwei Felder, Sir."),
+            ControllerCode: """
+            public record UpdateProfileRequest(string DisplayName, string Email);
+
+            [ApiController]
+            [Route("profile")]
+            [Authorize]
+            public class ProfileController(CrewDb db) : ControllerBase
+            {
+                [HttpPut]
+                public async Task<IActionResult> Update(UpdateProfileRequest input)
+                {
+                    var user = await db.Users.FindAsync(User.GetUserId());
+
+                    user!.DisplayName = input.DisplayName;
+                    user.Email = input.Email;
+                    await db.SaveChangesAsync();
+
+                    return Ok(new { user.DisplayName, user.Email });
+                }
+            }
+            """),
 
         new("reject-isadmin", """
             app.MapPut("/profile", async (User input, ClaimsPrincipal principal, CrewDb db) =>
@@ -194,7 +243,29 @@ public sealed class MassAssignmentLab(FlagService flags, DemoAuth auth) : ILab
                 "Eine Sperrliste mit genau einem Eintrag. `credits` lässt sich weiterhin ändern, und jedes Feld, das später zu `User` dazukommt, ist sofort angreifbar. Außerdem kann jetzt kein echter Admin mehr sein Profil speichern, weil sein eigenes `isAdmin` true ist."),
             BarclayLine: new(
                 "We just say no if someone sends `isAdmin: true`. That's the dangerous one. I-it's the only one, isn't it?",
-                "W-wir sagen einfach nein, wenn jemand `isAdmin: true` schickt. Das ist doch das gefährliche Feld. D-das einzige, oder?")),
+                "W-wir sagen einfach nein, wenn jemand `isAdmin: true` schickt. Das ist doch das gefährliche Feld. D-das einzige, oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("profile")]
+            [Authorize]
+            public class ProfileController(CrewDb db) : ControllerBase
+            {
+                [HttpPut]
+                public async Task<IActionResult> Update(User input)
+                {
+                    if (input.IsAdmin)
+                        return BadRequest("You cannot make yourself an admin.");
+
+                    var user = await db.Users.FindAsync(User.GetUserId());
+
+                    input.Id = user!.Id;
+                    db.Entry(user).CurrentValues.SetValues(input);
+                    await db.SaveChangesAsync();
+
+                    return Ok(user);
+                }
+            }
+            """),
 
         new("remove-form-field", """
             @* Profile.razor *@

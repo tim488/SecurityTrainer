@@ -30,6 +30,12 @@ Create `src/Trainer.Web/Labs/<Name>/<Name>Lab.cs` and implement `ILab`
   be mistakes real developers make. `Id` is a short kebab-case name of the approach.
 - `Tools`: optional extra tools (`LabTool.JwtEditor`, `LabTool.ModeratorView`).
 - Every player-facing string is a `Text(En, De)`. Code snippets stay English.
+- Endpoint code comes in two styles, Minimal API and controller; players pick one with
+  the switch on the lab page (display only, the lab's real endpoints don't change).
+  In Markdown, write each endpoint snippet twice, as a `` ```csharp minimal `` block
+  followed by a `` ```csharp controller `` block. Untagged blocks show in both styles.
+  A fix option that maps an endpoint sets `ControllerCode` as well. Keep prose
+  style-neutral. The contract tests check that both styles are there.
 
 ## 3. Endpoints and data
 

@@ -74,7 +74,7 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         // After login, the mobile app hands over to the browser and back again.
         app.MapGet("/login/continue", (string returnUrl, ClaimsPrincipal user, CodeStore codes) =>
         {
@@ -84,6 +84,22 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
             return Results.Redirect($"{returnUrl}{separator}code={code}");
         })
         .RequireAuthorization();
+        ```
+        ```csharp controller
+        // After login, the mobile app hands over to the browser and back again.
+        [ApiController]
+        [Route("login")]
+        public class LoginController(CodeStore codes) : ControllerBase
+        {
+            [HttpGet("continue"), Authorize]
+            public IActionResult Continue(string returnUrl)
+            {
+                var code = codes.IssueFor(User);              // one-time login code
+                var separator = returnUrl.Contains('?') ? '&' : '?';
+
+                return Redirect($"{returnUrl}{separator}code={code}");
+            }
+        }
         ```
         """;
 
@@ -160,12 +176,28 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
             .RequireAuthorization();
             """, IsCorrect: true,
             new("Correct. Only paths on this site are accepted, protocol-relative tricks like `//evil.example` are " +
-                "rejected, and anything else falls back to `/`. `Results.LocalRedirect` (or `Url.IsLocalUrl` in MVC) " +
-                "enforces the same rule and throws for external URLs.",
-                "Richtig. Es werden nur Pfade auf dieser Seite akzeptiert, Tricks wie `//evil.example` fallen durch, und alles andere landet bei `/`. `Results.LocalRedirect` (oder `Url.IsLocalUrl` in MVC) setzt dieselbe Regel durch und wirft bei externen URLs eine Exception."),
+                "rejected, and anything else falls back to `/`. `Url.IsLocalUrl` applies the same check, and " +
+                "`Results.LocalRedirect` / `LocalRedirect()` enforces it again and throws for external URLs.",
+                "Richtig. Es werden nur Pfade auf dieser Seite akzeptiert, Tricks wie `//evil.example` fallen durch, und alles andere landet bei `/`. `Url.IsLocalUrl` prüft nach derselben Regel, und `Results.LocalRedirect` bzw. `LocalRedirect()` setzt sie noch einmal durch und wirft bei externen URLs eine Exception."),
             BarclayLine: new(
                 "C-could we only allow addresses on our own ship? Local ones? I-I think there's a helper for that. There's always a helper.",
-                "K-könnten wir nur Adressen auf unserem eigenen Schiff erlauben? Also lokale? I-ich glaube, dafür gibt's eine Hilfsfunktion. Es gibt immer eine Hilfsfunktion.")),
+                "K-könnten wir nur Adressen auf unserem eigenen Schiff erlauben? Also lokale? I-ich glaube, dafür gibt's eine Hilfsfunktion. Es gibt immer eine Hilfsfunktion."),
+            ControllerCode: """
+            [ApiController]
+            [Route("login")]
+            public class LoginController(CodeStore codes) : ControllerBase
+            {
+                [HttpGet("continue"), Authorize]
+                public IActionResult Continue(string? returnUrl)
+                {
+                    var target = Url.IsLocalUrl(returnUrl) ? returnUrl : "/";
+                    var code = codes.IssueFor(User);
+                    var separator = target.Contains('?') ? '&' : '?';
+
+                    return LocalRedirect($"{target}{separator}code={code}");
+                }
+            }
+            """),
 
         new("starts-with-slash", """
             app.MapGet("/login/continue", (string returnUrl, ClaimsPrincipal user, CodeStore codes) =>
@@ -184,7 +216,24 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
                 "`//evil.example/` fängt auch mit einem Schrägstrich an. Browser lesen das als protokollrelative URL und gehen direkt zu evil.example, samt Code. (`/\\evil.example` klappt in vielen Browsern übrigens auch.)"),
             BarclayLine: new(
                 "Local addresses start with a slash. S-so we check for the slash. One character. Done.",
-                "Lokale Adressen fangen mit einem Schrägstrich an. A-also prüfen wir auf den Schrägstrich. Ein Zeichen, fertig.")),
+                "Lokale Adressen fangen mit einem Schrägstrich an. A-also prüfen wir auf den Schrägstrich. Ein Zeichen, fertig."),
+            ControllerCode: """
+            [ApiController]
+            [Route("login")]
+            public class LoginController(CodeStore codes) : ControllerBase
+            {
+                [HttpGet("continue"), Authorize]
+                public IActionResult Continue(string returnUrl)
+                {
+                    if (!returnUrl.StartsWith("/"))
+                        returnUrl = "/";
+
+                    var code = codes.IssueFor(User);
+                    var separator = returnUrl.Contains('?') ? '&' : '?';
+                    return Redirect($"{returnUrl}{separator}code={code}");
+                }
+            }
+            """),
 
         new("contains-domain", """
             app.MapGet("/login/continue", (string returnUrl, ClaimsPrincipal user, CodeStore codes) =>
@@ -203,7 +252,24 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
                 "Lore kann sich `enterprise.local.evil.example` zulegen oder einfach `https://evil.example/?enterprise.local` schicken. Beide enthalten den Text, und beide führen auf seinen Server."),
             BarclayLine: new(
                 "We just check that the address says `enterprise.local` somewhere. If it's ours, it says so. R-right?",
-                "W-wir prüfen einfach, ob `enterprise.local` irgendwo in der Adresse steht. Wenn sie uns gehört, steht das doch drin. Oder?")),
+                "W-wir prüfen einfach, ob `enterprise.local` irgendwo in der Adresse steht. Wenn sie uns gehört, steht das doch drin. Oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("login")]
+            public class LoginController(CodeStore codes) : ControllerBase
+            {
+                [HttpGet("continue"), Authorize]
+                public IActionResult Continue(string returnUrl)
+                {
+                    if (!returnUrl.Contains("enterprise.local"))
+                        returnUrl = "/";
+
+                    var code = codes.IssueFor(User);
+                    var separator = returnUrl.Contains('?') ? '&' : '?';
+                    return Redirect($"{returnUrl}{separator}code={code}");
+                }
+            }
+            """),
 
         new("strip-scheme", """
             app.MapGet("/login/continue", (string returnUrl, ClaimsPrincipal user, CodeStore codes) =>
@@ -221,7 +287,23 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
                 "`//evil.example/` hat gar kein Schema, das man entfernen könnte, und führt trotzdem woandershin. Großbuchstaben (`HTTPS://`) rutschen ebenfalls durch. Text zu entfernen ist eine Sperrliste und keine Regel dafür, wohin man darf."),
             BarclayLine: new(
                 "No `https://`, no other planet. I'll just r-remove it. Without the scheme it can't go anywhere. C-can it?",
-                "Ohne `https://` kein anderer Planet. I-ich entferne das einfach. Ohne Schema kann der Link doch nirgendwo hin. O-oder?")),
+                "Ohne `https://` kein anderer Planet. I-ich entferne das einfach. Ohne Schema kann der Link doch nirgendwo hin. O-oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("login")]
+            public class LoginController(CodeStore codes) : ControllerBase
+            {
+                [HttpGet("continue"), Authorize]
+                public IActionResult Continue(string returnUrl)
+                {
+                    returnUrl = returnUrl.Replace("https://", "").Replace("http://", "");
+
+                    var code = codes.IssueFor(User);
+                    var separator = returnUrl.Contains('?') ? '&' : '?';
+                    return Redirect($"{returnUrl}{separator}code={code}");
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(
@@ -231,7 +313,7 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
             because the redirect carried a one-time login code. Riker trusted the link because it
             really was the ship's login page, and the page handed his code to Lore's server.
 
-            Only redirect to local paths (`Results.LocalRedirect`, `Url.IsLocalUrl`), and fall back
+            Only redirect to local paths (`Results.LocalRedirect` / `LocalRedirect()`, `Url.IsLocalUrl`), and fall back
             to `/` for anything else. If you need external targets, use an exact allowlist of full
             URLs. That is what OAuth and OpenID Connect do with registered `redirect_uri`s, and
             they never accept a pattern or a partial match.
@@ -252,7 +334,7 @@ public sealed class OpenRedirectLab(FlagService flags, DemoAuth auth) : ILab
             mitgenommen hat. Riker hat dem Link vertraut, weil es wirklich die Anmeldeseite des Schiffs war,
             und genau diese Seite hat seinen Code an Lores Server übergeben.
 
-            Leite nur auf lokale Pfade weiter (`Results.LocalRedirect`, `Url.IsLocalUrl`) und falle bei allem
+            Leite nur auf lokale Pfade weiter (`Results.LocalRedirect` / `LocalRedirect()`, `Url.IsLocalUrl`) und falle bei allem
             anderen auf `/` zurück. Wenn du externe Ziele brauchst, nimm eine exakte Allowlist vollständiger
             URLs. So machen es auch OAuth und OpenID Connect mit registrierten `redirect_uri`s, und die
             akzeptieren nie ein Muster oder einen Teiltreffer.

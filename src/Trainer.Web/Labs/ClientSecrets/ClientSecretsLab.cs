@@ -164,7 +164,32 @@ public sealed class ClientSecretsLab(FlagService flags, DemoAuth auth) : ILab
                 "Richtig. Das ist das Backend-for-Frontend-Muster: Der Schlüssel verlässt nie den Server, und die App im Browser spricht mit der Anmeldung des Benutzers nur mit ihrem eigenen Backend. Das Backend entscheidet, wer bestellen darf, und ruft erst dann Sternenbasis 74 auf."),
             BarclayLine: new(
                 "W-what if the app doesn't talk to the Starbase at all? It asks our server, and our server asks the Starbase. It's an extra hop, I know. S-sorry.",
-                "U-und wenn die App gar nicht direkt mit der Sternenbasis redet? Sie fragt unseren Server, und der fragt die Sternenbasis. Ist ein Umweg, ich weiß. T-tut mir leid.")),
+                "U-und wenn die App gar nicht direkt mit der Sternenbasis redet? Sie fragt unseren Server, und der fragt die Sternenbasis. Ist ein Umweg, ich weiß. T-tut mir leid."),
+            ControllerCode: """
+            // Quartermaster.Server/Program.cs (runs on the ship's server)
+            // The key comes from user secrets / Key Vault, never from wwwroot.
+            builder.Services.AddHttpClient("Starbase", c =>
+            {
+                c.BaseAddress = new Uri(builder.Configuration["Starbase:SupplyApiUrl"]!);
+                c.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["Starbase:ApiKey"]);
+            });
+
+            [ApiController]
+            [Route("api/requisitions")]
+            [Authorize(Policy = "Quartermaster")]
+            public class RequisitionsController(IHttpClientFactory http) : ControllerBase
+            {
+                [HttpPost]
+                public async Task<IActionResult> Order(RequisitionRequest order)
+                {
+                    var starbase = http.CreateClient("Starbase");
+                    var response = await starbase.PostAsJsonAsync("requisitions", order);
+                    return StatusCode((int)response.StatusCode);
+                }
+            }
+
+            // The WebAssembly client only calls /api/requisitions with the user's own login.
+            """),
 
         new("base64-key", """
             // wwwroot/appsettings.json

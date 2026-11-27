@@ -72,7 +72,7 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         app.MapGet("/menu", (ClaimsPrincipal user) =>
         {
             List<MenuItem> items = [new("My profile", "/me")];
@@ -86,6 +86,31 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
             .RequireAuthorization();   // senior officers only
 
         admin.MapGet("/crew/export", (CrewDb db) => Results.Ok(db.ExportRoster()));
+        ```
+        ```csharp controller
+        [ApiController]
+        [Route("menu")]
+        [Authorize]
+        public class MenuController : ControllerBase
+        {
+            [HttpGet]
+            public List<MenuItem> Get()
+            {
+                List<MenuItem> items = [new("My profile", "/me")];
+                if (User.IsInRole("admin"))
+                    items.Add(new("Crew export", "/admin/crew/export"));
+                return items;
+            }
+        }
+
+        [ApiController]
+        [Route("admin")]
+        [Authorize]   // senior officers only
+        public class AdminController(CrewDb db) : ControllerBase
+        {
+            [HttpGet("crew/export")]
+            public IActionResult ExportCrew() => Ok(db.ExportRoster());
+        }
         ```
         """;
 
@@ -138,8 +163,8 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
     [
         new("`GET /menu` gives you a single entry. According to the code, the admin entry is simply left out for your role. Leaving something out of a list does not remove it from the ship.",
             "`GET /menu` liefert Ihnen nur einen Eintrag. Laut Code wird der Admin-Eintrag für Ihre Rolle einfach weggelassen. Was in einer Liste fehlt, ist deshalb aber nicht vom Schiff verschwunden."),
-        new("The `/admin` group calls `RequireAuthorization()` without naming a policy or a role. In that form it only requires that the caller is logged in. You are logged in.",
-            "Die Gruppe `/admin` ruft `RequireAuthorization()` auf, ohne eine Policy oder Rolle zu nennen. In dieser Form verlangt sie nur, dass der Aufrufer angemeldet ist. Sie sind angemeldet."),
+        new("The `/admin` endpoints require authorization (`RequireAuthorization()` / `[Authorize]`) without naming a policy or a role. In that form it only requires that the caller is logged in. You are logged in.",
+            "Die `/admin`-Endpunkte verlangen Autorisierung (`RequireAuthorization()` / `[Authorize]`), ohne eine Policy oder Rolle zu nennen. In dieser Form heißt das nur, dass der Aufrufer angemeldet sein muss. Sie sind angemeldet."),
         new("I would expect `GET /api/labs/bfla/admin/crew/export` with your own token to be refused. I would also have expected the roster not to be broadcast at 0300 hours.",
             "Ich würde erwarten, dass `GET /api/labs/bfla/admin/crew/export` mit Ihrem eigenen Token abgelehnt wird. Ich hätte allerdings auch erwartet, dass die Crewliste nicht um drei Uhr nachts gesendet wird."),
     ];
@@ -161,12 +186,25 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
 
             admin.MapGet("/crew/export", (CrewDb db) => Results.Ok(db.ExportRoster()));
             """, IsCorrect: true,
-            new("Correct. The role check now runs on the server for every endpoint in the admin group, " +
+            new("Correct. The role check now runs on the server for every admin endpoint, " +
                 "including ones added later. A logged-in crew member without the admin role gets 403 Forbidden.",
-                "Richtig. Die Rolle wird jetzt auf dem Server geprüft, und zwar für jeden Endpunkt der Admin-Gruppe, auch für später hinzugefügte. Ein angemeldetes Crewmitglied ohne Admin-Rolle bekommt 403 Forbidden."),
+                "Richtig. Die Rolle wird jetzt auf dem Server geprüft, und zwar für jeden Admin-Endpunkt, auch für später hinzugefügte. Ein angemeldetes Crewmitglied ohne Admin-Rolle bekommt 403 Forbidden."),
             BarclayLine: new(
-                "M-maybe the server should check the role itself? For the whole admin group? I-if that isn't overkill.",
-                "V-vielleicht sollte der Server die Rolle selbst prüfen? Für die ganze Admin-Gruppe? W-wenn das nicht übertrieben ist.")),
+                "M-maybe the server should check the role itself? For all the admin endpoints at once? I-if that isn't overkill.",
+                "V-vielleicht sollte der Server die Rolle selbst prüfen? Für alle Admin-Endpunkte auf einmal? W-wenn das nicht übertrieben ist."),
+            ControllerCode: """
+            builder.Services.AddAuthorizationBuilder()
+                .AddPolicy("Admin", p => p.RequireRole("admin"));
+
+            [ApiController]
+            [Route("admin")]
+            [Authorize(Policy = "Admin")]
+            public class AdminController(CrewDb db) : ControllerBase
+            {
+                [HttpGet("crew/export")]
+                public IActionResult ExportCrew() => Ok(db.ExportRoster());
+            }
+            """),
 
         new("lock-admin-page", """
             @* Pages/Admin/CrewExport.razor *@
@@ -195,7 +233,17 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
                 "Das ist Verschleierung, keine Autorisierung. Die Route steht trotzdem in der Menü-Antwort, im Blazor-Code, im Browserverlauf und in Proxy-Logs. Wer sie findet, kommt mit jeder gültigen Anmeldung weiterhin rein."),
             BarclayLine: new(
                 "W-we could rename the route. Something long, like `/admin-7f3a9c-do-not-use`. Nobody would ever type that. W-would they?",
-                "W-wir könnten die Route umbenennen. Irgendwas Langes, so wie `/admin-7f3a9c-do-not-use`. D-das tippt doch keiner ein. Oder?")),
+                "W-wir könnten die Route umbenennen. Irgendwas Langes, so wie `/admin-7f3a9c-do-not-use`. D-das tippt doch keiner ein. Oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("admin-7f3a9c-do-not-use")]
+            [Authorize]
+            public class AdminController(CrewDb db) : ControllerBase
+            {
+                [HttpGet("crew/export")]
+                public IActionResult ExportCrew() => Ok(db.ExportRoster());
+            }
+            """),
 
         new("referer-check", """
             admin.MapGet("/crew/export", (HttpRequest request, CrewDb db) =>
@@ -208,20 +256,33 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
                 "Den `Referer`-Header setzt der Client, er beweist also gar nichts. In der Request-Konsole kannst du `Referer: https://enterprise.local/admin/crew` einfach selbst mitschicken, und schon klappt der Export wieder."),
             BarclayLine: new(
                 "What if the export only works when you come from the admin page? We c-could check the `Referer` header. Only admins can open that page, s-so …",
-                "Und wenn der Export nur klappt, wenn man von der Admin-Seite kommt? W-wir könnten den `Referer`-Header prüfen. Die Seite können ja nur Admins öffnen, a-also …")),
+                "Und wenn der Export nur klappt, wenn man von der Admin-Seite kommt? W-wir könnten den `Referer`-Header prüfen. Die Seite können ja nur Admins öffnen, a-also …"),
+            ControllerCode: """
+            [ApiController]
+            [Route("admin")]
+            [Authorize]
+            public class AdminController(CrewDb db) : ControllerBase
+            {
+                [HttpGet("crew/export")]
+                public IActionResult ExportCrew() =>
+                    Request.Headers.Referer.ToString().EndsWith("/admin/crew")
+                        ? Ok(db.ExportRoster())
+                        : Forbid();
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(
         En: """
             **Broken Function Level Authorization (BFLA)** means a user can call a *function*
             meant for a higher role. In the last mission the question was *which object* you may
-            read; here it is *which endpoint* you may call at all. The admin group checked that
-            you were logged in, but `RequireAuthorization()` without a policy says nothing about
-            roles. The menu hid the entry, but the menu was never the lock.
+            read; here it is *which endpoint* you may call at all. The admin endpoints checked that
+            you were logged in, but `RequireAuthorization()` or `[Authorize]` without a policy says
+            nothing about roles. The menu hid the entry, but the menu was never the lock.
 
             The fix belongs on the server, as close to the route as possible: define a policy
-            (`RequireRole("admin")`) and apply it to the whole `/admin` group, so new admin
-            endpoints are protected by default. Hiding the menu is still fine for usability,
+            (`RequireRole("admin")`) and apply it to the whole `/admin` group or admin controller,
+            so new admin endpoints are protected by default. Hiding the menu is still fine for usability,
             just not for security.
 
             Why the other options fail:
@@ -237,12 +298,12 @@ public sealed class BflaLab(FlagService flags, DemoAuth auth) : ILab
             **Broken Function Level Authorization (BFLA)** heißt, dass ein Benutzer eine *Funktion*
             aufrufen kann, die für eine höhere Rolle gedacht ist. In der letzten Mission ging es darum,
             *welches Objekt* du lesen darfst. Hier geht es darum, *welchen Endpunkt* du überhaupt aufrufen
-            darfst. Die Admin-Gruppe hat geprüft, ob du angemeldet bist, aber `RequireAuthorization()`
-            ohne Policy sagt nichts über Rollen. Das Menü hat den Eintrag versteckt, aber abgeschlossen
+            darfst. Die Admin-Endpunkte haben geprüft, ob du angemeldet bist, aber `RequireAuthorization()`
+            oder `[Authorize]` ohne Policy sagt nichts über Rollen. Das Menü hat den Eintrag versteckt, aber abgeschlossen
             hat es nie etwas.
 
             Die Prüfung gehört auf den Server, möglichst direkt an die Route. Lege dazu eine Policy an
-            (`RequireRole("admin")`) und hänge sie an die ganze Gruppe `/admin`. Dann sind auch neue
+            (`RequireRole("admin")`) und hänge sie an die ganze Gruppe `/admin` bzw. den Admin-Controller. Dann sind auch neue
             Admin-Endpunkte von Anfang an geschützt. Das Menü darfst du trotzdem ausblenden, das ist gut
             für die Bedienung, aber eben kein Schutz.
 

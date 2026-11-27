@@ -64,7 +64,7 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
         var lab = Registry.Find(slug)!;
 
         // Fix options that map an endpoint need the controller version too.
-        Assert.All(lab.FixOptions.Where(o => o.Code.Contains("app.Map", StringComparison.Ordinal)),
+        Assert.All(lab.FixOptions.Where(o => MapsEndpoint(o.Code)),
             o => Assert.False(string.IsNullOrWhiteSpace(o.ControllerCode), o.Id));
         Assert.All(lab.FixOptions.Where(o => o.ControllerCode is not null),
             o => Assert.Contains("Controller", o.ControllerCode!));
@@ -73,10 +73,14 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
         {
             var blocks = Markdig.Markdown.Parse(markdown).Descendants<FencedCodeBlock>().ToList();
             // An endpoint snippet is always tagged, and every tagged snippet has its counterpart.
-            Assert.DoesNotContain(blocks, b => CodeStyles.Of(b) is null && b.Lines.ToString().Contains("app.Map", StringComparison.Ordinal));
+            Assert.DoesNotContain(blocks, b => CodeStyles.Of(b) is null && MapsEndpoint(b.Lines.ToString()));
             Assert.Equal(blocks.Count(b => CodeStyles.Of(b) == CodeStyle.MinimalApi), blocks.Count(b => CodeStyles.Of(b) == CodeStyle.Controller));
         }
     }
+
+    // app.MapGet, admin.MapPost, group.MapGroup, …
+    private static bool MapsEndpoint(string code) =>
+        System.Text.RegularExpressions.Regex.IsMatch(code, @"\.Map(Get|Post|Put|Patch|Delete|Methods|Group)\(");
 
     [Fact]
     public void Slugs_and_act_order_are_unique()

@@ -65,7 +65,7 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         app.MapGet("/archive/download", (string file) =>
         {
             var path = Path.Combine("/data/archive", file);
@@ -75,6 +75,24 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 : Results.NotFound();
         })
         .RequireAuthorization();
+        ```
+
+        ```csharp controller
+        [ApiController]
+        [Route("archive")]
+        [Authorize]
+        public class ArchiveController : ControllerBase
+        {
+            [HttpGet("download")]
+            public IActionResult Download(string file)
+            {
+                var path = Path.Combine("/data/archive", file);
+
+                return System.IO.File.Exists(path)
+                    ? PhysicalFile(path, "application/pdf")
+                    : NotFound();
+            }
+        }
         ```
         """;
 
@@ -154,7 +172,29 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 "Richtig. `GetFullPath` löst zuerst jedes `..` und jeden absoluten Pfad auf, und erst danach wird das Ergebnis mit dem Archivverzeichnis verglichen. Der Schrägstrich am Ende von `Root` ist wichtig, sonst käme auch `/data/archive-old` durch. Noch besser ist es, Dateien über eine ID in einer Tabelle nachzuschlagen. Dann landet gar keine Benutzereingabe im Pfad."),
             BarclayLine: new(
                 "W-we could work out the real path first, and then check it's still inside the archive? Like checking where the tube comes out, not where it goes in.",
-                "W-wir könnten erst den echten Pfad ausrechnen und dann prüfen, ob er noch im Archiv liegt? Also schauen, wo die Röhre rauskommt, nicht wo sie anfängt.")),
+                "W-wir könnten erst den echten Pfad ausrechnen und dann prüfen, ob er noch im Archiv liegt? Also schauen, wo die Röhre rauskommt, nicht wo sie anfängt."),
+            ControllerCode: """
+            [ApiController]
+            [Route("archive")]
+            [Authorize]
+            public class ArchiveController : ControllerBase
+            {
+                private const string Root = "/data/archive/";
+
+                [HttpGet("download")]
+                public IActionResult Download(string file)
+                {
+                    var fullPath = Path.GetFullPath(Path.Combine(Root, file));
+
+                    if (!fullPath.StartsWith(Root, StringComparison.Ordinal))
+                        return NotFound();
+
+                    return System.IO.File.Exists(fullPath)
+                        ? PhysicalFile(fullPath, "application/pdf")
+                        : NotFound();
+                }
+            }
+            """),
 
         new("strip-dot-dot", """
             app.MapGet("/archive/download", (string file) =>
@@ -173,7 +213,25 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 "`Replace` läuft nur einmal. Aus `....//restricted/crew-evaluations.pdf` wird nach dem Ersetzen `../restricted/crew-evaluations.pdf`. Und ein absoluter Pfad wie `/data/restricted/crew-evaluations.pdf` enthält überhaupt kein `../`."),
             BarclayLine: new(
                 "The dots are the problem, sir. We t-take out every `../`. No dots, no climbing.",
-                "D-die Punkte sind das Problem, Sir. Wir entfernen einfach jedes `../`. Ohne Punkte kein Klettern.")),
+                "D-die Punkte sind das Problem, Sir. Wir entfernen einfach jedes `../`. Ohne Punkte kein Klettern."),
+            ControllerCode: """
+            [ApiController]
+            [Route("archive")]
+            [Authorize]
+            public class ArchiveController : ControllerBase
+            {
+                [HttpGet("download")]
+                public IActionResult Download(string file)
+                {
+                    file = file.Replace("../", "");
+                    var path = Path.Combine("/data/archive", file);
+
+                    return System.IO.File.Exists(path)
+                        ? PhysicalFile(path, "application/pdf")
+                        : NotFound();
+                }
+            }
+            """),
 
         new("require-pdf", """
             app.MapGet("/archive/download", (string file) =>
@@ -193,7 +251,27 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 "Die Beurteilungen sind auch ein PDF. Die Prüfung legt fest, *welche Art* Datei du bekommst, aber nicht, *woher* sie kommt."),
             BarclayLine: new(
                 "It's a PDF archive. So w-we only hand out PDFs. Anything else gets refused. Th-that's tidy, at least.",
-                "Es ist ein PDF-Archiv. A-also geben wir nur PDFs raus, alles andere wird abgelehnt. D-das ist wenigstens ordentlich.")),
+                "Es ist ein PDF-Archiv. A-also geben wir nur PDFs raus, alles andere wird abgelehnt. D-das ist wenigstens ordentlich."),
+            ControllerCode: """
+            [ApiController]
+            [Route("archive")]
+            [Authorize]
+            public class ArchiveController : ControllerBase
+            {
+                [HttpGet("download")]
+                public IActionResult Download(string file)
+                {
+                    if (!file.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                        return BadRequest("Only PDF files.");
+
+                    var path = Path.Combine("/data/archive", file);
+
+                    return System.IO.File.Exists(path)
+                        ? PhysicalFile(path, "application/pdf")
+                        : NotFound();
+                }
+            }
+            """),
 
         new("reject-leading-slash", """
             app.MapGet("/archive/download", (string file) =>
@@ -214,7 +292,27 @@ public sealed class PathTraversalLab(FlagService flags, DemoAuth auth) : ILab
                 "Damit ist der Weg über absolute Pfade zu, aber `../restricted/crew-evaluations.pdf` beginnt nicht mit einem Schrägstrich und klettert trotzdem aus dem Archiv."),
             BarclayLine: new(
                 "Absolute paths are the scary ones. I'll just refuse anything that starts with a slash. Th-then it has to stay in the archive.",
-                "Absolute Pfade sind die gefährlichen. I-ich lehne einfach alles ab, was mit einem Schrägstrich anfängt. D-dann muss es ja im Archiv bleiben.")),
+                "Absolute Pfade sind die gefährlichen. I-ich lehne einfach alles ab, was mit einem Schrägstrich anfängt. D-dann muss es ja im Archiv bleiben."),
+            ControllerCode: """
+            [ApiController]
+            [Route("archive")]
+            [Authorize]
+            public class ArchiveController : ControllerBase
+            {
+                [HttpGet("download")]
+                public IActionResult Download(string file)
+                {
+                    if (file.StartsWith('/'))
+                        return BadRequest("Relative file names only.");
+
+                    var path = Path.Combine("/data/archive", file);
+
+                    return System.IO.File.Exists(path)
+                        ? PhysicalFile(path, "application/pdf")
+                        : NotFound();
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(

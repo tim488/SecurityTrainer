@@ -69,7 +69,7 @@ public sealed class BruteForceLab(FlagService flags, DemoAuth auth) : ILab
                 """));
 
     private const string VulnerableCode = """
-        ```csharp
+        ```csharp minimal
         app.MapPost("/password-reset/request", (ResetRequest body) =>
         {
             var code = Random.Shared.Next(0, 10_000).ToString("D4");
@@ -87,6 +87,33 @@ public sealed class BruteForceLab(FlagService flags, DemoAuth auth) : ILab
             }
             return Results.Json(new { error = "Invalid code." }, statusCode: 400);
         });
+        ```
+
+        ```csharp controller
+        [ApiController]
+        [Route("password-reset")]
+        public class PasswordResetController(ResetCodeStore pendingCodes) : ControllerBase
+        {
+            [HttpPost("request")]
+            public IActionResult RequestReset(ResetRequest body)
+            {
+                var code = Random.Shared.Next(0, 10_000).ToString("D4");
+                pendingCodes[body.User] = code;
+                // In a real system this would be sent by email or SMS.
+                return Ok(new { message = $"A 4-digit code was sent to {body.User}." });
+            }
+
+            [HttpPost("confirm")]
+            public IActionResult Confirm(ConfirmRequest body)
+            {
+                if (pendingCodes.TryGetValue(body.User, out var expected) && body.Code == expected)
+                {
+                    pendingCodes.Remove(body.User);
+                    return Ok(new { message = "Access code has been reset." });
+                }
+                return BadRequest(new { error = "Invalid code." });
+            }
+        }
         ```
         """;
 
@@ -178,7 +205,34 @@ public sealed class BruteForceLab(FlagService flags, DemoAuth auth) : ILab
                 "müsste jedes Mal einen neuen Code anfordern, und jeder verfällt nach drei Versuchen."),
             BarclayLine: new(
                 "W-what if the code just stops working after a few wrong tries? And maybe a longer code, too. S-six digits? Eight? I always forget mine anyway.",
-                "U-und wenn der Code nach ein paar Fehlversuchen einfach nicht mehr geht? Und v-vielleicht ein längerer Code. S-sechs Stellen? Acht? Ich vergesse meinen sowieso immer.")),
+                "U-und wenn der Code nach ein paar Fehlversuchen einfach nicht mehr geht? Und v-vielleicht ein längerer Code. S-sechs Stellen? Acht? Ich vergesse meinen sowieso immer."),
+            ControllerCode: """
+            [ApiController]
+            [Route("password-reset")]
+            public class PasswordResetController(ResetCodeStore pendingCodes) : ControllerBase
+            {
+                [HttpPost("confirm")]
+                public IActionResult Confirm(ConfirmRequest body)
+                {
+                    if (!pendingCodes.TryGetValue(body.User, out var entry))
+                        return BadRequest(new { error = "No reset pending." });
+
+                    if (entry.Attempts >= 3)
+                    {
+                        pendingCodes.Remove(body.User);
+                        return StatusCode(429, new { error = "Too many attempts. Request a new code." });
+                    }
+
+                    entry.Attempts++;
+
+                    if (body.Code != entry.Code)
+                        return BadRequest(new { error = "Invalid code." });
+
+                    pendingCodes.Remove(body.User);
+                    return Ok(new { message = "Access code has been reset." });
+                }
+            }
+            """),
 
         new("forwarded-for-limit", """
             app.MapPost("/password-reset/confirm", (ConfirmRequest body, HttpContext ctx) =>
@@ -206,7 +260,32 @@ public sealed class BruteForceLab(FlagService flags, DemoAuth auth) : ILab
                 "und erreicht das Limit nie."),
             BarclayLine: new(
                 "I-I'll add a rate limiter. By IP address. From the `X-Forwarded-For` header, that's what it's for. R-right? Nobody would fake their own address.",
-                "I-ich baue ein Rate-Limit ein. Nach IP-Adresse. Die steht ja im `X-Forwarded-For`-Header, d-dafür ist der da. Oder? Die eigene Adresse fälscht doch keiner.")),
+                "I-ich baue ein Rate-Limit ein. Nach IP-Adresse. Die steht ja im `X-Forwarded-For`-Header, d-dafür ist der da. Oder? Die eigene Adresse fälscht doch keiner."),
+            ControllerCode: """
+            [ApiController]
+            [Route("password-reset")]
+            public class PasswordResetController(ResetCodeStore pendingCodes, IpRateLimiter rateLimiter) : ControllerBase
+            {
+                [HttpPost("confirm")]
+                public IActionResult Confirm(ConfirmRequest body)
+                {
+                    var ip = Request.Headers["X-Forwarded-For"].FirstOrDefault()
+                             ?? HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+                    if (rateLimiter.IsBlocked(ip))
+                        return StatusCode(429, new { error = "Rate limit exceeded." });
+
+                    rateLimiter.Record(ip);
+
+                    if (pendingCodes.TryGetValue(body.User, out var code) && body.Code == code)
+                    {
+                        pendingCodes.Remove(body.User);
+                        return Ok(new { message = "Access code has been reset." });
+                    }
+                    return BadRequest(new { error = "Invalid code." });
+                }
+            }
+            """),
 
         new("form-captcha", """
             @* PasswordReset.razor *@
@@ -252,7 +331,26 @@ public sealed class BruteForceLab(FlagService flags, DemoAuth auth) : ILab
                 "voneinander. Zehntausend parallele Requests sind in einer halben Sekunde durch."),
             BarclayLine: new(
                 "I-I'll add a half-second delay when the code is wrong. That slows them down. F-five thousand seconds for ten thousand tries. That's… a lot. Right?",
-                "I-ich baue eine halbe Sekunde Verzögerung ein, wenn der Code falsch ist. D-das bremst die aus. Fünftausend Sekunden für zehntausend Versuche. Das ist … viel. Oder?")),
+                "I-ich baue eine halbe Sekunde Verzögerung ein, wenn der Code falsch ist. D-das bremst die aus. Fünftausend Sekunden für zehntausend Versuche. Das ist … viel. Oder?"),
+            ControllerCode: """
+            [ApiController]
+            [Route("password-reset")]
+            public class PasswordResetController(ResetCodeStore pendingCodes) : ControllerBase
+            {
+                [HttpPost("confirm")]
+                public async Task<IActionResult> Confirm(ConfirmRequest body)
+                {
+                    if (pendingCodes.TryGetValue(body.User, out var code) && body.Code == code)
+                    {
+                        pendingCodes.Remove(body.User);
+                        return Ok(new { message = "Access code has been reset." });
+                    }
+
+                    await Task.Delay(500); // slow down brute force
+                    return BadRequest(new { error = "Invalid code." });
+                }
+            }
+            """),
     ];
 
     public Text ExplanationMarkdown => new(
