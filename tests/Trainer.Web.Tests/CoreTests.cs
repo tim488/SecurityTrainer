@@ -90,7 +90,6 @@ public class StoryTests
         Assert.All(Trainer.Web.Core.Story.Acts.All, a =>
         {
             Assert.True(a.Title.IsComplete);
-            Assert.True(a.Tagline.IsComplete);
             Assert.True(a.Ending?.IsComplete ?? true);
         });
     }

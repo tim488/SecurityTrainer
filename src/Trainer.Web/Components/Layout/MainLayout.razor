@@ -1,6 +1,8 @@
 @inherits LayoutComponentBase
 @implements IDisposable
 @inject ProgressStore Progress
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 @* Ship's computer frame: elbow top left, bar across the top, blocks down the left side. *@
 <div class="frame">
@@ -31,7 +33,7 @@
         <div class="side-block side-sky side-fill" aria-hidden="true"><span class="side-label">USS Enterprise</span><span class="side-no">NCC-1701-D</span></div>
     </nav>
 
-    <main class="content">
+    <main class="content" @ref="_content">
         @Body
     </main>
 </div>
@@ -49,9 +51,40 @@
 
     private string L(string en, string de) => Lang == Language.De ? de : en;
 
-    protected override void OnInitialized() => Progress.Changed += OnChanged;
+    private ElementReference _content;
+    private string _path = "";
+    private bool _scrollToTop;
+
+    protected override void OnInitialized()
+    {
+        _path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('#', '?')[0];
+        Progress.Changed += OnChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+    }
 
     private void OnChanged() => _ = InvokeAsync(StateHasChanged);
 
-    public void Dispose() => Progress.Changed -= OnChanged;
+    // Only a new page starts at the top; a changed query or #fragment keeps its place.
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        var path = Navigation.ToBaseRelativePath(e.Location).Split('#', '?')[0];
+        if (path == _path) return;
+        _path = path;
+        _scrollToTop = true;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_scrollToTop) return;
+        _scrollToTop = false;
+        try { await JS.InvokeVoidAsync("trainerLayout.scrollTop", _content); }
+        catch (JSDisconnectedException) { }
+    }
+
+    public void Dispose()
+    {
+        Progress.Changed -= OnChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
 }

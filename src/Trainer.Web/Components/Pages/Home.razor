@@ -29,10 +29,6 @@
     var done = group.Count(l => Progress.Get(l.Slug).IsCompleted);
     <section class="act">
         <h2>@L("Act", "Akt") @group.Key@(act is null ? "" : $": {L(act.Title)}") <span class="act-count">@done/@group.Count()</span></h2>
-        @if (act is not null)
-        {
-            <p class="muted">@L(act.Tagline)</p>
-        }
         <div class="cards">
             @foreach (var lab in group.OrderBy(l => l.Story.Order))
             {

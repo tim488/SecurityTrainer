@@ -1,7 +1,7 @@
 namespace Trainer.Web.Core.Story;
 
 /// <param name="Ending">Shown under the act once all its labs are completed. Null until written.</param>
-public sealed record Act(int Number, Text Title, Text Tagline, Text? Ending = null);
+public sealed record Act(int Number, Text Title, Text? Ending = null);
 
 /// <summary>
 /// Act titles, opening scene, act endings and finale (SPEC §3.3).
@@ -85,8 +85,6 @@ public static class Acts
     public static readonly IReadOnlyList<Act> All =
     [
         new(1, new("Uninvited Guest", "Ungebetener Gast"),
-            new("Lore looks around: reading data he shouldn't see.",
-                "Lore schnüffelt in fremden Daten herum."),
             Ending: new(
                 En: """
                     The bridge lights dim for half a second. Then the main viewscreen switches on by itself.
@@ -120,8 +118,6 @@ public static class Acts
                     Der Schirm wird schwarz. Riker sieht Wesley an. Zum ersten Mal sagt ihm keiner, er solle sich setzen.
                     """)),
         new(2, new("Borrowed Identities", "Falsche Identitäten"),
-            new("Lore stops reading and starts becoming someone else.",
-                "Lore gibt sich als jemand anderes aus."),
             Ending: new(
                 En: """
                     The voice on comms is calm and precise. "Bridge, this is Data. I have isolated the intruder in
@@ -160,9 +156,7 @@ public static class Acts
                     Die Verbindung bricht ab. An seiner Konsole dreht sich der echte Data um. „Captain, ich war die
                     ganze Zeit hier.“
                     """)),
-        new(3, new("Into the Core", "Ins Herz des Schiffs"),
-            new("Lore goes for the core of the ship.",
-                "Lore greift nach dem Hauptcomputer.")),
+        new(3, new("Into the Core", "Ins Herz des Schiffs")),
     ];
 
     public static Act? Find(int number) => All.FirstOrDefault(a => a.Number == number);

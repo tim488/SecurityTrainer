@@ -112,7 +112,10 @@ button.link-button {
     display: grid;
     grid-template-columns: calc(var(--side) + var(--inner)) 1fr;
     grid-template-rows: auto 1fr;
-    min-height: 100vh;
+    /* The frame fills the window and stays put; only .content scrolls. */
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     max-width: 1320px;
     margin: 0 auto;
     padding: 12px 12px 0;
@@ -155,8 +158,14 @@ a.side-block:hover { filter: brightness(1.12); }
 .side-tall { min-height: 140px; }
 .side-fill { flex: 1; border-bottom-left-radius: 40px; }
 
-/* Starts right under the top bar, beside the elbow. */
-.content { grid-column: 2; grid-row: 1 / 3; min-width: 0; padding: calc(var(--arm) + 0.5rem) 0 2rem 1.5rem; }
+/* Starts right under the top bar, beside the elbow, and scrolls on its own.
+   The margin keeps the scroll box below the bar, so nothing slides under it. */
+.content {
+    grid-column: 2; grid-row: 1 / 3; min-width: 0; min-height: 0;
+    margin-top: var(--arm); padding: 0.5rem 0.75rem 2rem 1.5rem;
+    overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: var(--lilac) transparent;
+}
 
 @media (max-width: 720px) {
     .frame { --side: 28px; --inner: 18px; --arm: 16px; padding: 8px 8px 0; }
@@ -167,7 +176,7 @@ a.side-block:hover { filter: brightness(1.12); }
     .side-tall { min-height: 80px; }
     .brand { font-size: 1.3rem; }
     .bar-lilac { display: none; }
-    .content { padding-left: 0.75rem; }
+    .content { padding-left: 0.75rem; padding-right: 0.25rem; }
     h1 { font-size: 1.9rem; }
 }
 
@@ -206,6 +215,7 @@ a.side-block:hover { filter: brightness(1.12); }
 .board-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
 .board-bar p { margin: 0; }
 .act-count { color: var(--lilac); font-size: 1.1rem; }
+.act h2 { margin: 0 0 1rem; }
 .card-title { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; line-height: 1.2; }
 .card .lab-facts { font-size: 1rem; }
 .difficulty-easy { color: var(--ok); }
