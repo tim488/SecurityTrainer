@@ -81,8 +81,8 @@ public sealed partial class BolaLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/bola/logs` | Lists the logs of the logged-in user |
-            | `GET /api/labs/bola/logs/{"{id}"}` | Returns one log with its full notes |
+            | `GET /api/missions/bola/logs` | Lists the logs of the logged-in user |
+            | `GET /api/missions/bola/logs/{"{id}"}` | Returns one log with its full notes |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
 
@@ -99,8 +99,8 @@ public sealed partial class BolaLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/bola/logs` | Listet deine Logbücher auf |
-            | `GET /api/labs/bola/logs/{"{id}"}` | Gibt ein Logbuch samt Notizen zurück |
+            | `GET /api/missions/bola/logs` | Listet deine Logbücher auf |
+            | `GET /api/missions/bola/logs/{"{id}"}` | Gibt ein Logbuch samt Notizen zurück |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole.
 

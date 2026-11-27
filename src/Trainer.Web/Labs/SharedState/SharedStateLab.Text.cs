@@ -92,8 +92,8 @@ public sealed partial class SharedStateLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/shared-state/replicator/order` | What the panel shows you as "your order" |
-            | `POST /api/labs/shared-state/replicator/order` | Places an order: `{"{"} "item": "Tea, Earl Grey, hot" {"}"}` |
+            | `GET /api/missions/shared-state/replicator/order` | What the panel shows you as "your order" |
+            | `POST /api/missions/shared-state/replicator/order` | Places an order: `{"{"} "item": "Tea, Earl Grey, hot" {"}"}` |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
             Commander Riker is using his own panel at the same time. The state service and the panel
@@ -110,8 +110,8 @@ public sealed partial class SharedStateLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/shared-state/replicator/order` | Was das Panel dir als „deine Bestellung“ anzeigt |
-            | `POST /api/labs/shared-state/replicator/order` | Gibt eine Bestellung auf: `{"{"} "item": "Tee, Earl Grey, heiß" {"}"}` |
+            | `GET /api/missions/shared-state/replicator/order` | Was das Panel dir als „deine Bestellung“ anzeigt |
+            | `POST /api/missions/shared-state/replicator/order` | Gibt eine Bestellung auf: `{"{"} "item": "Tee, Earl Grey, heiß" {"}"}` |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. Commander Riker
             benutzt gleichzeitig sein eigenes Panel. So sehen der State-Service und das Panel aus:

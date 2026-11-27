@@ -44,7 +44,7 @@ public class SqlInjectionLabTests(WebApplicationFactory<Program> factory) : ICla
     [Fact]
     public async Task Broken_sql_returns_the_database_error()
     {
-        var response = await Client().GetAsync($"/api/labs/{Slug}/cargo?search='");
+        var response = await Client().GetAsync($"/api/missions/{Slug}/cargo?search='");
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         Assert.Contains("SQLite", await response.Content.ReadAsStringAsync());
@@ -56,7 +56,7 @@ public class SqlInjectionLabTests(WebApplicationFactory<Program> factory) : ICla
         var client = Client();
         client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de");
 
-        var items = await client.GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/cargo?search=phaser");
+        var items = await client.GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/cargo?search=phaser");
 
         Assert.Contains(items!, i => i.GetProperty("name").GetString() == "Phasergewehre, Typ 3");
     }
@@ -64,7 +64,7 @@ public class SqlInjectionLabTests(WebApplicationFactory<Program> factory) : ICla
     [Fact]
     public async Task Anonymous_callers_are_rejected()
     {
-        Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync($"/api/labs/{Slug}/cargo?search=x")).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync($"/api/missions/{Slug}/cargo?search=x")).StatusCode);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class SqlInjectionLabTests(WebApplicationFactory<Program> factory) : ICla
     }
 
     private async Task<JsonElement[]> Search(string term) =>
-        (await Client().GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/cargo?search={Uri.EscapeDataString(term)}"))!;
+        (await Client().GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/cargo?search={Uri.EscapeDataString(term)}"))!;
 
     private HttpClient Client()
     {

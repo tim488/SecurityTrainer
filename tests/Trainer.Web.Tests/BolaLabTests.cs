@@ -15,7 +15,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task Exploit_reads_rikers_log_and_returns_the_flag()
     {
-        var log = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/1003");
+        var log = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/logs/1003");
 
         Assert.Equal("riker", log.GetProperty("ownerId").GetString());
         Assert.Contains(Get<FlagService>().GetFlag(Slug), log.GetProperty("notes").GetString());
@@ -24,7 +24,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task List_only_shows_own_logs_without_notes()
     {
-        var logs = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/logs");
+        var logs = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/logs");
 
         Assert.Equal([1001, 1002], logs!.Select(l => l.GetProperty("id").GetInt32()));
         Assert.All(logs!, l => Assert.False(l.TryGetProperty("notes", out _)));
@@ -33,7 +33,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task Normal_use_still_works()
     {
-        var log = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/1001");
+        var log = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/logs/1001");
 
         Assert.Equal("wesley", log.GetProperty("ownerId").GetString());
     }
@@ -49,7 +49,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
         for (var i = 0; i < 11; i++)
         {
             var id = 5000 + i * 37;
-            var log = await client.GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/{id}");
+            var log = await client.GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/logs/{id}");
 
             Assert.Equal(id, log.GetProperty("id").GetInt32());
             Assert.DoesNotContain(log.GetProperty("ownerId").GetString(), new[] { "wesley", "riker" });
@@ -67,7 +67,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
         var client = Client(DemoAuth.Player);
         client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de");
 
-        var log = await client.GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/logs/1004");
+        var log = await client.GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/logs/1004");
 
         Assert.Equal("Pokerabend", log.GetProperty("title").GetString());
     }
@@ -77,8 +77,8 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     {
         var client = factory.CreateClient();
 
-        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/labs/{Slug}/logs")).StatusCode);
-        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/labs/{Slug}/logs/1003")).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/missions/{Slug}/logs")).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/missions/{Slug}/logs/1003")).StatusCode);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     {
         Get<LabRegistry>().Find(Slug)!.Reset();
 
-        var logs = await Client("riker").GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/logs");
+        var logs = await Client("riker").GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/logs");
         Assert.Equal([1003, 1004, 1005, 1006, 1007], logs!.Select(l => l.GetProperty("id").GetInt32()));
     }
 
@@ -95,7 +95,7 @@ public class BolaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     {
         var request = Get<LabRegistry>().Find(Slug)!.DefaultRequest;
 
-        Assert.Equal(("GET", $"/api/labs/{Slug}/logs"), (request.Method, request.Path));
+        Assert.Equal(("GET", $"/api/missions/{Slug}/logs"), (request.Method, request.Path));
         Assert.Equal($"Bearer {Get<DemoAuth>().GetToken(Slug, DemoAuth.Player)}", request.Headers["Authorization"]);
     }
 

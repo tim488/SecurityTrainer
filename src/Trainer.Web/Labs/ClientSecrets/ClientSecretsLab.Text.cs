@@ -79,9 +79,9 @@ public sealed partial class ClientSecretsLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/client-secrets/static/index.html` | The app's start page (a static file) |
-            | `GET /api/labs/client-secrets/static/appsettings.json` | The app's settings (a static file) |
-            | `GET /api/labs/client-secrets/starbase/requisitions` | Starbase 74: all orders for the Enterprise (needs `X-Api-Key`) |
+            | `GET /api/missions/client-secrets/static/index.html` | The app's start page (a static file) |
+            | `GET /api/missions/client-secrets/static/appsettings.json` | The app's settings (a static file) |
+            | `GET /api/missions/client-secrets/starbase/requisitions` | Starbase 74: all orders for the Enterprise (needs `X-Api-Key`) |
 
             The app sets up its connection to the Starbase like this:
 
@@ -97,9 +97,9 @@ public sealed partial class ClientSecretsLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/client-secrets/static/index.html` | Die Startseite der App (statische Datei) |
-            | `GET /api/labs/client-secrets/static/appsettings.json` | Die Einstellungen der App (statische Datei) |
-            | `GET /api/labs/client-secrets/starbase/requisitions` | Sternenbasis 74: alle Bestellungen der Enterprise (braucht `X-Api-Key`) |
+            | `GET /api/missions/client-secrets/static/index.html` | Die Startseite der App (statische Datei) |
+            | `GET /api/missions/client-secrets/static/appsettings.json` | Die Einstellungen der App (statische Datei) |
+            | `GET /api/missions/client-secrets/starbase/requisitions` | Sternenbasis 74: alle Bestellungen der Enterprise (braucht `X-Api-Key`) |
 
             So richtet die App ihre Verbindung zur Sternenbasis ein:
 

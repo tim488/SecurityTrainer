@@ -34,7 +34,7 @@
             <div class="mission-done-actions">
                 @if (NextMission is { } next && !ReferenceEquals(next, Lab))
                 {
-                    <a class="button primary" href="@($"labs/{next.Slug}")">@L("Next mission", "Nächste Mission"): @next.Story.Act.@next.Story.Order @L(next.Title)</a>
+                    <a class="button primary" href="@($"missions/{next.Slug}")">@L("Next mission", "Nächste Mission"): @next.Story.Act.@next.Story.Order @L(next.Title)</a>
                 }
                 <a class="button" href="/">@L("Back to the missions", "Zurück zu den Missionen")</a>
             </div>

@@ -40,14 +40,14 @@ dotnet test
 
 ## Terms
 
-- **Lab**: the technical exercise: a vulnerable API, a flag, fix options and tests.
-  The code, URLs and API paths say lab (`ILab`, `Labs/`, `/api/labs/`).
-- **Mission**: how the story presents a lab to the player. The UI says mission, and the
-  code does too where it is about the story (story order, locked missions).
+- **Mission**: what players see and use. The UI, the page addresses (`/missions/{slug}`)
+  and the API they attack (`/api/missions/{slug}/...`) all say mission.
+- **Lab**: the C# class behind a mission: its vulnerable endpoints, flag, fix options and
+  tests (`ILab`, `LabRegistry`, `Labs/<Name>/`). Only developers see this word.
 
 ## Layout
 
-- `src/Trainer.Web/`: the Blazor Web App and the vulnerable lab endpoints (`/api/labs/{slug}`)
+- `src/Trainer.Web/`: the Blazor Web App and the vulnerable endpoints (`/api/missions/{slug}`)
   - `Core/`: lab contract, registry, flags, demo auth, progress
   - `Components/`: home page, lab page, request console, quiz
   - `Core/Story/`: act titles, opening scene, act endings, finale

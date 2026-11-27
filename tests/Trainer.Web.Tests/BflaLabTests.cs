@@ -15,7 +15,7 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task Exploit_exports_the_roster_as_crew_and_returns_the_flag()
     {
-        var export = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/admin/crew/export");
+        var export = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/admin/crew/export");
 
         Assert.Equal(Get<FlagService>().GetFlag(Slug), export.GetProperty("verificationCode").GetString());
         Assert.Equal("wesley", export.GetProperty("exportedBy").GetString());
@@ -25,8 +25,8 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task Menu_hides_the_admin_entry_from_crew_only()
     {
-        var crew = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/menu");
-        var admin = await Client("riker").GetFromJsonAsync<JsonElement[]>($"/api/labs/{Slug}/menu");
+        var crew = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/menu");
+        var admin = await Client("riker").GetFromJsonAsync<JsonElement[]>($"/api/missions/{Slug}/menu");
 
         Assert.Equal(["/me"], crew!.Select(i => i.GetProperty("href").GetString()));
         Assert.Equal(["/me", "/admin/crew/export"], admin!.Select(i => i.GetProperty("href").GetString()));
@@ -35,8 +35,8 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Fact]
     public async Task Normal_use_still_works()
     {
-        var me = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/me");
-        var export = await Client("riker").GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/admin/crew/export");
+        var me = await Client(DemoAuth.Player).GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/me");
+        var export = await Client("riker").GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/admin/crew/export");
 
         Assert.Equal("crew", me.GetProperty("role").GetString());
         Assert.Equal("Wesley Crusher", me.GetProperty("name").GetString());
@@ -49,7 +49,7 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
         var client = Client(DemoAuth.Player);
         client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de");
 
-        var me = await client.GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/me");
+        var me = await client.GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/me");
 
         Assert.Equal("Fähnrich auf Probe", me.GetProperty("rank").GetString());
     }
@@ -60,17 +60,17 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
         var client = factory.CreateClient();
 
         foreach (var path in new[] { "me", "menu", "admin/crew/export" })
-            Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/labs/{Slug}/{path}")).StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync($"/api/missions/{Slug}/{path}")).StatusCode);
     }
 
     [Fact]
     public async Task Reset_restores_initial_data()
     {
         var lab = Get<LabRegistry>().Find(Slug)!;
-        await Client("riker").GetAsync($"/api/labs/{Slug}/admin/crew/export");
+        await Client("riker").GetAsync($"/api/missions/{Slug}/admin/crew/export");
         lab.Reset();
 
-        var export = await Client("riker").GetFromJsonAsync<JsonElement>($"/api/labs/{Slug}/admin/crew/export");
+        var export = await Client("riker").GetFromJsonAsync<JsonElement>($"/api/missions/{Slug}/admin/crew/export");
         Assert.Equal(1, export.GetProperty("exportNumber").GetInt32());
     }
 
@@ -79,7 +79,7 @@ public class BflaLabTests(WebApplicationFactory<Program> factory) : IClassFixtur
     {
         var request = Get<LabRegistry>().Find(Slug)!.DefaultRequest;
 
-        Assert.Equal(("GET", $"/api/labs/{Slug}/menu"), (request.Method, request.Path));
+        Assert.Equal(("GET", $"/api/missions/{Slug}/menu"), (request.Method, request.Path));
         Assert.Equal($"Bearer {Get<DemoAuth>().GetToken(Slug, DemoAuth.Player)}", request.Headers["Authorization"]);
     }
 

@@ -13,13 +13,13 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
         var html = await response.Content.ReadAsStringAsync();
         Assert.Contains("Missions", html);
         Assert.Contains("Uninvited Guest", html);
-        Assert.Contains("labs/bola", html);
+        Assert.Contains("missions/bola", html);
     }
 
     [Fact]
     public async Task Lab_page_renders()
     {
-        var response = await factory.CreateClient().GetAsync("/labs/bola");
+        var response = await factory.CreateClient().GetAsync("/missions/bola");
 
         response.EnsureSuccessStatusCode();
         var html = await response.Content.ReadAsStringAsync();
@@ -27,10 +27,21 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
         Assert.Contains("<table>", html); // Markdown tables in the scenario render as tables
     }
 
+    [Fact]
+    public async Task Old_lab_addresses_redirect_to_missions()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+        var response = await client.GetAsync("/labs/bola");
+
+        Assert.Equal(System.Net.HttpStatusCode.MovedPermanently, response.StatusCode);
+        Assert.Equal("/missions/bola", response.Headers.Location?.OriginalString);
+    }
+
     [Theory, MemberData(nameof(LabContractTests.Slugs), MemberType = typeof(LabContractTests))]
     public async Task Every_lab_page_renders(string slug)
     {
-        var response = await factory.CreateClient().GetAsync($"/labs/{slug}");
+        var response = await factory.CreateClient().GetAsync($"/missions/{slug}");
 
         response.EnsureSuccessStatusCode();
     }
@@ -38,7 +49,7 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
     [Fact]
     public async Task Jwt_page_shows_the_jwt_editor()
     {
-        var html = await factory.WithFreePlay().CreateClient().GetStringAsync("/labs/jwt");
+        var html = await factory.WithFreePlay().CreateClient().GetStringAsync("/missions/jwt");
 
         Assert.Contains("JWT editor", html);
     }
@@ -47,7 +58,7 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
     public async Task Story_mode_hides_locked_missions_until_progress_is_known()
     {
         // Progress lives in the browser, so the server renders a later mission as neither open nor locked.
-        var html = await factory.CreateClient().GetStringAsync("/labs/jwt");
+        var html = await factory.CreateClient().GetStringAsync("/missions/jwt");
 
         Assert.DoesNotContain("JWT editor", html);
         Assert.DoesNotContain("Mission locked", html);
@@ -60,11 +71,11 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
 
         Assert.Contains("Someone Else&#x27;s Personal Log", html);
         Assert.Contains("card locked", html);
-        Assert.DoesNotContain("href=\"labs/jwt\"", html);
+        Assert.DoesNotContain("href=\"missions/jwt\"", html);
 
         var freePlay = await factory.WithFreePlay().CreateClient().GetStringAsync("/");
         Assert.DoesNotContain("card locked", freePlay);
-        Assert.Contains("href=\"labs/jwt\"", freePlay);
+        Assert.Contains("href=\"missions/jwt\"", freePlay);
     }
 }
 

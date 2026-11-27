@@ -106,7 +106,7 @@ public sealed partial class SsrfLab
 
             | Endpoint | What it does |
             |---|---|
-            | `POST /api/labs/ssrf/link-preview` | Preview of a link: `{"{"} "url": "https://memory-alpha.example/" {"}"}` |
+            | `POST /api/missions/ssrf/link-preview` | Preview of a link: `{"{"} "url": "https://memory-alpha.example/" {"}"}` |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
             The core sits inside the ship's network, which is simulated here. The preview looks like this:
@@ -121,7 +121,7 @@ public sealed partial class SsrfLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `POST /api/labs/ssrf/link-preview` | Vorschau eines Links: `{"{"} "url": "https://memory-alpha.example/" {"}"}` |
+            | `POST /api/missions/ssrf/link-preview` | Vorschau eines Links: `{"{"} "url": "https://memory-alpha.example/" {"}"}` |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. Der Hauptcomputer
             steht im Netz des Schiffs, das hier simuliert wird. So sieht die Vorschau aus:

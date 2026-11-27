@@ -93,7 +93,7 @@ public sealed partial class SqlInjectionLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/sql-injection/cargo?search=...` | Cargo items whose name contains the search term |
+            | `GET /api/missions/sql-injection/cargo?search=...` | Cargo items whose name contains the search term |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
             The manifest runs on SQLite, and the search looks like this:
@@ -108,7 +108,7 @@ public sealed partial class SqlInjectionLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/sql-injection/cargo?search=...` | Frachtposten, deren Name den Suchbegriff enthält |
+            | `GET /api/missions/sql-injection/cargo?search=...` | Frachtposten, deren Name den Suchbegriff enthält |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. Das Manifest
             läuft auf SQLite, und die Suche sieht so aus:

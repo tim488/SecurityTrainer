@@ -108,8 +108,8 @@ public sealed partial class JwtLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/jwt/me` | The claims in your token, as the console sees them |
-            | `GET /api/labs/jwt/admin/bridge` | The bridge console (role `admin` only) |
+            | `GET /api/missions/jwt/me` | The claims in your token, as the console sees them |
+            | `GET /api/missions/jwt/admin/bridge` | The bridge console (role `admin` only) |
 
             Your JWT (role `crew`) is already in the request console. Below the console there is a
             **JWT editor** that decodes a token, lets you edit header and payload, and encodes it again.
@@ -126,8 +126,8 @@ public sealed partial class JwtLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/jwt/me` | Die Claims in deinem Token, so wie die Konsole sie sieht |
-            | `GET /api/labs/jwt/admin/bridge` | Die Brückenkonsole (nur Rolle `admin`) |
+            | `GET /api/missions/jwt/me` | Die Claims in deinem Token, so wie die Konsole sie sieht |
+            | `GET /api/missions/jwt/admin/bridge` | Die Brückenkonsole (nur Rolle `admin`) |
 
             Dein JWT (Rolle `crew`) steht schon in der Request-Konsole. Unter der Konsole findest du einen
             **JWT-Editor**. Er decodiert ein Token, lässt dich Header und Payload bearbeiten und codiert es

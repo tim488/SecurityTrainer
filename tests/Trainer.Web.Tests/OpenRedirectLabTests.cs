@@ -8,8 +8,8 @@ namespace Trainer.Web.Tests;
 public class OpenRedirectLabTests(WebApplicationFactory<Program> factory) : LabTestBase(factory, "open-redirect")
 {
     [Theory]
-    [InlineData("https://enterprise.local/api/labs/open-redirect/login/continue?returnUrl=https://evil.example/")]
-    [InlineData("/api/labs/open-redirect/login/continue?returnUrl=//evil.example/x")]
+    [InlineData("https://enterprise.local/api/missions/open-redirect/login/continue?returnUrl=https://evil.example/")]
+    [InlineData("/api/missions/open-redirect/login/continue?returnUrl=//evil.example/x")]
     public async Task Exploit_delivers_rikers_code_to_the_attacker_inbox(string link)
     {
         Lab.Reset();
@@ -54,7 +54,7 @@ public class OpenRedirectLabTests(WebApplicationFactory<Program> factory) : LabT
     public async Task Reset_clears_the_inbox()
     {
         var client = Client();
-        await client.PostAsJsonAsync($"{Api}/support/messages", new { link = "/api/labs/open-redirect/login/continue?returnUrl=https://evil.example/" });
+        await client.PostAsJsonAsync($"{Api}/support/messages", new { link = "/api/missions/open-redirect/login/continue?returnUrl=https://evil.example/" });
         Lab.Reset();
 
         Assert.Empty((await client.GetFromJsonAsync<JsonElement[]>($"{Api}/attacker/inbox"))!);

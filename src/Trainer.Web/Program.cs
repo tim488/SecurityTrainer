@@ -37,6 +37,9 @@ app.MapStaticAssets();
 
 app.Services.GetRequiredService<LabRegistry>().MapEndpoints(app);
 
+// Mission pages used to live under /labs/; keep old links and bookmarks working.
+app.MapGet("/labs/{slug}", (string slug) => Results.Redirect($"/missions/{Uri.EscapeDataString(slug)}", permanent: true));
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

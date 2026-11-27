@@ -92,9 +92,9 @@ public sealed partial class OpenRedirectLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/open-redirect/login/continue?returnUrl=...` | Redirects to `returnUrl` with your one-time `code` |
-            | `POST /api/labs/open-redirect/support/messages` | Sends Commander Riker a message as "Starfleet Support": `{"{"} "link": "..." {"}"}` |
-            | `GET /api/labs/open-redirect/attacker/inbox` | Every request that reached `https://evil.example` |
+            | `GET /api/missions/open-redirect/login/continue?returnUrl=...` | Redirects to `returnUrl` with your one-time `code` |
+            | `POST /api/missions/open-redirect/support/messages` | Sends Commander Riker a message as "Starfleet Support": `{"{"} "link": "..." {"}"}` |
+            | `GET /api/missions/open-redirect/attacker/inbox` | Every request that reached `https://evil.example` |
 
             Commander Riker is logged in and opens links in support messages, but only if they
             point at the ship (`https://enterprise.local/...`). The request console does not follow
@@ -111,9 +111,9 @@ public sealed partial class OpenRedirectLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/open-redirect/login/continue?returnUrl=...` | Leitet mit deinem Einmal-`code` zu `returnUrl` weiter |
-            | `POST /api/labs/open-redirect/support/messages` | Schickt Commander Riker eine Nachricht als „Sternenflotten-Support“: `{"{"} "link": "..." {"}"}` |
-            | `GET /api/labs/open-redirect/attacker/inbox` | Jeder Request, der bei `https://evil.example` angekommen ist |
+            | `GET /api/missions/open-redirect/login/continue?returnUrl=...` | Leitet mit deinem Einmal-`code` zu `returnUrl` weiter |
+            | `POST /api/missions/open-redirect/support/messages` | Schickt Commander Riker eine Nachricht als „Sternenflotten-Support“: `{"{"} "link": "..." {"}"}` |
+            | `GET /api/missions/open-redirect/attacker/inbox` | Jeder Request, der bei `https://evil.example` angekommen ist |
 
             Commander Riker ist angemeldet und öffnet Links in Support-Nachrichten, aber nur, wenn sie aufs
             Schiff zeigen (`https://enterprise.local/...`). Die Request-Konsole folgt keinen Weiterleitungen,

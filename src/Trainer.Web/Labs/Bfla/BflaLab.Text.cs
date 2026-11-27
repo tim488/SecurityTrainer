@@ -106,9 +106,9 @@ public sealed partial class BflaLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/bfla/me` | Your own profile |
-            | `GET /api/labs/bfla/menu` | The menu entries for your role |
-            | `GET /api/labs/bfla/admin/crew/export` | The full crew roster (senior officers) |
+            | `GET /api/missions/bfla/me` | Your own profile |
+            | `GET /api/missions/bfla/menu` | The menu entries for your role |
+            | `GET /api/missions/bfla/admin/crew/export` | The full crew roster (senior officers) |
 
             You are logged in as `wesley`, an ordinary crew member; your bearer token is already
             in the request console. Commander Riker is an admin.
@@ -128,9 +128,9 @@ public sealed partial class BflaLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/bfla/me` | Dein eigenes Profil |
-            | `GET /api/labs/bfla/menu` | Die Menüeinträge für deine Rolle |
-            | `GET /api/labs/bfla/admin/crew/export` | Die komplette Crewliste (Führungsoffiziere) |
+            | `GET /api/missions/bfla/me` | Dein eigenes Profil |
+            | `GET /api/missions/bfla/menu` | Die Menüeinträge für deine Rolle |
+            | `GET /api/missions/bfla/admin/crew/export` | Die komplette Crewliste (Führungsoffiziere) |
 
             Du bist als `wesley` angemeldet, ein ganz normales Crewmitglied. Dein Token steht schon in
             der Request-Konsole. Commander Riker ist Admin.
@@ -149,8 +149,8 @@ public sealed partial class BflaLab
             "`GET /menu` liefert Ihnen nur einen Eintrag. Laut Code wird der Admin-Eintrag für Ihre Rolle einfach weggelassen. Was in einer Liste fehlt, ist deshalb aber nicht vom Schiff verschwunden."),
         new("The `/admin` endpoints require authorization (`RequireAuthorization()` / `[Authorize]`) without naming a policy or a role. In that form it only requires that the caller is logged in. You are logged in.",
             "Die `/admin`-Endpunkte verlangen Autorisierung (`RequireAuthorization()` / `[Authorize]`), ohne eine Policy oder Rolle zu nennen. In dieser Form heißt das nur, dass der Aufrufer angemeldet sein muss. Sie sind angemeldet."),
-        new("I would expect `GET /api/labs/bfla/admin/crew/export` with your own token to be refused. I would also have expected the roster not to be broadcast at 0300 hours.",
-            "Ich würde erwarten, dass `GET /api/labs/bfla/admin/crew/export` mit Ihrem eigenen Token abgelehnt wird. Ich hätte allerdings auch erwartet, dass die Crewliste nicht um drei Uhr nachts gesendet wird."),
+        new("I would expect `GET /api/missions/bfla/admin/crew/export` with your own token to be refused. I would also have expected the roster not to be broadcast at 0300 hours.",
+            "Ich würde erwarten, dass `GET /api/missions/bfla/admin/crew/export` mit Ihrem eigenen Token abgelehnt wird. Ich hätte allerdings auch erwartet, dass die Crewliste nicht um drei Uhr nachts gesendet wird."),
     ];
 
     public IReadOnlyList<FixOption> FixOptions =>

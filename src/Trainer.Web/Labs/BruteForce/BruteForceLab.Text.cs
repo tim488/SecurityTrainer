@@ -113,8 +113,8 @@ public sealed partial class BruteForceLab
 
             | Endpoint | What it does |
             |---|---|
-            | `POST /api/labs/brute-force/password-reset/request` | Request a reset (body: `{"user": "riker"}`) |
-            | `POST /api/labs/brute-force/password-reset/confirm` | Confirm the reset (body: `{"user": "riker", "code": "1234"}`) |
+            | `POST /api/missions/brute-force/password-reset/request` | Request a reset (body: `{"user": "riker"}`) |
+            | `POST /api/missions/brute-force/password-reset/confirm` | Confirm the reset (body: `{"user": "riker", "code": "1234"}`) |
 
             The reset endpoints look like this:
 
@@ -132,8 +132,8 @@ public sealed partial class BruteForceLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `POST /api/labs/brute-force/password-reset/request` | Reset anfordern (Body: `{"user": "riker"}`) |
-            | `POST /api/labs/brute-force/password-reset/confirm` | Reset bestätigen (Body: `{"user": "riker", "code": "1234"}`) |
+            | `POST /api/missions/brute-force/password-reset/request` | Reset anfordern (Body: `{"user": "riker"}`) |
+            | `POST /api/missions/brute-force/password-reset/confirm` | Reset bestätigen (Body: `{"user": "riker", "code": "1234"}`) |
 
             Die Reset-Endpunkte sehen so aus:
 

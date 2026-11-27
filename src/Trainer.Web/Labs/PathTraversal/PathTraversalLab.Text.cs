@@ -92,8 +92,8 @@ public sealed partial class PathTraversalLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/path-traversal/archive` | Lists the public mission reports |
-            | `GET /api/labs/path-traversal/archive/download?file=1001.pdf` | Downloads one report |
+            | `GET /api/missions/path-traversal/archive` | Lists the public mission reports |
+            | `GET /api/missions/path-traversal/archive/download?file=1001.pdf` | Downloads one report |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
             The PDFs here are simulated and come back as readable text. The download looks like this:
@@ -109,8 +109,8 @@ public sealed partial class PathTraversalLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/path-traversal/archive` | Listet die öffentlichen Missionsberichte auf |
-            | `GET /api/labs/path-traversal/archive/download?file=1001.pdf` | Lädt einen Bericht herunter |
+            | `GET /api/missions/path-traversal/archive` | Listet die öffentlichen Missionsberichte auf |
+            | `GET /api/missions/path-traversal/archive/download?file=1001.pdf` | Lädt einen Bericht herunter |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. Die PDFs sind hier
             simuliert und kommen als lesbarer Text zurück. So sieht der Download aus:

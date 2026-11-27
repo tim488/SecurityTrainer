@@ -15,11 +15,11 @@ namespace Trainer.Web.Core;
 
 /// <summary>
 /// Holds all labs. Labs are registered explicitly here (no reflection), and each
-/// lab's endpoints are mapped under <c>/api/labs/{slug}</c>.
+/// lab's endpoints are mapped under <c>/api/missions/{slug}</c>.
 /// </summary>
 public sealed class LabRegistry : IDisposable
 {
-    public const string ApiPrefix = "/api/labs/";
+    public const string ApiPrefix = "/api/missions/";
 
     private readonly Dictionary<string, ILab> _bySlug;
 

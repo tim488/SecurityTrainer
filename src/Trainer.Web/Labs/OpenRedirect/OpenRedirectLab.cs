@@ -31,7 +31,7 @@ public sealed partial class OpenRedirectLab(FlagService flags, DemoAuth auth) : 
 
     public RequestTemplate DefaultRequest => new(
         "GET",
-        $"{LoginPath}?returnUrl=/api/labs/{Slug}/app/home",
+        $"{LoginPath}?returnUrl=/api/missions/{Slug}/app/home",
         new Dictionary<string, string> { ["Authorization"] = $"Bearer {auth.GetToken(Slug, DemoAuth.Player)}" },
         null);
 

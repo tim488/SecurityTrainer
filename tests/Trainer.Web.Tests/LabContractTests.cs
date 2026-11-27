@@ -94,6 +94,6 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
     [Theory, MemberData(nameof(Slugs))]
     public void Default_request_targets_the_labs_api(string slug)
     {
-        Assert.StartsWith($"/api/labs/{slug}/", Registry.Find(slug)!.DefaultRequest.Path);
+        Assert.StartsWith($"/api/missions/{slug}/", Registry.Find(slug)!.DefaultRequest.Path);
     }
 }

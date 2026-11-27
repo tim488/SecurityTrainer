@@ -10,7 +10,7 @@ public abstract class LabTestBase(WebApplicationFactory<Program> factory, string
 {
     protected WebApplicationFactory<Program> Factory => factory;
     protected string Slug => slug;
-    protected string Api => $"/api/labs/{slug}";
+    protected string Api => $"/api/missions/{slug}";
     protected string Flag => Get<FlagService>().GetFlag(slug);
     protected ILab Lab => Get<LabRegistry>().Find(slug)!;
 

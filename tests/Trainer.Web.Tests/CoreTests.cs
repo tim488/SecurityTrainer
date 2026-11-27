@@ -64,19 +64,19 @@ public class RequestSenderTests
     private static readonly Uri Base = new("http://localhost:5000/");
 
     [Theory]
-    [InlineData("/api/labs/bola/logs")]
-    [InlineData("/api/labs/bola/logs/1003?x=1")]
+    [InlineData("/api/missions/bola/logs")]
+    [InlineData("/api/missions/bola/logs/1003?x=1")]
     public void Allows_lab_api_paths(string path) =>
         Assert.True(RequestSender.TryBuildUri(Base, path, out _));
 
     [Theory]
     [InlineData("")]
     [InlineData("/")]
-    [InlineData("/labs/sample")]
-    [InlineData("/api/labs/../../etc")]
-    [InlineData("/api/labs/%2e%2e/admin")]
-    [InlineData("http://evil.example/api/labs/x")]
-    [InlineData("//evil.example/api/labs/x")]
+    [InlineData("/missions/sample")]
+    [InlineData("/api/missions/../../etc")]
+    [InlineData("/api/missions/%2e%2e/admin")]
+    [InlineData("http://evil.example/api/missions/x")]
+    [InlineData("//evil.example/api/missions/x")]
     public void Rejects_other_paths(string path) =>
         Assert.False(RequestSender.TryBuildUri(Base, path, out _));
 }

@@ -14,7 +14,7 @@ public sealed record ConsoleExchange(DateTimeOffset At, ConsoleRequest Request, 
 
 /// <summary>
 /// Backend of the request console: sends requests server-side to the
-/// app's own address, never follows redirects, only allows <c>/api/labs/</c> paths,
+/// app's own address, never follows redirects, only allows <c>/api/missions/</c> paths,
 /// and keeps the last 10 exchanges per lab in memory. Unless the player typed one,
 /// an <c>Accept-Language</c> header for the current UI language is added on the
 /// wire only, so lab data matches the EN | DE switch without cluttering the console.
@@ -96,7 +96,7 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
 
     /// <summary>
     /// Resolves <paramref name="path"/> against the app's own address and accepts it
-    /// only if it stays on that host and under <c>/api/labs/</c> after normalization.
+    /// only if it stays on that host and under <c>/api/missions/</c> after normalization.
     /// </summary>
     public static bool TryBuildUri(Uri baseAddress, string? path, out Uri uri)
     {

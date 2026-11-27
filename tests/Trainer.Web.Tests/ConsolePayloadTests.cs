@@ -9,9 +9,9 @@ namespace Trainer.Web.Tests;
 public class ConsolePayloadTests(WebApplicationFactory<Program> factory) : LabTestBase(factory, "sql-injection")
 {
     [Theory]
-    [InlineData("/api/labs/sql-injection/cargo?search=' OR 1=1 --", "search", "' OR 1=1 --")]
-    [InlineData("/api/labs/path-traversal/archive/download?file=../restricted/crew-evaluations.pdf", "file", "../restricted/crew-evaluations.pdf")]
-    [InlineData("/api/labs/path-traversal/archive/download?file=....//restricted/x.pdf", "file", "....//restricted/x.pdf")]
+    [InlineData("/api/missions/sql-injection/cargo?search=' OR 1=1 --", "search", "' OR 1=1 --")]
+    [InlineData("/api/missions/path-traversal/archive/download?file=../restricted/crew-evaluations.pdf", "file", "../restricted/crew-evaluations.pdf")]
+    [InlineData("/api/missions/path-traversal/archive/download?file=....//restricted/x.pdf", "file", "....//restricted/x.pdf")]
     public void Console_keeps_query_payloads_intact(string path, string key, string expected)
     {
         Assert.True(RequestSender.TryBuildUri(new Uri("http://localhost:5000/"), path, out var uri));
@@ -23,7 +23,7 @@ public class ConsolePayloadTests(WebApplicationFactory<Program> factory) : LabTe
     [Fact]
     public async Task Sql_payload_with_spaces_works_through_the_built_uri()
     {
-        Assert.True(RequestSender.TryBuildUri(new Uri("http://localhost/"), "/api/labs/sql-injection/cargo?search=' OR 1=1 --", out var uri));
+        Assert.True(RequestSender.TryBuildUri(new Uri("http://localhost/"), "/api/missions/sql-injection/cargo?search=' OR 1=1 --", out var uri));
 
         var items = await Client().GetFromJsonAsync<JsonElement[]>(uri.PathAndQuery);
 

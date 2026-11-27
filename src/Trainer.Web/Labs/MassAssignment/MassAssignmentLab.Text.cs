@@ -113,10 +113,10 @@ public sealed partial class MassAssignmentLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/mass-assignment/profile` | Your profile |
-            | `PUT /api/labs/mass-assignment/profile` | Saves your profile (JSON body) |
-            | `GET /api/labs/mass-assignment/crew` | Who is aboard, and who is an admin |
-            | `GET /api/labs/mass-assignment/admin/secret` | The Starfleet Command channel (admins only) |
+            | `GET /api/missions/mass-assignment/profile` | Your profile |
+            | `PUT /api/missions/mass-assignment/profile` | Saves your profile (JSON body) |
+            | `GET /api/missions/mass-assignment/crew` | Who is aboard, and who is an admin |
+            | `GET /api/missions/mass-assignment/admin/secret` | The Starfleet Command channel (admins only) |
 
             You are logged in as `wesley`; your bearer token is already in the request console.
             Saving the profile looks like this:
@@ -133,10 +133,10 @@ public sealed partial class MassAssignmentLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/mass-assignment/profile` | Dein Profil |
-            | `PUT /api/labs/mass-assignment/profile` | Speichert dein Profil (JSON-Body) |
-            | `GET /api/labs/mass-assignment/crew` | Wer an Bord ist und wer Admin ist |
-            | `GET /api/labs/mass-assignment/admin/secret` | Der Kanal des Sternenflottenkommandos (nur Admins) |
+            | `GET /api/missions/mass-assignment/profile` | Dein Profil |
+            | `PUT /api/missions/mass-assignment/profile` | Speichert dein Profil (JSON-Body) |
+            | `GET /api/missions/mass-assignment/crew` | Wer an Bord ist und wer Admin ist |
+            | `GET /api/missions/mass-assignment/admin/secret` | Der Kanal des Sternenflottenkommandos (nur Admins) |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. So wird das
             Profil gespeichert:

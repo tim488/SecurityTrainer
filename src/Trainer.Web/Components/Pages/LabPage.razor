@@ -1,4 +1,4 @@
-@page "/labs/{Slug}"
+@page "/missions/{Slug}"
 @inherits ProgressAwareComponent
 @inject RequestSender Sender
 
@@ -24,7 +24,7 @@
     <h1>@L("Mission locked", "Mission gesperrt")</h1>
     <p>@L("Story mode is on, so missions open one after another. Complete this mission first:",
           "Im Story-Modus werden die Missionen nacheinander freigeschaltet. Schließ zuerst diese Mission ab:")
-       <a href="@($"labs/{next.Slug}")">@number @L(next.Title)</a></p>
+       <a href="@($"missions/{next.Slug}")">@number @L(next.Title)</a></p>
     <p><button @onclick="() => Progress.SetStoryModeAsync(false)">@L("Switch to free play", "Zum freien Spiel wechseln")</button></p>
     return;
 }

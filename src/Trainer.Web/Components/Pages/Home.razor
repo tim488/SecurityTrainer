@@ -51,7 +51,7 @@
                 var next = ReferenceEquals(lab, NextMission);
                 var cardClass = $"card status-{status.ToString().ToLowerInvariant()}" + (next ? " next" : "");
                 @* Number block on the left (its colour is the status), title and plain labels on the right. *@
-                <a class="@cardClass" href="@($"labs/{lab.Slug}")">
+                <a class="@cardClass" href="@($"missions/{lab.Slug}")">
                     <span class="card-order">
                         @if (status == LabStatus.Solved)
                         {

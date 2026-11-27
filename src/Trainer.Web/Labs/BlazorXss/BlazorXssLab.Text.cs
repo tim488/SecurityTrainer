@@ -76,10 +76,10 @@ public sealed partial class BlazorXssLab
 
             | Endpoint | What it does |
             |---|---|
-            | `GET /api/labs/blazor-xss/comments` | All comments |
-            | `POST /api/labs/blazor-xss/comments` | Posts a comment: `{"{"} "text": "Jazz night at <b>20:00</b>" {"}"}` |
-            | `GET /api/labs/blazor-xss/collect?...` | Records any request with its query string (your listening post) |
-            | `GET /api/labs/blazor-xss/collected` | Everything the listening post has recorded |
+            | `GET /api/missions/blazor-xss/comments` | All comments |
+            | `POST /api/missions/blazor-xss/comments` | Posts a comment: `{"{"} "text": "Jazz night at <b>20:00</b>" {"}"}` |
+            | `GET /api/missions/blazor-xss/collect?...` | Records any request with its query string (your listening post) |
+            | `GET /api/missions/blazor-xss/collected` | Everything the listening post has recorded |
 
             You are logged in as `wesley`; your bearer token is already in the request console. Lore
             reads the board as moderator. The **moderator view** above the console shows his screen,
@@ -95,10 +95,10 @@ public sealed partial class BlazorXssLab
 
             | Endpunkt | Funktion |
             |---|---|
-            | `GET /api/labs/blazor-xss/comments` | Alle Kommentare |
-            | `POST /api/labs/blazor-xss/comments` | Postet einen Kommentar: `{"{"} "text": "Jazzabend um <b>20 Uhr</b>" {"}"}` |
-            | `GET /api/labs/blazor-xss/collect?...` | Zeichnet jeden Request samt Query-String auf (dein Horchposten) |
-            | `GET /api/labs/blazor-xss/collected` | Alles, was der Horchposten aufgezeichnet hat |
+            | `GET /api/missions/blazor-xss/comments` | Alle Kommentare |
+            | `POST /api/missions/blazor-xss/comments` | Postet einen Kommentar: `{"{"} "text": "Jazzabend um <b>20 Uhr</b>" {"}"}` |
+            | `GET /api/missions/blazor-xss/collect?...` | Zeichnet jeden Request samt Query-String auf (dein Horchposten) |
+            | `GET /api/missions/blazor-xss/collected` | Alles, was der Horchposten aufgezeichnet hat |
 
             Du bist als `wesley` angemeldet, dein Token steht schon in der Request-Konsole. Lore liest das Brett
             als Moderator. Die **Moderatoransicht** über der Konsole zeigt seinen Bildschirm, simuliert in deinem
@@ -113,8 +113,8 @@ public sealed partial class BlazorXssLab
             "Kommentare werden mit `MarkupString` dargestellt. HTML in einem Kommentar wird also auf dem Bildschirm des Moderators zu echtem HTML. Ein Kommentar mit `<b>` erscheint fett. Ich habe es getestet. Er ist sehr fett."),
         new("`<script>` tags inserted this way do not run. Event handler attributes do, for example `onerror` on an image whose source cannot be loaded.",
             "`<script>`-Tags, die auf diesem Weg eingefügt werden, laufen nicht. Event-Handler-Attribute dagegen schon, zum Beispiel `onerror` an einem Bild, dessen Quelle sich nicht laden lässt."),
-        new("A handler that loads `/api/labs/blazor-xss/collect?t=` with `modToken` appended would leave the token in `GET /collected`. My brother has always been curious. Today, that will be his undoing.",
-            "Ein Handler, der `/api/labs/blazor-xss/collect?t=` mit angehängtem `modToken` lädt, würde das Token in `GET /collected` hinterlassen. Mein Bruder war schon immer neugierig. Heute wird ihm das zum Verhängnis."),
+        new("A handler that loads `/api/missions/blazor-xss/collect?t=` with `modToken` appended would leave the token in `GET /collected`. My brother has always been curious. Today, that will be his undoing.",
+            "Ein Handler, der `/api/missions/blazor-xss/collect?t=` mit angehängtem `modToken` lädt, würde das Token in `GET /collected` hinterlassen. Mein Bruder war schon immer neugierig. Heute wird ihm das zum Verhängnis."),
     ];
 
     public IReadOnlyList<FixOption> FixOptions =>
