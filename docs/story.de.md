@@ -289,5 +289,32 @@ von hier.
   > sagt mir, Sie hätten auch Ihre eigene Beurteilung gelesen. Ich hoffe, sie steigt Ihnen nicht
   > zu Kopf. Mr. Worf wollte seine ebenfalls sehen. Ich habe nein gesagt. Direkt.
 
+### 3.2 `shared-state`: Gekreuzte Strahlen
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47330.5. Die Replikatoren haben Humor entwickelt. Counselor
+  > Troi hat einen Schokoladen-Eisbecher bestellt und Mr. Worfs Gagh bekommen. Mr. Worf fand das
+  > nicht witzig. Schlimmer noch: Laut Commander Riker hat jemand mit seinem Kommandocode bestellt,
+  > und er war es nicht. Seit dem Update läuft das Replikator-Panel auf einem neuen System. Ich
+  > habe Mr. Crusher gebeten herauszufinden, was es teilt, und mit wem.
+- Hinweise (Data):
+  1. `GET /replicator/order` sollte Ihre eigene Bestellung zeigen. Rufen Sie es bitte innerhalb der nächsten Minute ein paar Mal auf. Ich habe beobachtet, dass im Feld `orderedBy` nicht immer Ihr Name steht.
+  2. `ReplicatorOrderState` ist als Singleton registriert. In Blazor Server heißt das: eine einzige Instanz für alle Benutzer der Anwendung, solange der Server läuft.
+  3. Commander Riker gibt alle paar Sekunden eine Sonderbestellung auf und bestätigt sie mit seinem Kommandocode. Wenn Sie kurz danach auf Ihr Panel schauen, sehen Sie, was er sieht.
+- Visitenkarte (Lore):
+  > Commander Rikers Kommandocode, Wesley. Und sein Abendessen: Eier, extra scharf. Der Mann kennt
+  > keine Scham. Codes sind ja ganz nett, aber ich hab' mir angesehen, wie die Brückenkonsole die
+  > Freigabe prüft. Sie liest deinen Ausweis und glaubt jedes Wort. Wer ihn unterschrieben hat,
+  > fragt sie nie. Ich glaub', ich schreib' mir einen neuen. — L.
+- Barclay:
+  - `scoped-state`: „V-vielleicht kriegt jedes Crewmitglied eine eigene Kopie? Scoped heißt das, glaube ich. Ich verwechsle die Lebensdauern immer. T-tut mir leid.“
+  - `add-lock`: „Das ist ein Threading-Problem, Sir. Ganz klar. I-ich setze ein `lock` drum. Locks lösen Threading-Probleme. M-meistens.“
+  - `clear-after-order`: „W-wir könnten den Code löschen, sobald die Bestellung geliefert ist. Dann gibt's nichts mehr zu sehen. D-das Zeitfenster ist winzig.“
+  - `immutable-record`: „Und wenn man die Bestellung gar nicht ändern kann? Ein Record, unveränderlich. D-dann kann keiner dran rumspielen. So macht man das heute.“
+- Nachbesprechung:
+  > Gute Arbeit, Mr. Crusher. Jedes Crewmitglied hat jetzt sein eigenes Replikator-Panel, und
+  > keiner sieht mehr die Bestellung eines anderen. Commander Riker hat einen neuen Kommandocode,
+  > Counselor Troi hat ihren Eisbecher. Mr. Worf möchte wissen, wer sein Gagh bekommen hat. Ich
+  > habe beschlossen, es nicht herauszufinden.
+
 ### Finale
 - TODO

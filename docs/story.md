@@ -350,14 +350,33 @@ The German version is `docs/story.de.md`; keep both in step.
   > has asked to see his as well. I said no. Directly.
 
 ### 3.2 `shared-state`: Crossed Beams
-- Beat: crew members receive each other's replicator orders, and with Riker's
-  order comes his command code.
+- Beat: crew members receive each other's replicator orders, and with Riker's order comes his command code.
 - Calling card points to: a clearance check that doesn't check signatures (→ 3.3).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `add-lock` TODO · `clear-after-order` TODO · `immutable-record` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47330.5. The replicators have developed a sense of humour.
+  > Counselor Troi ordered a chocolate sundae and received Mr. Worf's gagh. Mr. Worf did not
+  > find it funny. Worse, Commander Riker reports that someone placed an order with his
+  > command code, and it was not him. Since the refit, the replicator panel runs on a new
+  > system. I have asked Mr. Crusher to find out what it is sharing, and with whom.
+- Hints (Data):
+  1. `GET /replicator/order` should show your own order. Please call it a few times over the next minute. I have observed that the field `orderedBy` does not always contain your name.
+  2. `ReplicatorOrderState` is registered as a singleton. In Blazor Server, that means a single instance for every user of the application, for as long as the server runs.
+  3. Commander Riker places an off-ration order every few seconds and authorises it with his command code. If you look at your panel just after he does, you will see what he sees.
+- Calling card (Lore):
+  > Commander Riker's command code, Wesley. And his dinner: eggs, extra spicy. The man has
+  > no shame. Codes are nice, but I've seen how the bridge console checks clearance. It reads
+  > your badge and believes every word. It never asks who signed it. I think I'll write
+  > myself a new one. — L.
+- Barclay lines:
+  - `scoped-state`: "M-maybe each crew member gets their own copy? Scoped, I think it's called. I always mix up the lifetimes. S-sorry."
+  - `add-lock`: "It's a threading problem, sir. Obviously. I'll put a `lock` around it. Locks fix threading problems. U-usually."
+  - `clear-after-order`: "We c-could wipe the code as soon as the order is delivered. Then there's nothing left to see. Th-the window is tiny."
+  - `immutable-record`: "What if the order can't be changed at all? A record. Immutable. Nobody can mess with it. Th-that's the modern way."
+- Debrief:
+  > Good work, Mr. Crusher. Every crew member now has their own replicator panel, and
+  > nobody sees anyone else's order. Commander Riker has a new command code, and Counselor
+  > Troi has her sundae. Mr. Worf has asked me to find out who received his gagh. I have
+  > decided not to.
 
 ### 3.3 `jwt`: Forged Clearance
 - Beat: Lore logs into the bridge console as an admiral who doesn't exist.

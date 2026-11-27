@@ -358,6 +358,9 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Vulnerable:* `ReplicatorOrderState` is registered as a **Singleton** in Blazor
   Server. A Riker bot places an order every few seconds, authorising it with his
   command code, which is stored in the state.
+- *Simulation:* the panel's actions are endpoints: `GET /replicator/order` shows "your
+  order" from the singleton, `POST /replicator/order { "item": ... }` places one. The
+  Riker bot is a timer (every 4 s) inside the lab.
 - *Flag:* Riker's command code. *Exploit:* `GET /replicator/order` as Wesley.
 - ✅ Register as Scoped (per circuit) and keep data keyed to the user
 - ❌ `lock` around access (thread safety ≠ isolation) · ❌ Clear the state after

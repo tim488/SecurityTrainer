@@ -4,6 +4,7 @@ using Trainer.Web.Labs.ClientSecrets;
 using Trainer.Web.Labs.MassAssignment;
 using Trainer.Web.Labs.OpenRedirect;
 using Trainer.Web.Labs.PathTraversal;
+using Trainer.Web.Labs.SharedState;
 using Trainer.Web.Labs.SqlInjection;
 
 namespace Trainer.Web.Core;
@@ -12,7 +13,7 @@ namespace Trainer.Web.Core;
 /// Holds all labs. Labs are registered explicitly here (no reflection), and each
 /// lab's endpoints are mapped under <c>/api/labs/{slug}</c>.
 /// </summary>
-public sealed class LabRegistry
+public sealed class LabRegistry : IDisposable
 {
     public const string ApiPrefix = "/api/labs/";
 
@@ -30,6 +31,7 @@ public sealed class LabRegistry
             new ClientSecretsLab(flags, auth),
             new OpenRedirectLab(flags, auth),
             new PathTraversalLab(flags, auth),
+            new SharedStateLab(flags, auth),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();
@@ -47,5 +49,11 @@ public sealed class LabRegistry
             var group = app.MapGroup(ApiPrefix + lab.Slug).WithTags(lab.Slug);
             lab.MapEndpoints(group);
         }
+    }
+
+    /// <summary>Stops lab background work (victim bots) and releases lab resources.</summary>
+    public void Dispose()
+    {
+        foreach (var lab in Labs.OfType<IDisposable>()) lab.Dispose();
     }
 }
