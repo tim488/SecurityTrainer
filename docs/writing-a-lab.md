@@ -1,11 +1,13 @@
 # Writing a lab
 
-A lab (shown to players as a "mission") is one folder with one class. This guide
-walks through adding one.
+A lab (shown to players as a "mission") is one folder with one partial class in two
+files: `<Name>Lab.cs` for endpoints and data, `<Name>Lab.Text.cs` for everything the
+player reads. This guide walks through adding one.
 
 ## 1. Story first
 
-Write the text in `docs/story.md` (English) and `docs/story.de.md` (German) first.
+Draft the text in `docs/story.md` (English) and `docs/story.de.md` (German) first.
+Once it is in the lab, the lab is the final version; polish it there.
 Follow "How to read this file" at the top of `story.md` and the writing rules at the
 top of `story.de.md`. You need:
 
@@ -17,8 +19,16 @@ top of `story.de.md`. You need:
 
 ## 2. The lab class
 
-Create `src/Trainer.Web/Labs/<Name>/<Name>Lab.cs` and implement `ILab`
-(`Core/ILab.cs`). `Labs/Bfla/BflaLab.cs` is a small, complete example to copy from.
+Create `src/Trainer.Web/Labs/<Name>/<Name>Lab.cs` and `<Name>Lab.Text.cs` as one
+`public sealed partial class` that implements `ILab` (`Core/ILab.cs`). `Labs/Bfla/` is a
+small, complete example to copy from.
+
+- `<Name>Lab.Text.cs`: `Title`, `Story`, `ScenarioMarkdown` (with the `VulnerableCode`
+  snippet it shows), `Hints`, `FixOptions` and `ExplanationMarkdown`.
+- `<Name>Lab.cs`: the primary constructor (`FlagService`, `DemoAuth`), `Slug`, `Category`,
+  `Difficulty`, `DefaultRequest`, `Tools`, the endpoints, the data and `Reset()`.
+  Constructor parameters are only visible in this file, so text that needs a token or
+  the flag goes here.
 
 - `Slug`: kebab-case, also the API prefix (`/api/labs/{slug}`) and the page URL.
 - `Story`: `Act` and `Order` must be unique across labs; they decide the place on the home page.

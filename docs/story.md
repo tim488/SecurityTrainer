@@ -1,7 +1,10 @@
 # Security Trainer — Story
 
-The single source for all story text. Labs copy their text from here.
-The German version is `docs/story.de.md`; keep both in step.
+The story outline and the first draft of every text. The text the app shows lives in
+the labs (`Labs/<Name>/<Name>Lab.Text.cs`) and `Core/Story/Acts.cs`, and it has been
+edited there since, so treat the code as the final version. This file is for the
+big picture: premise, characters, beats and how the missions connect.
+The German version is `docs/story.de.md`.
 
 ## How to read this file
 

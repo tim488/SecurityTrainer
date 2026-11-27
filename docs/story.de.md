@@ -1,8 +1,9 @@
 # Security Trainer — Story (Deutsch)
 
 Die deutsche Fassung von `docs/story.md`. Beats, Struktur und Grenzen (Wortzahlen,
-keine Spoiler) stehen dort; hier steht nur der deutsche Text. Labs übernehmen ihn
-von hier.
+keine Spoiler) stehen dort; hier steht nur der deutsche Text. Wie beim englischen
+Original ist das der erste Entwurf: Die endgültigen Texte stehen in den Labs
+(`Labs/<Name>/<Name>Lab.Text.cs`) und in `Core/Story/Acts.cs`.
 
 ## Schreibregeln
 

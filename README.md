@@ -46,9 +46,10 @@ dotnet test
   - `Core/Story/`: act titles, opening scene, act endings, finale
   - `Core/Simulation/`: virtual filesystem and fake network, so labs never touch the host
   - `Components/Tools/`: extra lab tools (JWT editor, moderator view)
-  - `Labs/<Name>/`: one folder per lab
+  - `Labs/<Name>/`: one folder per lab; `<Name>Lab.cs` has the endpoints and data,
+    `<Name>Lab.Text.cs` the story, scenario, hints, fix options and explanation
 - `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
-- `docs/story.md`: the story outline; `docs/story.de.md`: the German version
+- `docs/story.md`: the story outline and first draft of the text; `docs/story.de.md`: the German version
 - `docs/writing-a-lab.md`: how to add a lab
 - `docs/open-decisions.md`: choices made during development that are still open
 
