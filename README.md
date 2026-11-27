@@ -16,6 +16,18 @@ git clone <repo> && cd securityTrainer
 dotnet run --project src/Trainer.Web   # http://localhost:5000
 ```
 
+### Without the .NET SDK (Docker or Podman)
+
+```bash
+docker build -t security-trainer .
+docker run --rm -p 127.0.0.1:5000:5000 security-trainer   # http://localhost:5000
+```
+
+Keep the `127.0.0.1:` prefix. Without it, Docker opens the port to your whole network, and
+this app is deliberately vulnerable. Options work the same way as with `dotnet run`, e.g.
+`docker run --rm -p 127.0.0.1:5000:5000 security-trainer --Trainer:StoryMode=false`.
+`podman` takes the same commands.
+
 Missions open one after another (story mode). Players can switch to free play on the
 mission overview. For a workshop where everyone should start in free play, run with
 `--Trainer:StoryMode=false`.
