@@ -31,6 +31,9 @@ if (!app.Environment.IsDevelopment())
 app.UseWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api"),
     branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
 
+// Routing must run after the status code pages: the re-executed /not-found request needs
+// its endpoint chosen again, or it comes back as an empty 404.
+app.UseRouting();
 app.UseAntiforgery();
 
 app.MapStaticAssets();

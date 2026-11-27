@@ -17,6 +17,24 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
     }
 
     [Fact]
+    public async Task Unknown_pages_show_the_not_found_page()
+    {
+        var response = await factory.CreateClient().GetAsync("/does-not-exist");
+
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Contains("Not found", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task Unknown_mission_apis_return_a_plain_404()
+    {
+        var response = await factory.CreateClient().GetAsync("/api/missions/bola/does-not-exist");
+
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.DoesNotContain("<html", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
     public async Task Mission_page_renders()
     {
         var response = await factory.CreateClient().GetAsync("/missions/bola");
