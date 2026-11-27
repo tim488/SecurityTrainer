@@ -70,6 +70,7 @@ select, input, textarea {
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 0.4rem 0.7rem;
+    max-width: 100%;    /* long option texts must not push a select past the window */
 }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--sky); outline-offset: 0; }
 textarea { width: 100%; display: block; margin-top: 0.25rem; }
@@ -109,6 +110,7 @@ button.link-button {
     --arm: 22px;        /* thickness of the top bar */
     --inner: 36px;      /* width of the elbow's inner cut-out */
     --gap: 6px;
+    --brand: 1.9rem;    /* title in the top bar; taller than the bar itself */
     display: grid;
     grid-template-columns: calc(var(--side) + var(--inner)) 1fr;
     grid-template-rows: auto 1fr;
@@ -133,7 +135,7 @@ button.link-button {
 .bar-lilac { width: 12%; background: var(--lilac); }
 
 /* The title sits in a gap of the top bar, as on a ship's console. */
-.brand { flex: none; padding: 0 0.4rem; font-family: var(--display); font-weight: 600; font-size: 1.9rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.06em; color: var(--orange); text-decoration: none; white-space: nowrap; }
+.brand { flex: none; padding: 0 0.4rem; font-family: var(--display); font-weight: 600; font-size: var(--brand); line-height: 1; text-transform: uppercase; letter-spacing: 0.06em; color: var(--orange); text-decoration: none; white-space: nowrap; }
 .brand:hover { color: var(--peach); }
 .lang-switch { display: flex; gap: var(--gap); height: 100%; flex: none; }
 .lang-switch button { height: var(--arm); padding: 0 0.7rem; font-size: 0.95rem; line-height: 1; border-radius: 0; background: var(--sky); color: var(--on-colour); }
@@ -159,22 +161,21 @@ a.side-block:hover { filter: brightness(1.12); }
 .side-fill { flex: 1; border-bottom-left-radius: 40px; }
 
 /* Starts right under the top bar, beside the elbow, and scrolls on its own.
-   The margin keeps the scroll box below the bar, so nothing slides under it. */
+   The margin keeps the scroll box below the bar and the title, so nothing shows through behind them. */
 .content {
     grid-column: 2; grid-row: 1 / 3; min-width: 0; min-height: 0;
-    margin-top: var(--arm); padding: 0.5rem 0.75rem 2rem 1.5rem;
+    margin-top: max(var(--arm), var(--brand)); padding: 0 0.75rem 2rem 1.5rem;
     overflow-y: auto; overscroll-behavior: contain;
     scrollbar-width: thin; scrollbar-color: var(--lilac) transparent;
 }
 
 @media (max-width: 720px) {
-    .frame { --side: 28px; --inner: 18px; --arm: 16px; padding: 8px 8px 0; }
+    .frame { --side: 28px; --inner: 18px; --arm: 22px; --brand: 1.3rem; padding: 8px 8px 0; }
     .frame-elbow { border-top-left-radius: 32px; min-height: 48px; }
     .frame-elbow::after { border-top-left-radius: 16px; }
     .side-label, .side-no { display: none; }
     .side-block { min-height: 40px; padding: 0; }
     .side-tall { min-height: 80px; }
-    .brand { font-size: 1.3rem; }
     .bar-lilac { display: none; }
     .content { padding-left: 0.75rem; padding-right: 0.25rem; }
     h1 { font-size: 1.9rem; }
@@ -185,7 +186,7 @@ a.side-block:hover { filter: brightness(1.12); }
 .error { color: var(--bad); }
 
 /* Case board */
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 1rem; }
 .card { display: flex; gap: 6px; min-height: 96px; color: var(--text); text-decoration: none; }
 .card-order {
     --status: var(--lilac);
@@ -279,6 +280,12 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
 /* Request console */
 .console-line { display: flex; gap: 0.5rem; }
 .console-path { flex: 1; min-width: 0; }
+/* Narrow windows: method and Send on one line, the path gets a full line below. */
+@media (max-width: 520px) {
+    .console-line { flex-wrap: wrap; }
+    .console-line .primary { margin-left: auto; }
+    .console-path { order: 1; flex-basis: 100%; }
+}
 .exchange { margin-top: 0.75rem; background: var(--panel-2); border-radius: var(--radius); padding: 0.5rem 0.75rem; }
 .exchange pre { background: var(--bg); }
 .status-2xx { color: var(--ok); }
@@ -308,7 +315,7 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
 
 /* Lab tools (JWT editor, moderator view) */
 .tool { margin-top: 1.5rem; }
-.jwt-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 1rem; }
+.jwt-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 0 1rem; }
 .tool-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
 .jwt-output { word-break: break-all; }
 .moderator-frame { width: 100%; height: 320px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }

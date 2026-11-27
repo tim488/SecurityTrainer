@@ -6,10 +6,10 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY src/Trainer.Web/Trainer.Web.csproj src/Trainer.Web/
-RUN dotnet restore src/Trainer.Web/Trainer.Web.csproj
+# Restore with the full source present: restoring from the .csproj alone leaves out
+# Blazor's framework assets (_framework/blazor.web.js), and the UI never goes interactive.
 COPY src/Trainer.Web/ src/Trainer.Web/
-RUN dotnet publish src/Trainer.Web/Trainer.Web.csproj -c Release -o /app --no-restore
+RUN dotnet publish src/Trainer.Web/Trainer.Web.csproj -c Release -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
