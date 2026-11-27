@@ -69,7 +69,7 @@ public class BlazorXssLabTests(WebApplicationFactory<Program> factory) : LabTest
     [Fact]
     public async Task Lab_page_shows_the_sandboxed_moderator_view()
     {
-        var html = await Factory.CreateClient().GetStringAsync("/labs/blazor-xss");
+        var html = await Factory.WithFreePlay().CreateClient().GetStringAsync("/labs/blazor-xss");
 
         Assert.Contains("sandbox=\"allow-scripts\"", html);
     }

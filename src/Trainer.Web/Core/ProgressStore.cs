@@ -18,6 +18,9 @@ public sealed class GlobalSettings
 {
     public Language Language { get; set; } = Language.En;
     public CodeStyle CodeStyle { get; set; } = CodeStyle.MinimalApi;
+
+    /// <summary>Missions open one at a time, in story order. Off means free play.</summary>
+    public bool StoryMode { get; set; } = true;
 }
 
 public enum LabStatus { New, Exploited, Solved }
@@ -28,7 +31,7 @@ public enum LabStatus { New, Exploited, Solved }
 /// private mode, blocked storage) the app keeps working and progress is simply
 /// lost on reload.
 /// </summary>
-public sealed class ProgressStore(IJSRuntime js)
+public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
 {
     private const string LabKeyPrefix = "securityTrainer.lab.";
     private const string SettingsKey = "securityTrainer.settings";
@@ -37,7 +40,11 @@ public sealed class ProgressStore(IJSRuntime js)
     private readonly Dictionary<string, LabProgress> _labs = new(StringComparer.OrdinalIgnoreCase);
     private bool _loaded;
 
-    public GlobalSettings Settings { get; private set; } = new();
+    /// <summary>Story mode is on unless <c>Trainer:StoryMode</c> is false (e.g. for a workshop); the player's own choice wins.</summary>
+    private GlobalSettings DefaultSettings() => new() { StoryMode = config.GetValue("Trainer:StoryMode", true) };
+
+    public GlobalSettings Settings => _settings ??= DefaultSettings();
+    private GlobalSettings? _settings;
 
     /// <summary>Raised whenever progress or settings change (or are first loaded).</summary>
     public event Action? Changed;
@@ -50,7 +57,7 @@ public sealed class ProgressStore(IJSRuntime js)
         var changed = false;
         if (!_loaded)
         {
-            Settings = await ReadAsync<GlobalSettings>(SettingsKey) ?? new GlobalSettings();
+            _settings = await ReadAsync<GlobalSettings>(SettingsKey) ?? DefaultSettings();
             _loaded = true;
             changed = true;
         }
@@ -104,6 +111,13 @@ public sealed class ProgressStore(IJSRuntime js)
     public async Task SetCodeStyleAsync(CodeStyle style)
     {
         Settings.CodeStyle = style;
+        await WriteAsync(SettingsKey, Settings);
+        Changed?.Invoke();
+    }
+
+    public async Task SetStoryModeAsync(bool storyMode)
+    {
+        Settings.StoryMode = storyMode;
         await WriteAsync(SettingsKey, Settings);
         Changed?.Invoke();
     }

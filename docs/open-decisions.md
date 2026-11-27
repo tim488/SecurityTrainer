@@ -16,6 +16,11 @@ Each item says what I did, so you can keep it or change it.
 
 ## Game mechanics
 
+- **Story mode** is on by default: a mission opens once the one before it is completed
+  (flag *and* fix). Missions completed in free play stay open. Locked cards hide the
+  title, since Lore's calling card names the next mission first. Because progress lives
+  in the browser, the server renders a later mission page empty until progress has loaded.
+
 - **Admin user in 1.2** is `riker`. Picard would fit better as the admin, but Riker is
   the lab user the whole story is built around.
 - **1.3 shows SQL errors** in the response (500 with the SQLite message). That helps

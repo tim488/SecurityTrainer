@@ -180,12 +180,24 @@ a.side-block:hover { filter: brightness(1.12); }
     background: var(--status); color: var(--on-colour); border-top-left-radius: 22px;
     font-family: var(--display); font-weight: 600; font-size: 1.4rem; letter-spacing: 0.05em; line-height: 1;
 }
+.card-order:has(.card-mark) { flex-direction: column; justify-content: space-between; align-items: flex-end; }
+.card-mark { font-size: 1.2rem; }
 .card.status-exploited .card-order { --status: var(--orange); }
 .card.status-solved .card-order { --status: var(--ok); }
 .card-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; padding: 0.6rem 0.9rem; background: var(--panel-2); border-radius: 0 var(--radius) var(--radius) 0; }
 .card:hover .card-body { background: #252536; }
 .card:hover .card-order { filter: brightness(1.12); }
 .card:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+/* Solved missions step back, the next one stands out, locked ones are plain panels. */
+.card.status-solved .card-body { opacity: 0.7; }
+.card.next .card-body { box-shadow: inset 0 0 0 2px var(--sky); }
+.card.locked { cursor: not-allowed; }
+.card.locked .card-order { --status: var(--panel-2); color: var(--lilac); }
+.card.locked .card-body { color: var(--lilac); }
+.lab-facts .status-next { color: var(--sky); }
+.board-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+.board-bar p { margin: 0; }
+.act-count { color: var(--lilac); font-size: 1.1rem; }
 .card-title { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; line-height: 1.2; }
 .card .lab-facts { font-size: 1rem; }
 .difficulty-easy { color: var(--ok); }
@@ -202,12 +214,12 @@ a.side-block:hover { filter: brightness(1.12); }
 .lab-facts { display: flex; gap: 1rem; margin: 0; font-family: var(--display); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--lilac); }
 .reset-lab { margin-bottom: 2px; }
 .lab-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem 1rem; }
-/* Code style switch: two halves of one pill. */
-.code-style-switch { display: flex; gap: var(--gap); margin-bottom: 2px; }
-.code-style-switch button { border-radius: 0; background: var(--panel-2); color: var(--lilac); }
-.code-style-switch button:first-child { border-radius: 999px 0 0 999px; }
-.code-style-switch button:last-child { border-radius: 0 999px 999px 0; }
-.code-style-switch button.active { background: var(--sky); color: var(--on-colour); }
+/* Two-way switch (code style, story mode): two halves of one pill. */
+.pill-switch { display: flex; gap: var(--gap); margin-bottom: 2px; }
+.pill-switch button { border-radius: 0; background: var(--panel-2); color: var(--lilac); }
+.pill-switch button:first-child { border-radius: 999px 0 0 999px; }
+.pill-switch button:last-child { border-radius: 0 999px 999px 0; }
+.pill-switch button.active { background: var(--sky); color: var(--on-colour); }
 .step {
     display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
     min-width: 150px; min-height: 58px; padding: 0.3rem 0.8rem 0.35rem;

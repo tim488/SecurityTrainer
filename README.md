@@ -16,6 +16,10 @@ git clone <repo> && cd securityTrainer
 dotnet run --project src/Trainer.Web   # http://localhost:5000
 ```
 
+Missions open one after another (story mode). Players can switch to free play on the
+mission overview. For a workshop where everyone should start in free play, run with
+`--Trainer:StoryMode=false`.
+
 ## Test
 
 ```bash

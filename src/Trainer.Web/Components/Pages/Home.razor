@@ -6,7 +6,17 @@
 
 <h1>@L("Missions", "Missionen")</h1>
 
-<p class="muted">@L($"{Completed} of {Registry.Labs.Count} missions completed", $"{Completed} von {Registry.Labs.Count} Missionen abgeschlossen")</p>
+<div class="board-bar">
+    <p class="muted">@L($"{Completed} of {Registry.Labs.Count} missions completed", $"{Completed} von {Registry.Labs.Count} Missionen abgeschlossen")</p>
+    <div class="pill-switch" role="group" aria-label="@L("Mission order", "Reihenfolge der Missionen")">
+        <button type="button" class="@(StoryMode ? "active" : null)" aria-pressed="@(StoryMode ? "true" : "false")"
+                title="@L("Missions open one after another", "Missionen werden nacheinander freigeschaltet")"
+                @onclick="() => Progress.SetStoryModeAsync(true)">@L("Story mode", "Story-Modus")</button>
+        <button type="button" class="@(StoryMode ? null : "active")" aria-pressed="@(StoryMode ? "false" : "true")"
+                title="@L("Every mission is open", "Alle Missionen sind offen")"
+                @onclick="() => Progress.SetStoryModeAsync(false)">@L("Free play", "Freies Spiel")</button>
+    </div>
+</div>
 
 @if (Completed == 0)
 {
@@ -16,8 +26,9 @@
 @foreach (var group in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
 {
     var act = Acts.Find(group.Key);
+    var done = group.Count(l => Progress.Get(l.Slug).IsCompleted);
     <section class="act">
-        <h2>@L("Act", "Akt") @group.Key@(act is null ? "" : $": {L(act.Title)}")</h2>
+        <h2>@L("Act", "Akt") @group.Key@(act is null ? "" : $": {L(act.Title)}") <span class="act-count">@done/@group.Count()</span></h2>
         @if (act is not null)
         {
             <p class="muted">@L(act.Tagline)</p>
@@ -26,9 +37,32 @@
             @foreach (var lab in group.OrderBy(l => l.Story.Order))
             {
                 var status = Progress.StatusOf(lab.Slug);
+                var number = Number(lab);
+                if (IsLocked(lab))
+                {
+                    @* The title stays hidden until the mission opens: Lore's calling card names it first. *@
+                    <div class="card locked" aria-disabled="true">
+                        <span class="card-order"><span class="card-mark" aria-hidden="true">🔒</span>@number</span>
+                        <span class="card-body">
+                            <span class="card-title">@L("Locked", "Gesperrt")</span>
+                            <span class="lab-facts">
+                                <span>@L($"Complete {Number(NextMission!)} first", $"Erst {Number(NextMission!)} abschließen")</span>
+                            </span>
+                        </span>
+                    </div>
+                    continue;
+                }
+                var next = ReferenceEquals(lab, NextMission);
+                var cardClass = $"card status-{status.ToString().ToLowerInvariant()}" + (next ? " next" : "");
                 @* Number block on the left (its colour is the status), title and plain labels on the right. *@
-                <a class="card status-@status.ToString().ToLowerInvariant()" href="@($"labs/{lab.Slug}")">
-                    <span class="card-order">@lab.Story.Act.@lab.Story.Order</span>
+                <a class="@cardClass" href="@($"labs/{lab.Slug}")">
+                    <span class="card-order">
+                        @if (status == LabStatus.Solved)
+                        {
+                            <span class="card-mark" aria-hidden="true">✓</span>
+                        }
+                        @number
+                    </span>
                     <span class="card-body">
                         <span class="card-title">@L(lab.Title)</span>
                         <span class="lab-facts">
@@ -38,12 +72,16 @@
                             {
                                 <span class="status-@status.ToString().ToLowerInvariant()">@L(status)</span>
                             }
+                            @if (next)
+                            {
+                                <span class="status-next">@L("next", "als Nächstes")</span>
+                            }
                         </span>
                     </span>
                 </a>
             }
         </div>
-        @if (act is not null && group.All(l => Progress.Get(l.Slug).IsCompleted))
+        @if (act is not null && done == group.Count())
         {
             <StoryPanel Text="@L(act.Ending)" Kind="epilogue" />
         }
@@ -57,4 +95,8 @@
 
 @code {
     private int Completed => Registry.Labs.Count(l => Progress.Get(l.Slug).IsCompleted);
+
+    private bool StoryMode => Progress.Settings.StoryMode;
+
+    private static string Number(ILab lab) => $"{lab.Story.Act}.{lab.Story.Order}";
 }

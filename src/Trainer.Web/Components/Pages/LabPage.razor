@@ -10,6 +10,25 @@
     return;
 }
 
+@if (IsLocked(_lab))
+{
+    @* Progress is read from the browser after the first render: until then, don't claim the mission is locked. *@
+    if (!Progress.IsLoaded)
+    {
+        <PageTitle>Security Trainer</PageTitle>
+        return;
+    }
+    <PageTitle>@L("Mission locked", "Mission gesperrt")</PageTitle>
+    var next = NextMission!;
+    var number = $"{next.Story.Act}.{next.Story.Order}";
+    <h1>@L("Mission locked", "Mission gesperrt")</h1>
+    <p>@L("Story mode is on, so missions open one after another. Complete this mission first:",
+          "Im Story-Modus werden die Missionen nacheinander freigeschaltet. Schließ zuerst diese Mission ab:")
+       <a href="@($"labs/{next.Slug}")">@number @L(next.Title)</a></p>
+    <p><button @onclick="() => Progress.SetStoryModeAsync(false)">@L("Switch to free play", "Zum freien Spiel wechseln")</button></p>
+    return;
+}
+
 <PageTitle>@L(_lab.Title)</PageTitle>
 
 <header class="lab-header">
@@ -39,7 +58,7 @@
     @* Only how endpoint code is shown; the mission's API stays the same. *@
     @if (CodeStyles.HasVariants(_lab))
     {
-        <div class="code-style-switch" role="group" aria-label="@L("Endpoint code style", "Stil des Endpunkt-Codes")">
+        <div class="pill-switch" role="group" aria-label="@L("Endpoint code style", "Stil des Endpunkt-Codes")">
             @foreach (var (style, label) in Styles)
             {
                 <button type="button" class="@(Progress.Settings.CodeStyle == style ? "active" : null)"

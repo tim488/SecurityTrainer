@@ -1,4 +1,5 @@
 using Trainer.Web.Core;
+using Trainer.Web.Core.Story;
 
 namespace Trainer.Web.Tests;
 
@@ -114,4 +115,54 @@ public class StardateTests
     [InlineData(2027, 1, 1, 0, "48000.0")]
     public void Converts_date_and_time_to_tng_stardate(int year, int month, int day, int hour, string expected) =>
         Assert.Equal(expected, Trainer.Web.Core.Story.Stardate.Format(new DateTime(year, month, day, hour, 0, 0)));
+}
+
+public class StoryProgressTests
+{
+    private static readonly IReadOnlyList<ILab> Labs = new LabRegistry(new FlagService(), new DemoAuth()).Labs;
+
+    private static Func<string, bool> Completed(params int[] indexes)
+    {
+        var slugs = indexes.Select(i => Labs[i].Slug).ToHashSet();
+        return slugs.Contains;
+    }
+
+    [Fact]
+    public void Story_mode_opens_only_the_first_mission_at_the_start()
+    {
+        Assert.False(StoryProgress.IsLocked(Labs, Completed(), storyMode: true, Labs[0]));
+        Assert.All(Labs.Skip(1), l => Assert.True(StoryProgress.IsLocked(Labs, Completed(), storyMode: true, l), l.Slug));
+        Assert.Same(Labs[0], StoryProgress.Next(Labs, Completed()));
+    }
+
+    [Fact]
+    public void Completing_a_mission_opens_the_next_one()
+    {
+        var completed = Completed(0, 1);
+
+        Assert.False(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[2]));
+        Assert.True(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[3]));
+        Assert.Same(Labs[2], StoryProgress.Next(Labs, completed));
+    }
+
+    [Fact]
+    public void Completed_missions_stay_open_and_free_play_opens_everything()
+    {
+        // Mission 5 was completed in free play; story mode still waits for mission 1.
+        var completed = Completed(4);
+
+        Assert.False(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[4]));
+        Assert.True(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[1]));
+        Assert.All(Labs, l => Assert.False(StoryProgress.IsLocked(Labs, Completed(), storyMode: false, l)));
+    }
+
+    [Fact]
+    public void Nothing_is_next_when_everything_is_completed()
+    {
+        var all = Completed(Enumerable.Range(0, Labs.Count).ToArray());
+
+        Assert.Null(StoryProgress.Next(Labs, all));
+        Assert.Null(StoryProgress.Following(Labs, Labs[^1]));
+        Assert.Same(Labs[1], StoryProgress.Following(Labs, Labs[0]));
+    }
 }

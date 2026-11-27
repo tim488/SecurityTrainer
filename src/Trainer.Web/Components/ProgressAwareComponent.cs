@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Trainer.Web.Core;
+using Trainer.Web.Core.Story;
 
 namespace Trainer.Web.Components;
 
@@ -33,6 +34,14 @@ public abstract class ProgressAwareComponent : ComponentBase, IDisposable
         LabStatus.Exploited => L("exploited", "geknackt"),
         _ => L("solved", "gelöst"),
     };
+
+    private bool IsCompleted(string slug) => Progress.Get(slug).IsCompleted;
+
+    /// <summary>The first mission in story order that is not completed yet.</summary>
+    protected ILab? NextMission => StoryProgress.Next(Registry.Labs, IsCompleted);
+
+    /// <summary>True when story mode keeps this mission closed. Before progress has loaded, only the first mission is open.</summary>
+    protected bool IsLocked(ILab lab) => StoryProgress.IsLocked(Registry.Labs, IsCompleted, Progress.Settings.StoryMode, lab);
 
     protected override void OnInitialized() => Progress.Changed += OnProgressChanged;
 
