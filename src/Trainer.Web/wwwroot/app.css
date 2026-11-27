@@ -99,10 +99,10 @@ button.primary, .button.primary { background: var(--orange); }
 .mission-done { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin-top: 1rem; }
 .mission-done p { margin: 0; }
 .mission-done-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-button.link-button {
-    font: inherit; text-transform: none; letter-spacing: normal;
-    background: none; color: var(--info); padding: 0 0.25rem; border-radius: 0; text-decoration: underline;
-}
+/* Smaller pill for actions inside a list or a line of text. */
+button.small, .button.small { font-size: 0.85rem; padding: 0.2rem 0.8rem; }
+/* A row of buttons under a page's text: what to do next. */
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1rem; }
 
 /* Frame: elbow top left, bar across the top, blocks down the left side. */
 .frame {
@@ -138,9 +138,9 @@ button.link-button {
 .brand { flex: none; padding: 0 0.4rem; font-family: var(--display); font-weight: 600; font-size: var(--brand); line-height: 1; text-transform: uppercase; letter-spacing: 0.06em; color: var(--orange); text-decoration: none; white-space: nowrap; }
 .brand:hover { color: var(--peach); }
 .lang-switch { display: flex; gap: var(--gap); height: 100%; flex: none; }
-.lang-switch button { height: var(--arm); padding: 0 0.7rem; font-size: 0.95rem; line-height: 1; border-radius: 0; background: var(--sky); color: var(--on-colour); }
+.lang-switch button { height: var(--arm); padding: 0 0.7rem; font-size: 0.95rem; line-height: 1; border-radius: 0; background: var(--panel-2); color: var(--lilac); }
 .lang-switch button:last-child { border-radius: 0 999px 999px 0; padding-right: 1rem; }
-.lang-switch button.active { background: var(--orange); }
+.lang-switch button.active { background: var(--sky); color: var(--on-colour); }
 
 .frame-side { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; gap: var(--gap); width: var(--side); padding: var(--gap) 0 12px; }
 .side-block {
@@ -288,6 +288,9 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
 }
 .exchange { margin-top: 0.75rem; background: var(--panel-2); border-radius: var(--radius); padding: 0.5rem 0.75rem; }
 .exchange pre { background: var(--bg); }
+.exchange summary { line-height: 1.8; }
+.exchange summary .muted { margin-left: 0.6rem; }
+.exchange summary button { margin-left: 0.6rem; vertical-align: middle; }
 .status-2xx { color: var(--ok); }
 .status-3xx { color: var(--info); }
 .status-4xx, .status-5xx { color: var(--bad); }
@@ -296,7 +299,13 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
 .flag-input input { flex: 1; min-width: 0; font-family: ui-monospace, Consolas, monospace; }
 
 /* Fix quiz */
-.option { display: block; padding: 0.5rem 0.75rem; margin: 0.75rem 0; border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; }
+.option {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 0.75rem;
+    padding: 0.5rem 0.75rem; margin: 0.75rem 0; border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
+}
+/* The radio button gets its own column, level with Barclay's name; everything else sits beside it. */
+.option > input { grid-column: 1; grid-row: 1 / span 3; align-self: start; margin-top: 1rem; }
+.option > :not(input) { grid-column: 2; }
 .option input { accent-color: var(--orange); }
 .option.selected { border-color: var(--sky); }
 .option.correct { border-color: var(--ok); }

@@ -19,8 +19,10 @@
 
     @if (!Solved)
     {
-        <button class="primary" disabled="@(_selected is null)" @onclick="Submit">@L("Check answer", "Antwort prüfen")</button>
-        <span class="muted">@L("Attempts", "Versuche"): @Progress.Get(Mission.Slug).Attempts</span>
+        <div class="actions">
+            <button class="primary" disabled="@(_selected is null)" @onclick="Submit">@L("Check answer", "Antwort prüfen")</button>
+            <span class="muted">@L("Attempts", "Versuche"): @Progress.Get(Mission.Slug).Attempts</span>
+        </div>
     }
     else
     {

@@ -22,7 +22,9 @@
             Body <span class="muted">(@L("JSON, ignored for GET", "JSON, wird bei GET ignoriert"))</span>
             <textarea rows="4" @bind="_body" spellcheck="false"></textarea>
         </label>
-        <button type="button" class="link-button" @onclick="LoadDefault">@L("Restore default request", "Standard-Request wiederherstellen")</button>
+        <div class="actions">
+            <button type="button" class="small" @onclick="LoadDefault">@L("Restore default request", "Standard-Request wiederherstellen")</button>
+        </div>
     </form>
 
     @foreach (var exchange in Sender.History(Slug))
@@ -40,7 +42,7 @@
                     <span class="error">@L("error", "Fehler")</span>
                 }
                 <span class="muted">@exchange.At.ToString("HH:mm:ss")</span>
-                <button type="button" class="link-button" @onclick="() => LoadExchange(exchange)">@L("Edit & resend", "Bearbeiten und erneut senden")</button>
+                <button type="button" class="small" @onclick="() => LoadExchange(exchange)">@L("Edit & resend", "Bearbeiten und erneut senden")</button>
             </summary>
             @if (exchange.Response is { } response)
             {

@@ -38,10 +38,11 @@
     </main>
 </div>
 
+@* Shown by Blazor when a component throws and the page stops responding. *@
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+    @L("Something went wrong, and this page stopped responding.", "Etwas ist schiefgegangen, und die Seite reagiert nicht mehr.")
+    <a href="." class="reload button small primary">@L("Reload", "Neu laden")</a>
+    <span class="dismiss" role="button" aria-label="@L("Close", "Schließen")">✕</span>
 </div>
 
 @code {

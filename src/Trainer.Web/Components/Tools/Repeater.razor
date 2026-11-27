@@ -7,19 +7,16 @@
         "Schickt einen Request für jede Nummer in einem Bereich und ersetzt §NUM§ im Body durch die aktuelle Nummer (auf 4 Stellen aufgefüllt). Stoppt bei einer 200-Antwort.")</p>
 
     <div class="repeater-fields">
-        <label>
-            @L("Method", "Methode")
-            <select @bind="_method">
+        @* Method and path in one line, like the request console. *@
+        <div class="console-line">
+            <select @bind="_method" aria-label="@L("Method", "Methode")">
                 @foreach (var m in RequestSender.Methods)
                 {
                     <option value="@m">@m</option>
                 }
             </select>
-        </label>
-        <label>
-            Path
-            <input @bind="_path" spellcheck="false" />
-        </label>
+            <input class="console-path" @bind="_path" aria-label="@L("Path", "Pfad")" spellcheck="false" />
+        </div>
         <label>
             Header <span class="muted">(@L("one per line:", "einer pro Zeile:") <code>Name: @L("value", "Wert")</code>)</span>
             <textarea rows="2" @bind="_headers" spellcheck="false"></textarea>
