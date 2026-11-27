@@ -6,8 +6,12 @@ using Trainer.Web.Labs.SharedState;
 
 namespace Trainer.Web.Tests;
 
-public class SharedStateLabTests(WebApplicationFactory<Program> factory) : LabTestBase(factory, "shared-state")
+public class SharedStateLabTests : LabTestBase
 {
+    // The bot is stopped so it can't overwrite an order between a test's requests.
+    public SharedStateLabTests(WebApplicationFactory<Program> factory) : base(factory, "shared-state") =>
+        Shared.BotInterval = Timeout.InfiniteTimeSpan;
+
     private SharedStateLab Shared => (SharedStateLab)Lab;
 
     [Fact]
@@ -51,9 +55,17 @@ public class SharedStateLabTests(WebApplicationFactory<Program> factory) : LabTe
     public async Task Bot_orders_on_its_own()
     {
         Lab.Reset();
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        Shared.BotInterval = TimeSpan.FromMilliseconds(50);
 
-        var order = await Client(language: "de").GetFromJsonAsync<JsonElement>($"{Api}/replicator/order");
-        Assert.Equal("riker", order.GetProperty("orderedBy").GetString());
+        var client = Client(language: "de");
+        string? orderedBy = null;
+        for (var i = 0; i < 40 && orderedBy is null; i++)
+        {
+            await Task.Delay(50);
+            var order = await client.GetFromJsonAsync<JsonElement>($"{Api}/replicator/order");
+            orderedBy = order.TryGetProperty("orderedBy", out var by) ? by.GetString() : null;
+        }
+
+        Assert.Equal("riker", orderedBy);
     }
 }

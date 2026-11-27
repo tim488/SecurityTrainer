@@ -21,12 +21,23 @@ public sealed class ReplicatorOrderState
 public sealed partial class SharedStateLab(FlagService flags, DemoAuth auth) : ILab, IDisposable
 {
     private const string Riker = "riker";
-    private static readonly TimeSpan BotInterval = TimeSpan.FromSeconds(4);
 
     private readonly Lock _gate = new();
     private readonly ReplicatorOrderState _state = new();   // one instance for everyone
     private Timer? _bot;
+    private TimeSpan _botInterval = TimeSpan.FromSeconds(4);
     private int _rikerOrders;
+
+    /// <summary>How often Riker's bot orders. Takes effect at once; <see cref="Timeout.InfiniteTimeSpan"/> stops the bot (tests do this).</summary>
+    public TimeSpan BotInterval
+    {
+        get => _botInterval;
+        set
+        {
+            _botInterval = value;
+            _bot?.Change(value, value);
+        }
+    }
 
     public string Slug => "shared-state";
     public string Category => "Blazor";
@@ -52,7 +63,7 @@ public sealed partial class SharedStateLab(FlagService flags, DemoAuth auth) : I
         auth.GetToken(Slug, DemoAuth.Player);
         auth.GetToken(Slug, Riker);
         Reset();
-        _bot = new Timer(_ => SimulateRikerOrder(), null, TimeSpan.FromSeconds(1), BotInterval);
+        _bot = new Timer(_ => SimulateRikerOrder(), null, TimeSpan.FromSeconds(1), _botInterval);
 
         // VULNERABLE: everyone reads the same singleton state.
         app.MapGet("/replicator/order", (HttpRequest request) =>
