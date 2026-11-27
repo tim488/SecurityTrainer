@@ -50,8 +50,7 @@ Each item says what I did, so you can keep it or change it.
   the exploit end to end in headless Firefox.
 - **No separate Act 3 ending.** The finale follows 3.5 directly; `story.md` never
   planned one. `Acts.cs` has room for it if you want one.
-- **The finale and act endings** show once all *registered* missions are done. With
-  2.3 missing, Act 2 needs three missions.
+- **The finale and act endings** show once all *registered* missions are done.
 - **Lab APIs skip the friendly "not found" page** now. Before, a POST that got a
   401 was re-routed to the HTML page and showed up as a confusing 400 in the console.
 
