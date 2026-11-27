@@ -23,6 +23,22 @@ public class JwtMissionTests(WebApplicationFactory<Program> factory) : MissionTe
         Assert.Equal(Flag, bridge.GetProperty("bridgeCode").GetString());
     }
 
+    [Theory]
+    [InlineData("de", "Acting Ensign", "Willkommen auf der Brücke, Fähnrich auf Probe Wesley Crusher.")]
+    [InlineData("en", "Acting Ensign", "Welcome to the bridge, Acting Ensign Wesley Crusher.")]
+    [InlineData("de", "Admiral", "Willkommen auf der Brücke, Admiral Wesley Crusher.")]
+    public async Task Bridge_welcome_translates_known_ranks(string language, string rank, string expected)
+    {
+        var payload = $$$"""{"sub":"wesley","name":"Wesley Crusher","rank":"{{{rank}}}","role":"admin"}""";
+        var header = """{"alg":"none","typ":"JWT"}""";
+        var client = With($"{Base64Url.Encode(header)}.{Base64Url.Encode(payload)}.");
+        client.DefaultRequestHeaders.AcceptLanguage.ParseAdd(language);
+
+        var bridge = await client.GetFromJsonAsync<JsonElement>($"{Api}/admin/bridge");
+
+        Assert.Equal(expected, bridge.GetProperty("welcome").GetString());
+    }
+
     [Fact]
     public async Task Wesleys_real_token_works_but_is_not_admin()
     {

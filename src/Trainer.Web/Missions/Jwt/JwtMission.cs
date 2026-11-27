@@ -36,6 +36,12 @@ public sealed partial class JwtMission(FlagService flags) : IMission
         }
     }
 
+    /// <summary>Ranks the ship issues, translated for the welcome. A forged rank is shown as written.</summary>
+    private static readonly Dictionary<string, Text> KnownRanks = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Acting Ensign"] = new("Acting Ensign", "Fähnrich auf Probe"),
+    };
+
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         Reset();
@@ -57,6 +63,7 @@ public sealed partial class JwtMission(FlagService flags) : IMission
 
             var name = claims.TryGetValue("name", out var n) ? n.ToString() : "?";
             var rank = claims.TryGetValue("rank", out var r) ? r.ToString() : "";
+            rank = KnownRanks.TryGetValue(rank, out var translated) ? translated[language] : rank;
             return Results.Ok(new
             {
                 Console = new Text("Bridge: helm, tactical, ops", "Brücke: Steuer, Taktik, Einsatz")[language],

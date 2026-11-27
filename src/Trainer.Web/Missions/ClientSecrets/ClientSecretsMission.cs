@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Trainer.Web.Core;
 
 namespace Trainer.Web.Missions.ClientSecrets;
@@ -28,6 +29,8 @@ public sealed partial class ClientSecretsMission(FlagService flags, DemoAuth aut
         new Dictionary<string, string> { [ApiKeyHeader] = "" },
         null);
 
+    private static readonly JsonSerializerOptions ConfigFileJson = new() { WriteIndented = true };
+
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         auth.GetToken(Slug, DemoAuth.Player);
@@ -55,7 +58,8 @@ public sealed partial class ClientSecretsMission(FlagService flags, DemoAuth aut
         {
             string key;
             lock (_gate) key = _apiKey;
-            return Results.Ok(new
+            // PascalCase like a real appsettings.json (the API's default JSON settings would camelCase it).
+            return Results.Json(new
             {
                 Logging = new { LogLevel = new { Default = "Information" } },
                 Starbase = new
@@ -64,7 +68,7 @@ public sealed partial class ClientSecretsMission(FlagService flags, DemoAuth aut
                     ApiKey = key,
                 },
                 Ship = new { Registry = "NCC-1701-D", Office = "Quartermaster, deck 4" },
-            });
+            }, ConfigFileJson);
         });
 
         // Simulated Starbase 74 supply API.

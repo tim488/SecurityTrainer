@@ -15,6 +15,14 @@ public class SharedStateMissionTests : MissionTestBase
     private SharedStateMission Shared => (SharedStateMission)Mission;
 
     [Fact]
+    public async Task Own_order_reply_follows_the_language()
+    {
+        var post = await Client(language: "de").PostAsJsonAsync($"{Api}/replicator/order", new { item = "Tee, Earl Grey, heiß" });
+
+        Assert.Equal("geliefert", (await post.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+    }
+
+    [Fact]
     public async Task Exploit_wesley_sees_rikers_order_and_command_code()
     {
         Shared.SimulateRikerOrder();

@@ -103,7 +103,7 @@ public sealed partial class SharedStateMission(FlagService flags, DemoAuth auth)
 
             item = item.Trim()[..Math.Min(item.Trim().Length, 80)];
             Place(user.Name, new Text(item, item), commandCode: null);
-            return Results.Ok(new { orderedBy = user.Name, item, status = "delivered" });
+            return Results.Ok(new { orderedBy = user.Name, item, status = new Text("delivered", "geliefert")[Languages.FromRequest(request)] });
         });
     }
 

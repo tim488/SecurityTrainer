@@ -12,7 +12,7 @@ public class ClientSecretsMissionTests(WebApplicationFactory<Program> factory) :
     {
         var client = Client(null);
         var settings = await client.GetFromJsonAsync<JsonElement>($"{Api}/static/appsettings.json");
-        var key = settings.GetProperty("starbase").GetProperty("apiKey").GetString()!;
+        var key = settings.GetProperty("Starbase").GetProperty("ApiKey").GetString()!;
 
         client.DefaultRequestHeaders.Add("X-Api-Key", key);
         var orders = await client.GetFromJsonAsync<JsonElement>($"{Api}/starbase/requisitions");
@@ -42,9 +42,9 @@ public class ClientSecretsMissionTests(WebApplicationFactory<Program> factory) :
     public async Task Reset_rotates_the_key()
     {
         var client = Client(null);
-        var before = (await client.GetFromJsonAsync<JsonElement>($"{Api}/static/appsettings.json")).GetProperty("starbase").GetProperty("apiKey").GetString();
+        var before = (await client.GetFromJsonAsync<JsonElement>($"{Api}/static/appsettings.json")).GetProperty("Starbase").GetProperty("ApiKey").GetString();
         Mission.Reset();
-        var after = (await client.GetFromJsonAsync<JsonElement>($"{Api}/static/appsettings.json")).GetProperty("starbase").GetProperty("apiKey").GetString();
+        var after = (await client.GetFromJsonAsync<JsonElement>($"{Api}/static/appsettings.json")).GetProperty("Starbase").GetProperty("ApiKey").GetString();
 
         Assert.NotEqual(before, after);
     }
