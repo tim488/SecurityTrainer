@@ -14,8 +14,20 @@ public interface ILab
     IReadOnlyList<FixOption> FixOptions { get; }
     Text ExplanationMarkdown { get; }
 
+    /// <summary>Extra tools on the Exploit step (SPEC §5.2). Most labs need none.</summary>
+    IReadOnlyList<LabTool> Tools => [];
+
     void MapEndpoints(IEndpointRouteBuilder app);
     void Reset();
+}
+
+public enum LabTool
+{
+    /// <summary>Decode, edit and re-encode a JWT, then use it in the request console.</summary>
+    JwtEditor,
+
+    /// <summary>A sandboxed iframe showing the comment moderator's view (blazor-xss).</summary>
+    ModeratorView,
 }
 
 public enum Difficulty

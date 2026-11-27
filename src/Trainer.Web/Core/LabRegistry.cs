@@ -1,6 +1,7 @@
 using Trainer.Web.Labs.Bfla;
 using Trainer.Web.Labs.Bola;
 using Trainer.Web.Labs.ClientSecrets;
+using Trainer.Web.Labs.Jwt;
 using Trainer.Web.Labs.MassAssignment;
 using Trainer.Web.Labs.OpenRedirect;
 using Trainer.Web.Labs.PathTraversal;
@@ -32,6 +33,7 @@ public sealed class LabRegistry : IDisposable
             new OpenRedirectLab(flags, auth),
             new PathTraversalLab(flags, auth),
             new SharedStateLab(flags, auth),
+            new JwtLab(flags),
         ];
 
         Labs = labs.OrderBy(l => l.Story.Act).ThenBy(l => l.Story.Order).ToList();

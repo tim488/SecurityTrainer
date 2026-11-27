@@ -47,7 +47,11 @@
                         Collapsed="LabProgress.FlagSubmitted" />
             <MarkdownView Text="@L(_lab.ScenarioMarkdown)" />
             <HintList Slug="@_lab.Slug" Hints="_lab.Hints" />
-            <RequestConsole @key="_resetCount" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
+            <RequestConsole @key="_resetCount" @ref="_console" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
+            @if (_lab.Tools.Contains(LabTool.JwtEditor))
+            {
+                <JwtEditor @key="_resetCount" InitialToken="@BearerToken(_lab.DefaultRequest)" OnUse="UseToken" />
+            }
             <FlagInput Slug="@_lab.Slug" CallingCard="@L(_lab.Story.CallingCard)" OnAccepted="() => _step = Step.Fix" />
         </section>
         break;
@@ -67,6 +71,7 @@
     private ILab? _lab;
     private Step _step = Step.Exploit;
     private int _resetCount;
+    private RequestConsole? _console;
 
     private LabProgress LabProgress => Progress.Get(_lab!.Slug);
 
@@ -76,6 +81,13 @@
         if (!ReferenceEquals(lab, _lab)) _step = Step.Exploit;
         _lab = lab;
     }
+
+    private static string BearerToken(RequestTemplate request) =>
+        request.Headers.TryGetValue("Authorization", out var value) && value.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+            ? value["Bearer ".Length..]
+            : "";
+
+    private void UseToken(string token) => _console?.SetHeader("Authorization", $"Bearer {token}");
 
     private string StepClass(Step step) => step == _step ? "step active" : "step";
 

@@ -379,13 +379,31 @@ The German version is `docs/story.de.md`; keep both in step.
   > decided not to.
 
 ### 3.3 `jwt`: Forged Clearance
-- Beat: Lore logs into the bridge console as an admiral who doesn't exist.
+- Beat: Lore logs into the bridge console as "Admiral Lore", an admiral who doesn't exist.
 - Calling card points to: the core fetching anything it's asked to (→ 3.4).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `reject-alg-none` TODO · `shorter-lifetime` TODO · `role-from-db` TODO
-- Debrief: TODO
+- Briefing:
+  > Captain's log, stardate 47331.8. At 0412 hours an Admiral Lore logged into the bridge
+  > console with full clearance and tried to take the helm. Starfleet has no Admiral Lore.
+  > The console checks a clearance badge, a signed token every officer receives at login.
+  > Lore's badge was accepted without question. I have asked Mr. Crusher to find out what
+  > exactly the console is checking.
+- Hints (Data):
+  1. Your token has three parts separated by dots: a header, a payload and a signature. The first two are merely Base64url-encoded JSON. The JWT editor below the console decodes them.
+  2. Changing the payload invalidates the signature. However, the configuration sets `RequireSignedTokens = false`. A token without any signature is therefore not checked at all.
+  3. Set `"role": "admin"` in the payload and `"alg": "none"` in the header, remove the signature, use the token and call `GET /admin/bridge`. I would recommend keeping a modest rank. Lore did not.
+- Calling card (Lore):
+  > An admiral at last, and the chair is even more comfortable than it looks. You can have
+  > the console back, Wesley. I've found something better. The core fetches link previews for
+  > every subspace message, from anywhere I ask. Anywhere at all. Even from inside itself. — L.
+- Barclay lines:
+  - `require-signed`: "W-we could tell the console to insist on a signature. Our key, our algorithm, our issuer. That's a lot of settings. I-I'd better double-check them all."
+  - `reject-alg-none`: "The trick is `alg: none`, sir. So we block `none`. N-no more none."
+  - `shorter-lifetime`: "If badges only last five minutes, a fake one is useless after five minutes. R-right? That's how it works?"
+  - `role-from-db`: "We don't trust the role in the badge. We l-look it up in the crew database instead. By the name on the badge."
+- Debrief:
+  > Good work, Mr. Crusher. The bridge console now accepts only badges signed with our key,
+  > issued by us, for this ship. Admiral Lore's clearance has been revoked. I am told your own
+  > forged badge still said "acting ensign". Modest. I approve.
 
 ### 3.4 `ssrf`: Ping the Core
 - Beat: someone is offering the ship's core credentials to a Ferengi trader.

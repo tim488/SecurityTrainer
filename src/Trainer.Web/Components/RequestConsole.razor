@@ -71,6 +71,15 @@
         LoadDefault();
     }
 
+    /// <summary>Sets one header in the editor (replacing it if present). Used by lab tools.</summary>
+    public void SetHeader(string name, string value)
+    {
+        var headers = ParseHeaders(_headers);
+        headers[name] = value;
+        _headers = FormatHeaders(headers);
+        StateHasChanged();
+    }
+
     private void LoadDefault() =>
         Load(DefaultRequest.Method, DefaultRequest.Path, DefaultRequest.Headers, DefaultRequest.Body);
 

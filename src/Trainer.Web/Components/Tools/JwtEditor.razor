@@ -1,0 +1,121 @@
+@using System.Text.Json
+@using System.Text.Json.Nodes
+@inherits ProgressAwareComponent
+
+@* JWT editor (SPEC §5.2): decode, edit, re-encode. It never signs anything. *@
+<div class="console tool">
+    <h3>@L("JWT editor", "JWT-Editor")</h3>
+    <label>
+        Token
+        <textarea rows="3" @bind="_token" spellcheck="false"></textarea>
+    </label>
+    <button type="button" @onclick="Decode">@L("Decode", "Decodieren")</button>
+
+    <div class="jwt-parts">
+        <label>
+            Header
+            <textarea rows="4" @bind="_header" spellcheck="false"></textarea>
+        </label>
+        <label>
+            Payload
+            <textarea rows="8" @bind="_payload" spellcheck="false"></textarea>
+        </label>
+    </div>
+    <label>
+        @L("Signature", "Signatur")
+        <select @bind="_signature">
+            <option value="keep">@L("Keep the original signature", "Ursprüngliche Signatur behalten")</option>
+            <option value="drop">@L("Remove the signature (empty third part)", "Signatur entfernen (leerer dritter Teil)")</option>
+        </select>
+    </label>
+    <div class="tool-actions">
+        <button type="button" class="primary" @onclick="Encode">@L("Encode", "Codieren")</button>
+        <button type="button" disabled="@(_encoded is null)" @onclick="Use">@L("Use as bearer token in the console", "Als Bearer-Token in die Konsole übernehmen")</button>
+    </div>
+    @if (_error is not null)
+    {
+        <p class="error">@_error</p>
+    }
+    @if (_encoded is not null)
+    {
+        <pre class="jwt-output">@_encoded</pre>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string InitialToken { get; set; } = "";
+    [Parameter] public EventCallback<string> OnUse { get; set; }
+
+    private static readonly JsonSerializerOptions Pretty = new() { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+
+    private string _token = "";
+    private string _header = "";
+    private string _payload = "";
+    private string _signature = "keep";
+    private string _originalSignature = "";
+    private string? _encoded;
+    private string? _error;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _token = InitialToken;
+        Decode();
+    }
+
+    private void Decode()
+    {
+        _error = null;
+        var parts = _token.Trim().Split('.');
+        if (parts.Length != 3)
+        {
+            _error = L("A JWT has three parts separated by dots.", "Ein JWT hat drei Teile, getrennt durch Punkte.");
+            return;
+        }
+        var header = Base64Url.DecodeString(parts[0]);
+        var payload = Base64Url.DecodeString(parts[1]);
+        if (header is null || payload is null)
+        {
+            _error = L("Header or payload is not valid Base64url.", "Header oder Payload ist kein gültiges Base64url.");
+            return;
+        }
+        _header = PrettyPrint(header);
+        _payload = PrettyPrint(payload);
+        _originalSignature = parts[2];
+    }
+
+    private void Encode()
+    {
+        _error = null;
+        _encoded = null;
+        if (!TryCompact(_header, out var header) || !TryCompact(_payload, out var payload))
+        {
+            _error = L("Header and payload must be valid JSON.", "Header und Payload müssen gültiges JSON sein.");
+            return;
+        }
+        var signature = _signature == "drop" ? "" : _originalSignature;
+        _encoded = $"{Base64Url.Encode(header)}.{Base64Url.Encode(payload)}.{signature}";
+    }
+
+    private Task Use() => _encoded is null ? Task.CompletedTask : OnUse.InvokeAsync(_encoded);
+
+    private static string PrettyPrint(string json)
+    {
+        try { return JsonNode.Parse(json)?.ToJsonString(Pretty) ?? json; }
+        catch (JsonException) { return json; }
+    }
+
+    private static bool TryCompact(string json, out string compact)
+    {
+        try
+        {
+            compact = JsonNode.Parse(json)?.ToJsonString(new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }) ?? "";
+            return compact.Length > 0;
+        }
+        catch (JsonException)
+        {
+            compact = "";
+            return false;
+        }
+    }
+}

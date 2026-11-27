@@ -198,8 +198,10 @@ Barclay line, the correct one too, and they all sound equally unsure.
   headers and formatted body. Redirects are **not** followed.
 - Only paths under `/api/labs/` are allowed. Last 10 requests per lab are kept
   in memory.
-- Optional per-lab tools: **JWT editor** (decode, edit, re-encode) and
-  **Repeater** (send a request for each value in a number range).
+- Optional per-lab tools, declared with `ILab.Tools`: **JWT editor** (decode, edit,
+  re-encode, put into the console's `Authorization` header) and **moderator view**
+  (3.5). The **Repeater** (send a request for each value in a number range) was planned
+  for 2.3 and is not built.
 
 ### 5.3 Demo auth
 
@@ -370,7 +372,10 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 - *Premise:* Lore logged into the bridge console as an admiral who doesn't exist.
 - *Vulnerable:* JWT bearer config with `RequireSignedTokens = false` and
   `ValidateIssuerSigningKey = false`.
-- *Flag:* `GET /admin/bridge`. *Exploit:* in the JWT editor set
+- *Simulation:* validation is simulated in the lab (no JwtBearer package): an empty
+  signature is accepted unchecked, a non-empty one must be a valid HS256 signature.
+  The key is random and rotates on reset. `GET /me` shows the claims.
+- *Flag:* `bridgeCode` from `GET /admin/bridge`. *Exploit:* in the JWT editor set
   `"role": "admin"`, `alg: none`, drop the signature.
 - ✅ `RequireSignedTokens = true`, `ValidateIssuerSigningKey = true`,
   `ValidAlgorithms = ["HS256"]`, validate issuer and audience

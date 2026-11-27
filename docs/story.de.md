@@ -316,5 +316,32 @@ von hier.
   > Counselor Troi hat ihren Eisbecher. Mr. Worf möchte wissen, wer sein Gagh bekommen hat. Ich
   > habe beschlossen, es nicht herauszufinden.
 
+### 3.3 `jwt`: Gefälschte Freigabe
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47331.8. Um 4:12 Uhr hat sich ein Admiral Lore mit voller
+  > Freigabe an der Brückenkonsole angemeldet und versucht, das Steuer zu übernehmen. Einen Admiral
+  > Lore gibt es in der Sternenflotte nicht. Die Konsole prüft einen Freigabe-Ausweis, ein signiertes
+  > Token, das jeder Offizier bei der Anmeldung bekommt. Lores Ausweis wurde ohne Rückfrage
+  > akzeptiert. Ich habe Mr. Crusher gebeten herauszufinden, was die Konsole eigentlich prüft.
+- Hinweise (Data):
+  1. Ihr Token besteht aus drei Teilen, getrennt durch Punkte: Header, Payload und Signatur. Die ersten beiden sind nur Base64url-codiertes JSON. Der JWT-Editor unter der Konsole decodiert sie.
+  2. Wenn Sie die Payload ändern, passt die Signatur nicht mehr. Die Konfiguration setzt allerdings `RequireSignedTokens = false`. Ein Token ganz ohne Signatur wird also gar nicht erst geprüft.
+  3. Setzen Sie in der Payload `"role": "admin"` und im Header `"alg": "none"`, entfernen Sie die Signatur, übernehmen Sie das Token und rufen Sie `GET /admin/bridge` auf. Ich empfehle, beim bescheidenen Rang zu bleiben. Lore hat das nicht getan.
+- Visitenkarte (Lore):
+  > Endlich Admiral, und der Sessel ist noch bequemer, als er aussieht. Die Konsole kannst du
+  > wiederhaben, Wesley. Ich hab' was Besseres gefunden. Der Bordcomputer holt für jede
+  > Subraumnachricht eine Link-Vorschau, von überall, wo ich will. Wirklich überall. Sogar aus
+  > sich selbst. — L.
+- Barclay:
+  - `require-signed`: „W-wir könnten der Konsole sagen, dass sie auf einer Signatur besteht. Unser Schlüssel, unser Algorithmus, unser Aussteller. D-das sind viele Einstellungen. Die prüfe ich lieber alle zweimal.“
+  - `reject-alg-none`: „Der Trick ist `alg: none`, Sir. A-also sperren wir `none`. K-kein none mehr.“
+  - `shorter-lifetime`: „Wenn Ausweise nur fünf Minuten gelten, ist ein gefälschter nach fünf Minuten nutzlos. O-oder? So funktioniert das doch?“
+  - `role-from-db`: „W-wir glauben der Rolle im Ausweis einfach nicht und schlagen sie in der Crew-Datenbank nach. Über den Namen auf dem Ausweis.“
+- Nachbesprechung:
+  > Gute Arbeit, Mr. Crusher. Die Brückenkonsole akzeptiert jetzt nur noch Ausweise, die mit unserem
+  > Schlüssel signiert und von uns für dieses Schiff ausgestellt wurden. Admiral Lores Freigabe ist
+  > entzogen. Man sagt mir, auf Ihrem gefälschten Ausweis stand weiterhin „Fähnrich auf Probe“.
+  > Bescheiden. Das gefällt mir.
+
 ### Finale
 - TODO
