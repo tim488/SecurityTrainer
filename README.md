@@ -1,5 +1,7 @@
 # Security Trainer
 
+> Built with [Claude Code](https://claude.com/claude-code).
+
 Learn common vulnerabilities in .NET, Blazor and Web APIs by exploiting them in
 the browser. Each mission is a chapter of a short Star Trek story: you play Wesley
 Crusher, chasing Lore through the Enterprise's freshly refitted computer core.
@@ -12,7 +14,7 @@ Crusher, chasing Lore through the Enterprise's freshly refitted computer core.
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download) and a modern browser.
 
 ```bash
-git clone <repo> && cd securityTrainer
+git clone https://github.com/tim488/SecurityTrainer.git && cd SecurityTrainer
 dotnet run --project src/Trainer.Web   # http://localhost:5000
 ```
 
@@ -32,6 +34,12 @@ Missions open one after another (story mode). Players can switch to free play on
 mission overview. For a workshop where everyone should start in free play, run with
 `--Trainer:StoryMode=false`.
 
+Progress is stored in your browser's `localStorage`. Use **Reset** on a mission to start it over.
+It belongs to the exact address you opened: `localhost:5000`, `127.0.0.1:5000` and another
+port each start from zero, and so does a private window. Stick to one address.
+Mission data lives in the running app and is shared by everyone who uses that instance, so
+**Reset** also resets the mission for them. Each player should run their own copy.
+
 ## Test
 
 ```bash
@@ -43,33 +51,6 @@ what unit tests can't, such as a page that crashes when it re-renders. It runs t
 Claude Code with the Playwright MCP server: ask Claude for a smoke test, or run the
 `/smoke-test` skill (`.claude/skills/smoke-test/SKILL.md`). The playthrough itself is
 `tests/smoke/playthrough.js`.
-
-## Terms
-
-One word everywhere: a **mission** is one exercise, with its story, vulnerable API, flag,
-fix options and tests. The UI, the page addresses (`/missions/{slug}`), the API paths
-(`/api/missions/{slug}/...`) and the code (`IMission`, `MissionRegistry`, `Missions/<Name>/`)
-all use it.
-
-## Layout
-
-- `src/Trainer.Web/`: the Blazor Web App and the vulnerable endpoints (`/api/missions/{slug}`)
-  - `Core/`: mission contract, registry, flags, demo auth, progress
-  - `Components/`: home page, mission page, request console, quiz
-  - `Core/Story/`: act titles, opening scene, act endings, finale
-  - `Core/Simulation/`: virtual filesystem and fake network, so missions never touch the host
-  - `Components/Tools/`: extra mission tools (JWT editor, moderator view)
-  - `Missions/<Name>/`: one folder per mission; `<Name>Mission.cs` has the endpoints and data,
-    `<Name>Mission.Text.cs` the story, scenario, hints, fix options and explanation
-- `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
-- `docs/story-guide.md`: premise, cast, the arc and the writing rules (English and German)
-- `docs/writing-a-mission.md`: how to add a mission
-
-Progress is stored in your browser's `localStorage`. Use **Reset** on a mission to start it over.
-It belongs to the exact address you opened: `localhost:5000`, `127.0.0.1:5000` and another
-port each start from zero, and so does a private window. Stick to one address.
-Mission data lives in the running app and is shared by everyone who uses that instance, so
-**Reset** also resets the mission for them. Each player should run their own copy.
 
 ## Known limitations
 
