@@ -1,6 +1,7 @@
 using Trainer.Web.Labs.Bfla;
 using Trainer.Web.Labs.BlazorXss;
 using Trainer.Web.Labs.Bola;
+using Trainer.Web.Labs.BruteForce;
 using Trainer.Web.Labs.ClientSecrets;
 using Trainer.Web.Labs.Jwt;
 using Trainer.Web.Labs.MassAssignment;
@@ -32,6 +33,7 @@ public sealed class LabRegistry : IDisposable
             new SqlInjectionLab(flags, auth),
             new MassAssignmentLab(flags, auth),
             new ClientSecretsLab(flags, auth),
+            new BruteForceLab(flags, auth),
             new OpenRedirectLab(flags, auth),
             new PathTraversalLab(flags, auth),
             new SharedStateLab(flags, auth),

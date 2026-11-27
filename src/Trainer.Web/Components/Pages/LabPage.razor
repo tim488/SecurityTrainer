@@ -51,6 +51,10 @@
             {
                 <ModeratorView @key="_resetCount" Src="@moderator.ModeratorViewUrl" />
             }
+            @if (_lab.Tools.Contains(LabTool.Repeater))
+            {
+                <Repeater @key="_resetCount" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
+            }
             <RequestConsole @key="_resetCount" @ref="_console" Slug="@_lab.Slug" DefaultRequest="_lab.DefaultRequest" />
             @if (_lab.Tools.Contains(LabTool.JwtEditor))
             {

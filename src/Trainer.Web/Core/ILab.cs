@@ -28,6 +28,9 @@ public enum LabTool
 
     /// <summary>A sandboxed iframe showing the comment moderator's view (blazor-xss).</summary>
     ModeratorView,
+
+    /// <summary>Sends a request for every number in a range, replacing a placeholder with the current number (brute-force).</summary>
+    Repeater,
 }
 
 public enum Difficulty

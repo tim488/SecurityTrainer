@@ -259,12 +259,32 @@ The German version is `docs/story.de.md`; keep both in step.
 
 ### 2.3 `brute-force`: Four-Digit Airlock
 - Beat: Lore resets Riker's access code without touching his communicator.
-- Calling card points to: stealing Riker's session (→ 2.4).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `forwarded-for-limit` TODO · `form-captcha` TODO · `delay-on-failure` TODO
-- Debrief: TODO
+- Calling card points to: stealing Riker's session (→ 2.4 open-redirect, via a link from "Starfleet Support").
+- Briefing:
+  > Captain's log, stardate 47326.8. Commander Riker's access code has been changed
+  > without his knowledge. He never touched his communicator; nobody did. The ship's
+  > password reset system sent a four-digit confirmation code, and someone confirmed
+  > it before the Commander even saw the message. The code has only ten thousand
+  > possible values and the system does not limit how often you may guess. I have asked
+  > Mr. Crusher to find out how quickly that code can be found.
+- Hints (Data):
+  1. `POST /password-reset/request` with `"user": "riker"` generates a code. I observe that the response does not reveal the code itself, only that one was created. The code has four decimal digits, which means exactly ten thousand possibilities.
+  2. `POST /password-reset/confirm` returns 400 for every wrong code but does not invalidate it. You may try as many codes as you wish; the correct one will still be accepted on the ten-thousandth attempt.
+  3. The Repeater sends `POST /password-reset/confirm` for every number from 0000 to 9999 and stops when it receives a 200 response. I recommend setting it to the confirm endpoint with the body template `§NUM§` as the code.
+- Calling card (Lore):
+  > Four digits, Wesley. That's all it took. Ten thousand guesses and not a single
+  > alarm. The Commander didn't even notice until his door wouldn't open. I've got his
+  > code now, but I want more than a door. There's a link from Starfleet Support
+  > waiting in his inbox. He trusts Starfleet Support. He shouldn't. — L.
+- Barclay lines:
+  - `attempt-limit`: "W-what if the code just stops working after a few wrong tries? And maybe a longer code, too. S-six digits? Eight? I always forget mine anyway."
+  - `forwarded-for-limit`: "I-I'll add a rate limiter. By IP address. From the `X-Forwarded-For` header, that's what it's for. R-right? Nobody would fake their own address."
+  - `form-captcha`: "C-could we add a CAPTCHA? To the form. Those squiggly letters. N-nobody can read those. Well, I can't."
+  - `delay-on-failure`: "I-I'll add a half-second delay when the code is wrong. That slows them down. F-five thousand seconds for ten thousand tries. That's… a lot. Right?"
+- Debrief:
+  > Well done, Mr. Crusher. The reset code is now longer, random, and expires after
+  > three wrong attempts. Commander Riker has a new access code. He has asked that it
+  > have more than four digits. I have approved this request with some enthusiasm.
 
 ### 2.4 `open-redirect`: Wrong Coordinates
 - Beat: Riker follows a link from "Starfleet Support" to the ship's own login page, which forwards his one-time code to Lore.

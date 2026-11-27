@@ -1,0 +1,165 @@
+@inherits ProgressAwareComponent
+@inject RequestSender Sender
+
+<div class="console tool">
+    <h3>Repeater</h3>
+    <p class="muted">@L("Sends a request for every number in a range, replacing §NUM§ in the body with the current number (zero-padded to 4 digits). Stops on a 200 response.",
+        "Schickt einen Request für jede Nummer in einem Bereich und ersetzt §NUM§ im Body durch die aktuelle Nummer (auf 4 Stellen aufgefüllt). Stoppt bei einer 200-Antwort.")</p>
+
+    <div class="repeater-fields">
+        <label>
+            @L("Method", "Methode")
+            <select @bind="_method">
+                @foreach (var m in RequestSender.Methods)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+        </label>
+        <label>
+            Path
+            <input @bind="_path" spellcheck="false" />
+        </label>
+        <label>
+            Header <span class="muted">(@L("one per line:", "einer pro Zeile:") <code>Name: @L("value", "Wert")</code>)</span>
+            <textarea rows="2" @bind="_headers" spellcheck="false"></textarea>
+        </label>
+        <label>
+            @L("Body template", "Body-Template") <span class="muted">(<code>§NUM§</code> → 0000–9999)</span>
+            <textarea rows="2" @bind="_bodyTemplate" spellcheck="false"></textarea>
+        </label>
+        <div class="repeater-range">
+            <label>
+                @L("Start", "Start")
+                <input type="number" min="0" max="9999" @bind="_start" />
+            </label>
+            <label>
+                @L("End", "Ende")
+                <input type="number" min="0" max="9999" @bind="_end" />
+            </label>
+        </div>
+    </div>
+
+    <div class="tool-actions">
+        @if (!_running)
+        {
+            <button type="button" class="primary" @onclick="Run">@L("Run", "Starten")</button>
+        }
+        else
+        {
+            <button type="button" @onclick="Stop">@L("Stop", "Stopp")</button>
+        }
+    </div>
+
+    @if (_running || _done)
+    {
+        <div class="repeater-progress">
+            <progress max="@(_end - _start + 1)" value="@_tried"></progress>
+            <span class="muted">@_current.ToString("D4") &nbsp; (@_tried / @(_end - _start + 1))</span>
+        </div>
+    }
+
+    @if (_successBody is not null)
+    {
+        <div class="repeater-result">
+            <strong>@L("Found!", "Gefunden!") @_successCode</strong>
+            <pre>@_successBody</pre>
+        </div>
+    }
+    else if (_done && !_running)
+    {
+        <p class="muted">@L("No successful response found in this range.", "Keine erfolgreiche Antwort in diesem Bereich gefunden.")</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter, EditorRequired] public RequestTemplate DefaultRequest { get; set; } = default!;
+
+    private string _method = "POST";
+    private string _path = "";
+    private string _headers = "";
+    private string _bodyTemplate = "";
+    private int _start;
+    private int _end = 9999;
+
+    private bool _running;
+    private bool _done;
+    private int _current;
+    private int _tried;
+    private string? _successBody;
+    private string? _successCode;
+    private CancellationTokenSource? _cts;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _method = DefaultRequest.Method;
+        _path = DefaultRequest.Path;
+        _headers = string.Join("\n", DefaultRequest.Headers.Select(h => $"{h.Key}: {h.Value}"));
+        _bodyTemplate = DefaultRequest.Body ?? "";
+    }
+
+    private async Task Run()
+    {
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+        var ct = _cts.Token;
+
+        _running = true;
+        _done = false;
+        _tried = 0;
+        _successBody = null;
+        _successCode = null;
+        StateHasChanged();
+
+        try
+        {
+            for (var i = _start; i <= _end; i++)
+            {
+                ct.ThrowIfCancellationRequested();
+                _current = i;
+                var padded = i.ToString("D4");
+                var body = _bodyTemplate.Replace("§NUM§", padded);
+                var headers = ParseHeaders(_headers);
+                var request = new ConsoleRequest(_method, _path, headers, body);
+                var exchange = await Sender.SendAsync(Slug, request, Lang, ct);
+                _tried++;
+
+                if (exchange.Response is { StatusCode: 200 })
+                {
+                    _successCode = "200 OK";
+                    _successBody = exchange.Response.Body;
+                    break;
+                }
+
+                // Re-render every 50 requests to keep the UI responsive without excessive updates.
+                if (_tried % 50 == 0)
+                    StateHasChanged();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Stopped by the user.
+        }
+        finally
+        {
+            _running = false;
+            _done = true;
+            StateHasChanged();
+        }
+    }
+
+    private void Stop() => _cts?.Cancel();
+
+    private static Dictionary<string, string> ParseHeaders(string text)
+    {
+        var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var colon = line.IndexOf(':');
+            if (colon > 0) headers[line[..colon].Trim()] = line[(colon + 1)..].Trim();
+        }
+        return headers;
+    }
+}

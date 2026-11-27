@@ -209,6 +209,35 @@ von hier.
   > und die Bestellungen sind storniert. Bis auf den Brandy. Der war schon geliefert, und keiner
   > will mir sagen, wohin.
 
+### 2.3 `brute-force`: Vierstellige Luftschleuse
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47326.8. Commander Rikers Zugangscode wurde ohne
+  > sein Wissen geändert. Er hat sein Kommunikationsgerät nicht angerührt, und sonst
+  > hat es auch niemand getan. Das Passwort-Reset-System des Schiffs hat einen
+  > vierstelligen Bestätigungscode verschickt, und jemand hat ihn bestätigt, bevor der
+  > Commander die Nachricht überhaupt gesehen hat. Der Code hat nur zehntausend mögliche
+  > Werte, und das System begrenzt die Versuche nicht. Ich habe Mr. Crusher gebeten
+  > herauszufinden, wie schnell sich so ein Code finden lässt.
+- Hinweise (Data):
+  1. `POST /password-reset/request` mit `"user": "riker"` erzeugt einen Code. Ich stelle fest, dass die Antwort den Code selbst nicht verrät, nur dass einer erzeugt wurde. Der Code hat vier Dezimalziffern, also genau zehntausend Möglichkeiten.
+  2. `POST /password-reset/confirm` liefert bei jedem falschen Code eine 400-Antwort, macht ihn aber nicht ungültig. Sie können beliebig viele Codes probieren. Der richtige wird auch beim zehntausendsten Versuch noch akzeptiert.
+  3. Der Repeater schickt `POST /password-reset/confirm` für jede Nummer von 0000 bis 9999 und stoppt bei einer 200-Antwort. Ich empfehle, ihn auf den Confirm-Endpunkt mit dem Body-Template `§NUM§` als Code einzustellen.
+- Visitenkarte (Lore):
+  > Vier Ziffern, Wesley. Mehr war's nicht. Zehntausend Versuche und kein einziger
+  > Alarm. Der Commander hat's erst gemerkt, als seine Tür nicht mehr aufging. Seinen
+  > Code hab' ich jetzt, aber mir reicht keine Tür. In seinem Posteingang wartet ein
+  > Link vom Sternenflotten-Support. Er vertraut dem Support. Sollte er nicht. — L.
+- Barclay:
+  - `attempt-limit`: „U-und wenn der Code nach ein paar Fehlversuchen einfach nicht mehr geht? Und v-vielleicht ein längerer Code. S-sechs Stellen? Acht? Ich vergesse meinen sowieso immer."
+  - `forwarded-for-limit`: „I-ich baue ein Rate-Limit ein. Nach IP-Adresse. Die steht ja im `X-Forwarded-For`-Header, d-dafür ist der da. Oder? Die eigene Adresse fälscht doch keiner."
+  - `form-captcha`: „K-könnten wir ein CAPTCHA einbauen? Ins Formular. Diese krakeligen Buchstaben. D-die kann doch keiner lesen. Also ich jedenfalls nicht."
+  - `delay-on-failure`: „I-ich baue eine halbe Sekunde Verzögerung ein, wenn der Code falsch ist. D-das bremst die aus. Fünftausend Sekunden für zehntausend Versuche. Das ist … viel. Oder?"
+- Nachbesprechung:
+  > Gut gemacht, Mr. Crusher. Der Reset-Code ist jetzt länger, zufällig und verfällt
+  > nach drei Fehlversuchen. Commander Riker hat einen neuen Zugangscode. Er hat darum
+  > gebeten, dass er mehr als vier Ziffern hat. Ich habe das mit einer gewissen
+  > Begeisterung genehmigt.
+
 ### 2.4 `open-redirect`: Falsche Koordinaten
 - Briefing:
   > Logbuch des Captains, Sternzeit 47327.9. Commander Riker hat heute Morgen eine Nachricht vom
