@@ -45,6 +45,12 @@ public record LabStory(int Act, int Order, Text Briefing, Text CallingCard, Text
 /// <param name="Code">The snippet; code is not translated.</param>
 /// <param name="BarclayLine">Barclay suggesting this option; every option has one, so it gives nothing away.</param>
 /// <param name="Language">highlight.js language of <paramref name="Code"/> (csharp, razor, json, sql, …).</param>
-public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback, Text? BarclayLine = null, string Language = "csharp");
+/// <param name="ControllerCode">The same fix as a classic MVC controller, for snippets that define endpoints
+/// (<paramref name="Code"/> is the Minimal API version). Shown when the player picks <see cref="CodeStyle.Controller"/>.</param>
+public record FixOption(string Id, string Code, bool IsCorrect, Text Feedback, Text? BarclayLine = null, string Language = "csharp",
+    string? ControllerCode = null)
+{
+    public string CodeFor(CodeStyle style) => style == CodeStyle.Controller && ControllerCode is not null ? ControllerCode : Code;
+}
 
 public record RequestTemplate(string Method, string Path, Dictionary<string, string> Headers, string? Body);

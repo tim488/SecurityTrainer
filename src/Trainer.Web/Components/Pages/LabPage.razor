@@ -35,7 +35,21 @@
         <span class="step-no">02</span><span class="step-label">@L("Fix", "Absichern")</span>
     </button>
 </nav>
-<button class="reset-lab" @onclick="ResetLab">@L("Reset mission", "Mission zurücksetzen")</button>
+<div class="lab-actions">
+    @* Only how endpoint code is shown; the mission's API stays the same. *@
+    @if (CodeStyles.HasVariants(_lab))
+    {
+        <div class="code-style-switch" role="group" aria-label="@L("Endpoint code style", "Stil des Endpunkt-Codes")">
+            @foreach (var (style, label) in Styles)
+            {
+                <button type="button" class="@(Progress.Settings.CodeStyle == style ? "active" : null)"
+                        aria-pressed="@(Progress.Settings.CodeStyle == style ? "true" : "false")"
+                        @onclick="() => Progress.SetCodeStyleAsync(style)">@label</button>
+            }
+        </div>
+    }
+    <button class="reset-lab" @onclick="ResetLab">@L("Reset mission", "Mission zurücksetzen")</button>
+</div>
 </div>
 
 @switch (_step)
@@ -73,6 +87,8 @@
 
 @code {
     private enum Step { Exploit, Fix }
+
+    private static readonly (CodeStyle, string)[] Styles = [(CodeStyle.MinimalApi, "Minimal API"), (CodeStyle.Controller, "Controller")];
 
     [Parameter] public string Slug { get; set; } = "";
 

@@ -201,6 +201,13 @@ a.side-block:hover { filter: brightness(1.12); }
 .lab-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1.25rem; }
 .lab-facts { display: flex; gap: 1rem; margin: 0; font-family: var(--display); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--lilac); }
 .reset-lab { margin-bottom: 2px; }
+.lab-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem 1rem; }
+/* Code style switch: two halves of one pill. */
+.code-style-switch { display: flex; gap: var(--gap); margin-bottom: 2px; }
+.code-style-switch button { border-radius: 0; background: var(--panel-2); color: var(--lilac); }
+.code-style-switch button:first-child { border-radius: 999px 0 0 999px; }
+.code-style-switch button:last-child { border-radius: 0 999px 999px 0; }
+.code-style-switch button.active { background: var(--sky); color: var(--on-colour); }
 .step {
     display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
     min-width: 150px; min-height: 58px; padding: 0.3rem 0.8rem 0.35rem;

@@ -1,3 +1,4 @@
+using Markdig.Syntax;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Trainer.Web.Core;
@@ -55,6 +56,26 @@ public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.True(lab.ExplanationMarkdown.IsComplete, "Explanation");
         Assert.All(lab.Hints, h => Assert.True(h.IsComplete, "Hint"));
         Assert.All(lab.FixOptions, o => Assert.True(o.Feedback.IsComplete, o.Id));
+    }
+
+    [Theory, MemberData(nameof(Slugs))]
+    public void Endpoint_code_exists_in_both_code_styles(string slug)
+    {
+        var lab = Registry.Find(slug)!;
+
+        // Fix options that map an endpoint need the controller version too.
+        Assert.All(lab.FixOptions.Where(o => o.Code.Contains("app.Map", StringComparison.Ordinal)),
+            o => Assert.False(string.IsNullOrWhiteSpace(o.ControllerCode), o.Id));
+        Assert.All(lab.FixOptions.Where(o => o.ControllerCode is not null),
+            o => Assert.Contains("Controller", o.ControllerCode!));
+
+        foreach (var markdown in CodeStyles.MarkdownOf(lab))
+        {
+            var blocks = Markdig.Markdown.Parse(markdown).Descendants<FencedCodeBlock>().ToList();
+            // An endpoint snippet is always tagged, and every tagged snippet has its counterpart.
+            Assert.DoesNotContain(blocks, b => CodeStyles.Of(b) is null && b.Lines.ToString().Contains("app.Map", StringComparison.Ordinal));
+            Assert.Equal(blocks.Count(b => CodeStyles.Of(b) == CodeStyle.MinimalApi), blocks.Count(b => CodeStyles.Of(b) == CodeStyle.Controller));
+        }
     }
 
     [Fact]

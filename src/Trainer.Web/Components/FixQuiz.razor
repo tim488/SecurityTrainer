@@ -9,7 +9,7 @@
                    checked="@(_selected == option.Id)" disabled="@Solved"
                    @onchange="() => _selected = option.Id" />
             <StoryPanel Speaker="Lt. Barclay" Text="@L(option.BarclayLine)" Kind="barclay" />
-            <CodeBlock Code="@option.Code" Language="@option.Language" />
+            <CodeBlock Code="@option.CodeFor(Progress.Settings.CodeStyle)" Language="@option.Language" />
             @if (Solved || _wrong.Contains(option.Id))
             {
                 <p class="feedback">@(option.IsCorrect ? "✔ " : "✘ ")@L(option.Feedback)</p>

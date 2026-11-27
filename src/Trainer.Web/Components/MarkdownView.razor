@@ -1,7 +1,9 @@
 @using Markdig
+@using Markdig.Syntax
+@inherits ProgressAwareComponent
 @inject IJSRuntime JS
 
-<div class="markdown" @ref="_root">@((MarkupString)Markdown.ToHtml(Text ?? "", Pipeline))</div>
+<div class="markdown" @ref="_root">@((MarkupString)Render(Text ?? "", Progress.Settings.CodeStyle))</div>
 
 @code {
     // Raw HTML is disabled: lab content is rendered as Markdown only.
@@ -12,10 +14,20 @@
 
     [Parameter] public string? Text { get; set; }
 
+    /// <summary>Renders the Markdown, dropping code blocks tagged for the other code style.</summary>
+    private static string Render(string text, CodeStyle style)
+    {
+        var document = Markdown.Parse(text, Pipeline);
+        foreach (var block in document.Descendants<FencedCodeBlock>().Where(b => CodeStyles.Of(b) is { } s && s != style).ToList())
+            block.Parent!.Remove(block);
+        return document.ToHtml(Pipeline);
+    }
+
     // Fenced code blocks are coloured in the browser after every render
     // (already highlighted blocks are skipped).
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
         try { await JS.InvokeVoidAsync("trainerHighlight.within", _root); }
         catch (Exception ex) when (ex is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
     }

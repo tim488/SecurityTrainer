@@ -17,6 +17,7 @@ public sealed class LabProgress
 public sealed class GlobalSettings
 {
     public Language Language { get; set; } = Language.En;
+    public CodeStyle CodeStyle { get; set; } = CodeStyle.MinimalApi;
 }
 
 public enum LabStatus { New, Exploited, Solved }
@@ -96,6 +97,13 @@ public sealed class ProgressStore(IJSRuntime js)
     public async Task SetLanguageAsync(Language language)
     {
         Settings.Language = language;
+        await WriteAsync(SettingsKey, Settings);
+        Changed?.Invoke();
+    }
+
+    public async Task SetCodeStyleAsync(CodeStyle style)
+    {
+        Settings.CodeStyle = style;
         await WriteAsync(SettingsKey, Settings);
         Changed?.Invoke();
     }
