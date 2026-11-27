@@ -5,7 +5,7 @@
     @foreach (var option in _options)
     {
         <label class="option @OptionClass(option)">
-            <input type="radio" name="fix-@Lab.Slug" value="@option.Id"
+            <input type="radio" name="fix-@Mission.Slug" value="@option.Id"
                    checked="@(_selected == option.Id)" disabled="@Solved"
                    @onchange="() => _selected = option.Id" />
             <StoryPanel Speaker="Lt. Barclay" Text="@L(option.BarclayLine)" Kind="barclay" />
@@ -20,19 +20,19 @@
     @if (!Solved)
     {
         <button class="primary" disabled="@(_selected is null)" @onclick="Submit">@L("Check answer", "Antwort prüfen")</button>
-        <span class="muted">@L("Attempts", "Versuche"): @Progress.Get(Lab.Slug).Attempts</span>
+        <span class="muted">@L("Attempts", "Versuche"): @Progress.Get(Mission.Slug).Attempts</span>
     }
     else
     {
         <div class="explanation">
             <h3>@L("Explanation", "Erklärung")</h3>
-            <MarkdownView Text="@L(Lab.ExplanationMarkdown)" />
+            <MarkdownView Text="@L(Mission.ExplanationMarkdown)" />
         </div>
-        <StoryPanel Speaker="@L("Debrief", "Nachbesprechung")" Text="@L(Lab.Story.Debrief)" Kind="debrief" />
+        <StoryPanel Speaker="@L("Debrief", "Nachbesprechung")" Text="@L(Mission.Story.Debrief)" Kind="debrief" />
         <div class="mission-done">
             <p class="success">@L("Mission completed.", "Mission abgeschlossen.")</p>
             <div class="mission-done-actions">
-                @if (NextMission is { } next && !ReferenceEquals(next, Lab))
+                @if (NextMission is { } next && !ReferenceEquals(next, Mission))
                 {
                     <a class="button primary" href="@($"missions/{next.Slug}")">@L("Next mission", "Nächste Mission"): @next.Story.Act.@next.Story.Order @L(next.Title)</a>
                 }
@@ -43,18 +43,18 @@
 </div>
 
 @code {
-    [Parameter, EditorRequired] public ILab Lab { get; set; } = default!;
+    [Parameter, EditorRequired] public IMission Mission { get; set; } = default!;
 
     private List<FixOption> _options = [];
     private readonly HashSet<string> _wrong = [];
     private string? _selected;
 
-    private bool Solved => Progress.Get(Lab.Slug).FixAnsweredCorrectly;
+    private bool Solved => Progress.Get(Mission.Slug).FixAnsweredCorrectly;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _options = Lab.FixOptions.ToList();
+        _options = Mission.FixOptions.ToList();
         Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_options));
     }
 
@@ -69,7 +69,7 @@
         if (option is null) return;
 
         if (!option.IsCorrect) _wrong.Add(option.Id);
-        await Progress.UpdateAsync(Lab.Slug, p =>
+        await Progress.UpdateAsync(Mission.Slug, p =>
         {
             p.Attempts++;
             if (option.IsCorrect) p.FixAnsweredCorrectly = true;

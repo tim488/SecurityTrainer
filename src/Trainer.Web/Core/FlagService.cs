@@ -5,7 +5,7 @@ using System.Text;
 namespace Trainer.Web.Core;
 
 /// <summary>
-/// Generates one random flag per lab per app start (<c>FLAG{slug-&lt;hex&gt;}</c>)
+/// Generates one random flag per mission per app start (<c>FLAG{slug-&lt;hex&gt;}</c>)
 /// and checks submissions in constant time.
 /// </summary>
 public sealed class FlagService

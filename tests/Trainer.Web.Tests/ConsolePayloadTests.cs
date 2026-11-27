@@ -5,8 +5,8 @@ using Trainer.Web.Core;
 
 namespace Trainer.Web.Tests;
 
-/// <summary>Payloads typed into the request console must reach the lab unchanged.</summary>
-public class ConsolePayloadTests(WebApplicationFactory<Program> factory) : LabTestBase(factory, "sql-injection")
+/// <summary>Payloads typed into the request console must reach the mission unchanged.</summary>
+public class ConsolePayloadTests(WebApplicationFactory<Program> factory) : MissionTestBase(factory, "sql-injection")
 {
     [Theory]
     [InlineData("/api/missions/sql-injection/cargo?search=' OR 1=1 --", "search", "' OR 1=1 --")]

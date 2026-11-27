@@ -6,7 +6,7 @@
 <div class="markdown" @ref="_root">@((MarkupString)Render(Text ?? "", Progress.Settings.CodeStyle))</div>
 
 @code {
-    // Raw HTML is disabled: lab content is rendered as Markdown only.
+    // Raw HTML is disabled: mission content is rendered as Markdown only.
     private static readonly MarkdownPipeline Pipeline =
         new MarkdownPipelineBuilder().DisableHtml().UseAutoLinks().UsePipeTables().Build();
 

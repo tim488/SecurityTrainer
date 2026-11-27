@@ -15,9 +15,9 @@ public sealed record ConsoleExchange(DateTimeOffset At, ConsoleRequest Request, 
 /// <summary>
 /// Backend of the request console: sends requests server-side to the
 /// app's own address, never follows redirects, only allows <c>/api/missions/</c> paths,
-/// and keeps the last 10 exchanges per lab in memory. Unless the player typed one,
+/// and keeps the last 10 exchanges per mission in memory. Unless the player typed one,
 /// an <c>Accept-Language</c> header for the current UI language is added on the
-/// wire only, so lab data matches the EN | DE switch without cluttering the console.
+/// wire only, so mission data matches the EN | DE switch without cluttering the console.
 /// </summary>
 public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer server)
 {
@@ -64,7 +64,7 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
 
         var baseAddress = GetBaseAddress();
         if (!TryBuildUri(baseAddress, request.Path, out var uri))
-            throw new ArgumentException($"Only paths under {LabRegistry.ApiPrefix} are allowed.");
+            throw new ArgumentException($"Only paths under {MissionRegistry.ApiPrefix} are allowed.");
 
         using var message = new HttpRequestMessage(new HttpMethod(method), uri);
         if (!string.IsNullOrEmpty(request.Body) && method != "GET")
@@ -103,11 +103,11 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
         uri = baseAddress;
         if (string.IsNullOrWhiteSpace(path)) return false;
         path = path.Trim();
-        if (!path.StartsWith(LabRegistry.ApiPrefix, StringComparison.Ordinal)) return false;
+        if (!path.StartsWith(MissionRegistry.ApiPrefix, StringComparison.Ordinal)) return false;
         if (!Uri.TryCreate(baseAddress, path, out var candidate)) return false;
         if (Uri.Compare(candidate, baseAddress, UriComponents.SchemeAndServer, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) != 0)
             return false;
-        if (!candidate.AbsolutePath.StartsWith(LabRegistry.ApiPrefix, StringComparison.Ordinal)) return false;
+        if (!candidate.AbsolutePath.StartsWith(MissionRegistry.ApiPrefix, StringComparison.Ordinal)) return false;
         uri = candidate;
         return true;
     }

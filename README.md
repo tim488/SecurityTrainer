@@ -1,7 +1,7 @@
 # Security Trainer
 
 Learn common vulnerabilities in .NET, Blazor and Web APIs by exploiting them in
-the browser. Each lab is a chapter of a short Star Trek story: you play Wesley
+the browser. Each mission is a chapter of a short Star Trek story: you play Wesley
 Crusher, chasing Lore through the Enterprise's freshly refitted computer core.
 
 > ⚠️ This app is **deliberately vulnerable**. It binds to `localhost` only.
@@ -40,27 +40,27 @@ dotnet test
 
 ## Terms
 
-- **Mission**: what players see and use. The UI, the page addresses (`/missions/{slug}`)
-  and the API they attack (`/api/missions/{slug}/...`) all say mission.
-- **Lab**: the C# class behind a mission: its vulnerable endpoints, flag, fix options and
-  tests (`ILab`, `LabRegistry`, `Labs/<Name>/`). Only developers see this word.
+One word everywhere: a **mission** is one exercise, with its story, vulnerable API, flag,
+fix options and tests. The UI, the page addresses (`/missions/{slug}`), the API paths
+(`/api/missions/{slug}/...`) and the code (`IMission`, `MissionRegistry`, `Missions/<Name>/`)
+all use it.
 
 ## Layout
 
 - `src/Trainer.Web/`: the Blazor Web App and the vulnerable endpoints (`/api/missions/{slug}`)
-  - `Core/`: lab contract, registry, flags, demo auth, progress
-  - `Components/`: home page, lab page, request console, quiz
+  - `Core/`: mission contract, registry, flags, demo auth, progress
+  - `Components/`: home page, mission page, request console, quiz
   - `Core/Story/`: act titles, opening scene, act endings, finale
-  - `Core/Simulation/`: virtual filesystem and fake network, so labs never touch the host
-  - `Components/Tools/`: extra lab tools (JWT editor, moderator view)
-  - `Labs/<Name>/`: one folder per lab; `<Name>Lab.cs` has the endpoints and data,
-    `<Name>Lab.Text.cs` the story, scenario, hints, fix options and explanation
+  - `Core/Simulation/`: virtual filesystem and fake network, so missions never touch the host
+  - `Components/Tools/`: extra mission tools (JWT editor, moderator view)
+  - `Missions/<Name>/`: one folder per mission; `<Name>Mission.cs` has the endpoints and data,
+    `<Name>Mission.Text.cs` the story, scenario, hints, fix options and explanation
 - `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
 - `docs/story-guide.md`: premise, cast, the arc and the writing rules (English and German)
-- `docs/writing-a-lab.md`: how to add a lab
+- `docs/writing-a-mission.md`: how to add a mission
 
-Progress is stored in your browser's `localStorage`. Use **Reset** on a lab to start it over.
-Lab data lives in the running app and is shared by everyone who uses that instance, so
+Progress is stored in your browser's `localStorage`. Use **Reset** on a mission to start it over.
+Mission data lives in the running app and is shared by everyone who uses that instance, so
 **Reset** also resets the mission for them. Each player should run their own copy.
 
 ## Known limitations

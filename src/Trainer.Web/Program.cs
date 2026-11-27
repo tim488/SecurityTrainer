@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<FlagService>();
 builder.Services.AddSingleton<DemoAuth>();
-builder.Services.AddSingleton<LabRegistry>();
+builder.Services.AddSingleton<MissionRegistry>();
 builder.Services.AddSingleton<RequestSender>();
 builder.Services.AddScoped<ProgressStore>();
 
@@ -26,7 +26,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
-// Friendly "not found" pages for the UI only. Lab APIs must return their real status codes
+// Friendly "not found" pages for the UI only. Mission APIs must return their real status codes
 // (a re-executed POST would otherwise fail antiforgery and show up as 400 in the console).
 app.UseWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api"),
     branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
@@ -35,7 +35,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
-app.Services.GetRequiredService<LabRegistry>().MapEndpoints(app);
+app.Services.GetRequiredService<MissionRegistry>().MapEndpoints(app);
 
 // Mission pages used to live under /labs/; keep old links and bookmarks working.
 app.MapGet("/labs/{slug}", (string slug) => Results.Redirect($"/missions/{Uri.EscapeDataString(slug)}", permanent: true));

@@ -5,7 +5,7 @@ namespace Trainer.Web.Core.Simulation;
 
 /// <summary>
 /// A simulated network: an <see cref="HttpMessageHandler"/> that answers for a
-/// fixed set of hosts, so labs can make "outbound" requests without touching the real network.
+/// fixed set of hosts, so missions can make "outbound" requests without touching the real network.
 /// Hosts can have DNS aliases. Unknown hosts fail like a failed DNS lookup. Redirects are
 /// returned as-is; following them is up to the caller.
 /// </summary>

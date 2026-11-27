@@ -1,6 +1,6 @@
 namespace Trainer.Web.Core.Story;
 
-/// <param name="Ending">Shown under the act once all its labs are completed. Null until written.</param>
+/// <param name="Ending">Shown under the act once all its missions are completed. Null until written.</param>
 public sealed record Act(int Number, Text Title, Text? Ending = null);
 
 /// <summary>
@@ -47,7 +47,7 @@ public static class Acts
             Die Musik spielt weiter, und sonst hat niemand etwas bemerkt. Wesley stellt sein Glas ab.
             """);
 
-    /// <summary>Shown once all labs are completed.</summary>
+    /// <summary>Shown once all missions are completed.</summary>
     public static readonly Text? Finale = new(
         En: """
             The core is quiet for the first time since the refit. In Ten Forward, Guinan pours a drink

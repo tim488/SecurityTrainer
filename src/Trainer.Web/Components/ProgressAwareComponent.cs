@@ -11,14 +11,14 @@ namespace Trainer.Web.Components;
 public abstract class ProgressAwareComponent : ComponentBase, IDisposable
 {
     [Inject] protected ProgressStore Progress { get; set; } = default!;
-    [Inject] protected LabRegistry Registry { get; set; } = default!;
+    [Inject] protected MissionRegistry Registry { get; set; } = default!;
 
     protected Language Lang => Progress.Settings.Language;
 
     /// <summary>Picks the current language's version of an inline UI string.</summary>
     protected string L(string en, string de) => Lang == Language.De ? de : en;
 
-    /// <summary>Picks the current language's version of lab or story text (null stays null).</summary>
+    /// <summary>Picks the current language's version of mission or story text (null stays null).</summary>
     protected string? L(Text? text) => text?[Lang];
 
     protected string L(Difficulty difficulty) => difficulty switch
@@ -28,27 +28,27 @@ public abstract class ProgressAwareComponent : ComponentBase, IDisposable
         _ => L("Hard", "Schwer"),
     };
 
-    protected string L(LabStatus status) => status switch
+    protected string L(MissionStatus status) => status switch
     {
-        LabStatus.New => L("new", "neu"),
-        LabStatus.Exploited => L("exploited", "geknackt"),
+        MissionStatus.New => L("new", "neu"),
+        MissionStatus.Exploited => L("exploited", "geknackt"),
         _ => L("solved", "gelöst"),
     };
 
     private bool IsCompleted(string slug) => Progress.Get(slug).IsCompleted;
 
     /// <summary>The first mission in story order that is not completed yet.</summary>
-    protected ILab? NextMission => StoryProgress.Next(Registry.Labs, IsCompleted);
+    protected IMission? NextMission => StoryProgress.Next(Registry.Missions, IsCompleted);
 
     /// <summary>True when story mode keeps this mission closed. Before progress has loaded, only the first mission is open.</summary>
-    protected bool IsLocked(ILab lab) => StoryProgress.IsLocked(Registry.Labs, IsCompleted, Progress.Settings.StoryMode, lab);
+    protected bool IsLocked(IMission mission) => StoryProgress.IsLocked(Registry.Missions, IsCompleted, Progress.Settings.StoryMode, mission);
 
     protected override void OnInitialized() => Progress.Changed += OnProgressChanged;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            await Progress.LoadAsync(Registry.Labs.Select(l => l.Slug));
+            await Progress.LoadAsync(Registry.Missions.Select(m => m.Slug));
     }
 
     private void OnProgressChanged() => _ = InvokeAsync(StateHasChanged);

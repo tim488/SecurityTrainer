@@ -7,7 +7,7 @@
 <h1>@L("Missions", "Missionen")</h1>
 
 <div class="board-bar">
-    <p class="muted">@L($"{Completed} of {Registry.Labs.Count} missions completed", $"{Completed} von {Registry.Labs.Count} Missionen abgeschlossen")</p>
+    <p class="muted">@L($"{Completed} of {Registry.Missions.Count} missions completed", $"{Completed} von {Registry.Missions.Count} Missionen abgeschlossen")</p>
     <div class="pill-switch" role="group" aria-label="@L("Mission order", "Reihenfolge der Missionen")">
         <button type="button" class="@(StoryMode ? "active" : null)" aria-pressed="@(StoryMode ? "true" : "false")"
                 title="@L("Missions open one after another", "Missionen werden nacheinander freigeschaltet")"
@@ -23,48 +23,48 @@
     <StoryPanel Text="@L(Acts.OpeningScene)" Kind="epilogue" />
 }
 
-@foreach (var group in Registry.Labs.GroupBy(l => l.Story.Act).OrderBy(g => g.Key))
+@foreach (var group in Registry.Missions.GroupBy(m => m.Story.Act).OrderBy(g => g.Key))
 {
     var act = Acts.Find(group.Key);
-    var done = group.Count(l => Progress.Get(l.Slug).IsCompleted);
+    var done = group.Count(m => Progress.Get(m.Slug).IsCompleted);
     <section class="act">
         <h2>@L("Act", "Akt") @group.Key@(act is null ? "" : $": {L(act.Title)}") <span class="act-count">@done/@group.Count()</span></h2>
         <div class="cards">
-            @foreach (var lab in group.OrderBy(l => l.Story.Order))
+            @foreach (var mission in group.OrderBy(m => m.Story.Order))
             {
-                var status = Progress.StatusOf(lab.Slug);
-                var number = Number(lab);
-                if (IsLocked(lab))
+                var status = Progress.StatusOf(mission.Slug);
+                var number = Number(mission);
+                if (IsLocked(mission))
                 {
                     @* The title stays hidden until the mission opens: Lore's calling card names it first. *@
                     <div class="card locked" aria-disabled="true">
                         <span class="card-order"><svg class="card-mark card-icon card-lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="8" rx="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>@number</span>
                         <span class="card-body">
                             <span class="card-title">@L("Locked", "Gesperrt")</span>
-                            <span class="lab-facts">
+                            <span class="mission-facts">
                                 <span>@L($"Complete {Number(NextMission!)} first", $"Erst {Number(NextMission!)} abschließen")</span>
                             </span>
                         </span>
                     </div>
                     continue;
                 }
-                var next = ReferenceEquals(lab, NextMission);
+                var next = ReferenceEquals(mission, NextMission);
                 var cardClass = $"card status-{status.ToString().ToLowerInvariant()}" + (next ? " next" : "");
                 @* Number block on the left (its colour is the status), title and plain labels on the right. *@
-                <a class="@cardClass" href="@($"missions/{lab.Slug}")">
+                <a class="@cardClass" href="@($"missions/{mission.Slug}")">
                     <span class="card-order">
-                        @if (status == LabStatus.Solved)
+                        @if (status == MissionStatus.Solved)
                         {
                             <svg class="card-mark card-icon card-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8" /></svg>
                         }
                         @number
                     </span>
                     <span class="card-body">
-                        <span class="card-title">@L(lab.Title)</span>
-                        <span class="lab-facts">
-                            <span>@lab.Category</span>
-                            <span class="difficulty-@lab.Difficulty.ToString().ToLowerInvariant()">@L(lab.Difficulty)</span>
-                            @if (status != LabStatus.New)
+                        <span class="card-title">@L(mission.Title)</span>
+                        <span class="mission-facts">
+                            <span>@mission.Category</span>
+                            <span class="difficulty-@mission.Difficulty.ToString().ToLowerInvariant()">@L(mission.Difficulty)</span>
+                            @if (status != MissionStatus.New)
                             {
                                 <span class="status-@status.ToString().ToLowerInvariant()">@L(status)</span>
                             }
@@ -84,15 +84,15 @@
     </section>
 }
 
-@if (Registry.Labs.Count > 0 && Completed == Registry.Labs.Count)
+@if (Registry.Missions.Count > 0 && Completed == Registry.Missions.Count)
 {
     <StoryPanel Text="@L(Acts.Finale)" Kind="epilogue" />
 }
 
 @code {
-    private int Completed => Registry.Labs.Count(l => Progress.Get(l.Slug).IsCompleted);
+    private int Completed => Registry.Missions.Count(m => Progress.Get(m.Slug).IsCompleted);
 
     private bool StoryMode => Progress.Settings.StoryMode;
 
-    private static string Number(ILab lab) => $"{lab.Story.Act}.{lab.Story.Order}";
+    private static string Number(IMission mission) => $"{mission.Story.Act}.{mission.Story.Order}";
 }

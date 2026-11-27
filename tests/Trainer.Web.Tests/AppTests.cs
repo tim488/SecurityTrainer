@@ -17,7 +17,7 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
     }
 
     [Fact]
-    public async Task Lab_page_renders()
+    public async Task Mission_page_renders()
     {
         var response = await factory.CreateClient().GetAsync("/missions/bola");
 
@@ -28,7 +28,7 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
     }
 
     [Fact]
-    public async Task Old_lab_addresses_redirect_to_missions()
+    public async Task Old_mission_addresses_redirect_to_missions()
     {
         var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
@@ -38,8 +38,8 @@ public class AppTests(WebApplicationFactory<Program> factory) : IClassFixture<We
         Assert.Equal("/missions/bola", response.Headers.Location?.OriginalString);
     }
 
-    [Theory, MemberData(nameof(LabContractTests.Slugs), MemberType = typeof(LabContractTests))]
-    public async Task Every_lab_page_renders(string slug)
+    [Theory, MemberData(nameof(MissionContractTests.Slugs), MemberType = typeof(MissionContractTests))]
+    public async Task Every_mission_page_renders(string slug)
     {
         var response = await factory.CreateClient().GetAsync($"/missions/{slug}");
 

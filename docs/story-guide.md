@@ -1,7 +1,7 @@
 # Story guide
 
 The big picture of the story and the rules for writing it. The text players read
-lives in the code: each lab's `Labs/<Name>/<Name>Lab.Text.cs`, plus `Core/Story/Acts.cs`
+lives in the code: each mission's `Missions/<Name>/<Name>Mission.Text.cs`, plus `Core/Story/Acts.cs`
 for the opening scene, act titles, act endings and finale.
 
 ## Premise
@@ -27,12 +27,12 @@ for the opening scene, act titles, act endings and finale.
 
 | Character | Role in the app | Voice |
 |---|---|---|
-| **Wesley Crusher** | the player (lab user `wesley`) | eager, underestimated, clever |
+| **Wesley Crusher** | the player (user `wesley`) | eager, underestimated, clever |
 | **Captain Picard** | briefings (Captain's log) and debriefs | calm, brief, formal; calls him "Mr. Crusher" |
 | **Lt. Cmdr. Data** | hints | precise, formal, **never a contraction**; quietly conflicted about his brother |
 | **Lt. Barclay** | suggests every fix option, right or wrong | nervous, stutters ("I-I …", "M-maybe …"); wrote much of the refit and feels guilty |
 | **Lore** | calling cards | charming, cruel, uses contractions, mocks "the boy" |
-| **Commander Riker** | first officer, Lore's favourite target (lab user `riker`) | |
+| **Commander Riker** | first officer, Lore's favourite target (user `riker`) | |
 
 ## How a mission tells its part
 

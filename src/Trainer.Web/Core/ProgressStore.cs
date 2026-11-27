@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 
 namespace Trainer.Web.Core;
 
-public sealed class LabProgress
+public sealed class MissionProgress
 {
     public int HintsRevealed { get; set; }
     public bool FlagSubmitted { get; set; }
@@ -23,7 +23,7 @@ public sealed class GlobalSettings
     public bool StoryMode { get; set; } = true;
 }
 
-public enum LabStatus { New, Exploited, Solved }
+public enum MissionStatus { New, Exploited, Solved }
 
 /// <summary>
 /// Per-circuit progress, persisted to <c>localStorage</c> via JS interop.
@@ -33,11 +33,12 @@ public enum LabStatus { New, Exploited, Solved }
 /// </summary>
 public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
 {
-    private const string LabKeyPrefix = "securityTrainer.lab.";
+    private const string MissionKeyPrefix = "securityTrainer.mission.";
+    private const string OldKeyPrefix = "securityTrainer.lab.";   // used before the lab → mission rename
     private const string SettingsKey = "securityTrainer.settings";
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { Converters = { new JsonStringEnumConverter() } };
 
-    private readonly Dictionary<string, LabProgress> _labs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, MissionProgress> _missions = new(StringComparer.OrdinalIgnoreCase);
     private bool _loaded;
 
     /// <summary>Story mode is on unless <c>Trainer:StoryMode</c> is false (e.g. for a workshop); the player's own choice wins.</summary>
@@ -51,7 +52,7 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
 
     public bool IsLoaded => _loaded;
 
-    /// <summary>Loads settings and the given labs' progress. Call from OnAfterRenderAsync.</summary>
+    /// <summary>Loads settings and the given missions' progress. Call from OnAfterRenderAsync.</summary>
     public async Task LoadAsync(IEnumerable<string> slugs)
     {
         var changed = false;
@@ -64,39 +65,41 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
 
         foreach (var slug in slugs)
         {
-            if (_labs.ContainsKey(slug)) continue;
-            _labs[slug] = await ReadAsync<LabProgress>(LabKeyPrefix + slug) ?? new LabProgress();
+            if (_missions.ContainsKey(slug)) continue;
+            _missions[slug] = await ReadAsync<MissionProgress>(MissionKeyPrefix + slug)
+                ?? await MigrateAsync(slug)
+                ?? new MissionProgress();
             changed = true;
         }
 
         if (changed) Changed?.Invoke();
     }
 
-    public LabProgress Get(string slug)
+    public MissionProgress Get(string slug)
     {
-        if (!_labs.TryGetValue(slug, out var progress))
-            _labs[slug] = progress = new LabProgress();
+        if (!_missions.TryGetValue(slug, out var progress))
+            _missions[slug] = progress = new MissionProgress();
         return progress;
     }
 
-    public LabStatus StatusOf(string slug)
+    public MissionStatus StatusOf(string slug)
     {
         var p = Get(slug);
-        return p.IsCompleted ? LabStatus.Solved : p.FlagSubmitted ? LabStatus.Exploited : LabStatus.New;
+        return p.IsCompleted ? MissionStatus.Solved : p.FlagSubmitted ? MissionStatus.Exploited : MissionStatus.New;
     }
 
-    public async Task UpdateAsync(string slug, Action<LabProgress> change)
+    public async Task UpdateAsync(string slug, Action<MissionProgress> change)
     {
         var progress = Get(slug);
         change(progress);
-        await WriteAsync(LabKeyPrefix + slug, progress);
+        await WriteAsync(MissionKeyPrefix + slug, progress);
         Changed?.Invoke();
     }
 
     public async Task ClearAsync(string slug)
     {
-        _labs[slug] = new LabProgress();
-        try { await js.InvokeVoidAsync("localStorage.removeItem", LabKeyPrefix + slug); }
+        _missions[slug] = new MissionProgress();
+        try { await js.InvokeVoidAsync("localStorage.removeItem", MissionKeyPrefix + slug); }
         catch (Exception ex) when (IsInteropFailure(ex)) { }
         Changed?.Invoke();
     }
@@ -120,6 +123,17 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
         Settings.StoryMode = storyMode;
         await WriteAsync(SettingsKey, Settings);
         Changed?.Invoke();
+    }
+
+    /// <summary>Moves progress saved under the old key prefix to the new one, so nobody loses it.</summary>
+    private async Task<MissionProgress?> MigrateAsync(string slug)
+    {
+        var old = await ReadAsync<MissionProgress>(OldKeyPrefix + slug);
+        if (old is null) return null;
+        await WriteAsync(MissionKeyPrefix + slug, old);
+        try { await js.InvokeVoidAsync("localStorage.removeItem", OldKeyPrefix + slug); }
+        catch (Exception ex) when (IsInteropFailure(ex)) { }
+        return old;
     }
 
     private async Task<T?> ReadAsync<T>(string key) where T : class

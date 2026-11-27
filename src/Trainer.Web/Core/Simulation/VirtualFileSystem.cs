@@ -1,7 +1,7 @@
 namespace Trainer.Web.Core.Simulation;
 
 /// <summary>
-/// An in-memory, Unix-style filesystem so labs never touch the host.
+/// An in-memory, Unix-style filesystem so missions never touch the host.
 /// <see cref="Combine"/> and <see cref="GetFullPath"/> behave like their
 /// <see cref="Path"/> counterparts on Linux, so vulnerable code behaves like the real thing.
 /// </summary>

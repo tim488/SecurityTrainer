@@ -7,7 +7,7 @@ public enum Language
 }
 
 /// <summary>
-/// A piece of player-facing text in every supported language. Lab content
+/// A piece of player-facing text in every supported language. Mission content
 /// (story, scenario, hints, feedback, explanation) is written as <see cref="Text"/>;
 /// code snippets and HTTP requests stay English.
 /// </summary>

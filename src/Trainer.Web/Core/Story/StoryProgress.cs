@@ -8,27 +8,27 @@ namespace Trainer.Web.Core.Story;
 public static class StoryProgress
 {
     /// <summary>The first mission in story order that is not completed, or null when all are.</summary>
-    public static ILab? Next(IReadOnlyList<ILab> labs, Func<string, bool> isCompleted) =>
-        labs.FirstOrDefault(l => !isCompleted(l.Slug));
+    public static IMission? Next(IReadOnlyList<IMission> missions, Func<string, bool> isCompleted) =>
+        missions.FirstOrDefault(m => !isCompleted(m.Slug));
 
-    /// <summary>The mission after <paramref name="lab"/> in story order, or null for the last one.</summary>
-    public static ILab? Following(IReadOnlyList<ILab> labs, ILab lab)
+    /// <summary>The mission after <paramref name="mission"/> in story order, or null for the last one.</summary>
+    public static IMission? Following(IReadOnlyList<IMission> missions, IMission mission)
     {
-        var index = IndexOf(labs, lab);
-        return index >= 0 && index < labs.Count - 1 ? labs[index + 1] : null;
+        var index = IndexOf(missions, mission);
+        return index >= 0 && index < missions.Count - 1 ? missions[index + 1] : null;
     }
 
-    public static bool IsLocked(IReadOnlyList<ILab> labs, Func<string, bool> isCompleted, bool storyMode, ILab lab)
+    public static bool IsLocked(IReadOnlyList<IMission> missions, Func<string, bool> isCompleted, bool storyMode, IMission mission)
     {
-        if (!storyMode || isCompleted(lab.Slug)) return false;
-        var next = Next(labs, isCompleted);
-        return next is not null && IndexOf(labs, lab) > IndexOf(labs, next);
+        if (!storyMode || isCompleted(mission.Slug)) return false;
+        var next = Next(missions, isCompleted);
+        return next is not null && IndexOf(missions, mission) > IndexOf(missions, next);
     }
 
-    private static int IndexOf(IReadOnlyList<ILab> labs, ILab lab)
+    private static int IndexOf(IReadOnlyList<IMission> missions, IMission mission)
     {
-        for (var i = 0; i < labs.Count; i++)
-            if (ReferenceEquals(labs[i], lab)) return i;
+        for (var i = 0; i < missions.Count; i++)
+            if (ReferenceEquals(missions[i], mission)) return i;
         return -1;
     }
 }

@@ -212,27 +212,27 @@ a.side-block:hover { filter: brightness(1.12); }
 .card.locked { cursor: not-allowed; }
 .card.locked .card-order { --status: var(--panel-2); color: var(--lilac); }
 .card.locked .card-body { color: var(--lilac); }
-.lab-facts .status-next { color: var(--sky); }
+.mission-facts .status-next { color: var(--sky); }
 .board-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
 .board-bar p { margin: 0; }
 .act-count { color: var(--lilac); font-size: 1.1rem; }
 .act h2 { margin: 0 0 1rem; }
 .card-title { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; line-height: 1.2; }
-.card .lab-facts { font-size: 1rem; }
+.card .mission-facts { font-size: 1rem; }
 .difficulty-easy { color: var(--ok); }
 .difficulty-medium { color: var(--gold); }
 .difficulty-hard { color: var(--red); }
-.lab-facts .status-exploited { color: var(--orange); }
-.lab-facts .status-solved { color: var(--ok); }
+.mission-facts .status-exploited { color: var(--orange); }
+.mission-facts .status-solved { color: var(--ok); }
 
-/* Lab page */
+/* Mission page */
 /* Tabs: square blocks on a bar that leads into the section (buttons stay pills). */
 .steps-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0.5rem 1rem; margin: 1rem 0 0; padding-bottom: 6px; border-bottom: 8px solid var(--orange); }
 .steps { display: flex; gap: 6px; }
-.lab-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1.25rem; }
-.lab-facts { display: flex; gap: 1rem; margin: 0; font-family: var(--display); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--lilac); }
-.reset-lab { margin-bottom: 2px; }
-.lab-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem 1rem; }
+.mission-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1.25rem; }
+.mission-facts { display: flex; gap: 1rem; margin: 0; font-family: var(--display); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--lilac); }
+.reset-mission { margin-bottom: 2px; }
+.mission-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem 1rem; }
 /* Two-way switch (code style, story mode): two halves of one pill. */
 .pill-switch { display: flex; gap: var(--gap); margin-bottom: 2px; }
 .pill-switch button { border-radius: 0; background: var(--panel-2); color: var(--lilac); }
@@ -313,7 +313,7 @@ details.story:not([open]) { padding-bottom: 0.5rem; }
         content: "An error has occurred."
     }
 
-/* Lab tools (JWT editor, moderator view) */
+/* Mission tools (JWT editor, moderator view) */
 .tool { margin-top: 1.5rem; }
 .jwt-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 0 1rem; }
 .tool-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }

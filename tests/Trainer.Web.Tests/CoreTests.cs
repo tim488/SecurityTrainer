@@ -17,7 +17,7 @@ public class FlagServiceTests
     }
 
     [Fact]
-    public void Flags_differ_between_starts_and_labs()
+    public void Flags_differ_between_starts_and_missions()
     {
         Assert.NotEqual(new FlagService().GetFlag("bola"), new FlagService().GetFlag("bola"));
         var flags = new FlagService();
@@ -43,7 +43,7 @@ public class FlagServiceTests
 public class DemoAuthTests
 {
     [Fact]
-    public void Tokens_are_random_and_map_back_to_their_user_and_lab()
+    public void Tokens_are_random_and_map_back_to_their_user_and_mission()
     {
         var auth = new DemoAuth();
         var wesley = auth.GetToken("bola", "wesley");
@@ -53,7 +53,7 @@ public class DemoAuthTests
         Assert.NotEqual(wesley, new DemoAuth().GetToken("bola", "wesley"));
         Assert.Equal(new DemoUser("bola", "wesley"), auth.FindUser("bola", wesley));
         Assert.Equal("riker", auth.FindUser("bola", riker)?.Name);
-        Assert.Null(auth.FindUser("other-lab", wesley));
+        Assert.Null(auth.FindUser("other-mission", wesley));
         Assert.Null(auth.FindUser("bola", "not-a-token"));
         Assert.Null(auth.FindUser("bola", (string?)null));
     }
@@ -66,7 +66,7 @@ public class RequestSenderTests
     [Theory]
     [InlineData("/api/missions/bola/logs")]
     [InlineData("/api/missions/bola/logs/1003?x=1")]
-    public void Allows_lab_api_paths(string path) =>
+    public void Allows_mission_api_paths(string path) =>
         Assert.True(RequestSender.TryBuildUri(Base, path, out _));
 
     [Theory]
@@ -118,20 +118,20 @@ public class StardateTests
 
 public class StoryProgressTests
 {
-    private static readonly IReadOnlyList<ILab> Labs = new LabRegistry(new FlagService(), new DemoAuth()).Labs;
+    private static readonly IReadOnlyList<IMission> Missions = new MissionRegistry(new FlagService(), new DemoAuth()).Missions;
 
     private static Func<string, bool> Completed(params int[] indexes)
     {
-        var slugs = indexes.Select(i => Labs[i].Slug).ToHashSet();
+        var slugs = indexes.Select(i => Missions[i].Slug).ToHashSet();
         return slugs.Contains;
     }
 
     [Fact]
     public void Story_mode_opens_only_the_first_mission_at_the_start()
     {
-        Assert.False(StoryProgress.IsLocked(Labs, Completed(), storyMode: true, Labs[0]));
-        Assert.All(Labs.Skip(1), l => Assert.True(StoryProgress.IsLocked(Labs, Completed(), storyMode: true, l), l.Slug));
-        Assert.Same(Labs[0], StoryProgress.Next(Labs, Completed()));
+        Assert.False(StoryProgress.IsLocked(Missions, Completed(), storyMode: true, Missions[0]));
+        Assert.All(Missions.Skip(1), l => Assert.True(StoryProgress.IsLocked(Missions, Completed(), storyMode: true, l), l.Slug));
+        Assert.Same(Missions[0], StoryProgress.Next(Missions, Completed()));
     }
 
     [Fact]
@@ -139,9 +139,9 @@ public class StoryProgressTests
     {
         var completed = Completed(0, 1);
 
-        Assert.False(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[2]));
-        Assert.True(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[3]));
-        Assert.Same(Labs[2], StoryProgress.Next(Labs, completed));
+        Assert.False(StoryProgress.IsLocked(Missions, completed, storyMode: true, Missions[2]));
+        Assert.True(StoryProgress.IsLocked(Missions, completed, storyMode: true, Missions[3]));
+        Assert.Same(Missions[2], StoryProgress.Next(Missions, completed));
     }
 
     [Fact]
@@ -150,18 +150,18 @@ public class StoryProgressTests
         // Mission 5 was completed in free play; story mode still waits for mission 1.
         var completed = Completed(4);
 
-        Assert.False(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[4]));
-        Assert.True(StoryProgress.IsLocked(Labs, completed, storyMode: true, Labs[1]));
-        Assert.All(Labs, l => Assert.False(StoryProgress.IsLocked(Labs, Completed(), storyMode: false, l)));
+        Assert.False(StoryProgress.IsLocked(Missions, completed, storyMode: true, Missions[4]));
+        Assert.True(StoryProgress.IsLocked(Missions, completed, storyMode: true, Missions[1]));
+        Assert.All(Missions, l => Assert.False(StoryProgress.IsLocked(Missions, Completed(), storyMode: false, l)));
     }
 
     [Fact]
     public void Nothing_is_next_when_everything_is_completed()
     {
-        var all = Completed(Enumerable.Range(0, Labs.Count).ToArray());
+        var all = Completed(Enumerable.Range(0, Missions.Count).ToArray());
 
-        Assert.Null(StoryProgress.Next(Labs, all));
-        Assert.Null(StoryProgress.Following(Labs, Labs[^1]));
-        Assert.Same(Labs[1], StoryProgress.Following(Labs, Labs[0]));
+        Assert.Null(StoryProgress.Next(Missions, all));
+        Assert.Null(StoryProgress.Following(Missions, Missions[^1]));
+        Assert.Same(Missions[1], StoryProgress.Following(Missions, Missions[0]));
     }
 }
