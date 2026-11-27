@@ -5,13 +5,13 @@
     <h3>@L("Request console", "Request-Konsole")</h3>
     <form @onsubmit="Send" @onsubmit:preventDefault>
         <div class="console-line">
-            <select @bind="_method" aria-label="Method">
+            <select @bind="_method" aria-label="@L("Method", "Methode")">
                 @foreach (var m in RequestSender.Methods)
                 {
                     <option value="@m">@m</option>
                 }
             </select>
-            <input class="console-path" @bind="_path" aria-label="Path" spellcheck="false" />
+            <input class="console-path" @bind="_path" aria-label="@L("Path", "Pfad")" spellcheck="false" />
             <button type="submit" class="primary" disabled="@_sending">@(_sending ? L("Sending…", "Wird gesendet …") : L("Send", "Senden"))</button>
         </div>
         <label>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- An LCARS elbow in the app's colours: orange frame, lilac and sky bars. -->
+  <path d="M0 10a10 10 0 0 1 10-10h22v8H12a4 4 0 0 0-4 4v20H0z" fill="#ff9900"/>
+  <rect x="12" y="12" width="20" height="8" rx="4" fill="#cc99cc"/>
+  <rect x="12" y="24" width="14" height="8" rx="4" fill="#99ccff"/>
+</svg>

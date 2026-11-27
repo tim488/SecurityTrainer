@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -123,13 +124,18 @@ public sealed class RequestSender(IHttpClientFactory httpClientFactory, IServer 
         return builder.Uri;
     }
 
-    private static string PrettyPrint(string body)
+    // Relaxed escaping: the console shows "—", "'" and "ü" as typed instead of \u2014, \u0027 and \u00fc.
+    // Safe here because Blazor HTML-encodes the text when it renders it.
+    private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+
+    /// <summary>Indents a JSON body for the console; anything else is returned unchanged.</summary>
+    public static string PrettyPrint(string body)
     {
         if (string.IsNullOrWhiteSpace(body)) return body;
         try
         {
             using var doc = JsonDocument.Parse(body);
-            return JsonSerializer.Serialize(doc.RootElement, new JsonSerializerOptions { WriteIndented = true });
+            return JsonSerializer.Serialize(doc.RootElement, Indented);
         }
         catch (JsonException)
         {

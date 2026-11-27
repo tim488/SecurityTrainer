@@ -21,6 +21,15 @@ public class ConsolePayloadTests(WebApplicationFactory<Program> factory) : Missi
     }
 
     [Fact]
+    public void Console_shows_responses_without_unicode_escapes()
+    {
+        var shown = RequestSender.PrettyPrint("{\"title\":\"Personal \\u2014 don\\u0027t share\",\"de\":\"Gr\\u00FC\\u00DFe\"}");
+
+        Assert.Contains("Personal — don't share", shown);
+        Assert.Contains("Grüße", shown);
+    }
+
+    [Fact]
     public async Task Sql_payload_with_spaces_works_through_the_built_uri()
     {
         Assert.True(RequestSender.TryBuildUri(new Uri("http://localhost/"), "/api/missions/sql-injection/cargo?search=' OR 1=1 --", out var uri));
