@@ -8,7 +8,7 @@ namespace Trainer.Web.Labs.OpenRedirect;
 public sealed record InboxEntry(DateTimeOffset ReceivedAt, string Url);
 
 /// <summary>
-/// 2.4 Open redirect (SPEC §6): <c>GET /login/continue?returnUrl=</c> redirects anywhere
+/// 2.4 Open redirect: <c>GET /login/continue?returnUrl=</c> redirects anywhere
 /// and appends the user's one-time <c>code</c>. A Riker bot (<c>POST /support/messages</c>)
 /// follows links that point at the ship's own login page; anything that ends up on
 /// <c>evil.example</c> is logged in <c>GET /attacker/inbox</c>. Riker's code is the flag.

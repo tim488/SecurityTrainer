@@ -48,9 +48,18 @@ dotnet test
   - `Components/Tools/`: extra lab tools (JWT editor, moderator view)
   - `Labs/<Name>/`: one folder per lab
 - `tests/Trainer.Web.Tests/`: xUnit tests using `WebApplicationFactory`
-- `SPEC.md`: the full specification
 - `docs/story.md`: the story outline; `docs/story.de.md`: the German version
 - `docs/writing-a-lab.md`: how to add a lab
 - `docs/open-decisions.md`: choices made during development that are still open
 
 Progress is stored in your browser's `localStorage`. Use **Reset** on a lab to start it over.
+Lab data lives in the running app and is shared by everyone who uses that instance, so
+**Reset** also resets the mission for them. Each player should run their own copy.
+
+## License
+
+The code is [MIT licensed](LICENSE). highlight.js and the Antonio font come with their own
+licenses in `src/Trainer.Web/wwwroot/lib/`.
+
+Star Trek and its characters belong to their rights holders (Paramount). This is a
+non-commercial fan project for teaching, not affiliated with or endorsed by them.

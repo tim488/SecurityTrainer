@@ -4,7 +4,7 @@ using Trainer.Web.Core;
 namespace Trainer.Web.Labs.BruteForce;
 
 /// <summary>
-/// 2.3 Brute force (SPEC §6): <c>POST /password-reset/request</c> generates a 4-digit
+/// 2.3 Brute force: <c>POST /password-reset/request</c> generates a 4-digit
 /// code for a user. <c>POST /password-reset/confirm</c> accepts user + code with no
 /// attempt limit, so the code can be brute-forced over 0000–9999. The flag is returned
 /// on a successful confirm.

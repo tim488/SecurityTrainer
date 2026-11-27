@@ -5,7 +5,7 @@ using Trainer.Web.Core;
 
 namespace Trainer.Web.Tests;
 
-/// <summary>Checks every registered lab against the lab contract (SPEC §7, §8).</summary>
+/// <summary>Checks every registered lab against the lab contract.</summary>
 public class LabContractTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
     private LabRegistry Registry => factory.Services.GetRequiredService<LabRegistry>();

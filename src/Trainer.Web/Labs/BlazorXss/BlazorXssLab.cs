@@ -10,7 +10,7 @@ public sealed record Comment(int Id, string Author, string Text, DateTimeOffset 
 public sealed record Collected(DateTimeOffset At, Dictionary<string, string> Query);
 
 /// <summary>
-/// 3.5 Stored XSS in Blazor (SPEC §6), the finale. Comments render like
+/// 3.5 Stored XSS in Blazor, the finale. Comments render like
 /// <c>@((MarkupString)comment.Text)</c>. The moderator view (Lore's screen) is a page in a
 /// sandboxed iframe that inserts every comment with <c>innerHTML</c>, exactly what
 /// MarkupString does, so <c>&lt;script&gt;</c> doesn't run but event handlers do. The page

@@ -6,7 +6,7 @@ using Trainer.Web.Core;
 namespace Trainer.Web.Labs.Jwt;
 
 /// <summary>
-/// 3.3 Forged JWT (SPEC §6). Wesley gets an HS256-signed JWT with <c>"role": "crew"</c>.
+/// 3.3 Forged JWT. Wesley gets an HS256-signed JWT with <c>"role": "crew"</c>.
 /// Token validation mimics JwtBearer with <c>RequireSignedTokens = false</c>: a token with
 /// an empty signature is accepted unchecked, a signed one must verify. <c>GET /admin/bridge</c>
 /// returns the flag for <c>"role": "admin"</c>. This lab uses JWTs instead of DemoAuth tokens.

@@ -5,7 +5,7 @@ namespace Trainer.Web.Labs.Bfla;
 public sealed record CrewMember(string Name, Text Rank, Text Position, string Quarters, Text Shift);
 
 /// <summary>
-/// 1.2 Broken Function Level Authorization (SPEC §6): the <c>/admin</c> group only
+/// 1.2 Broken Function Level Authorization: the <c>/admin</c> group only
 /// requires a logged-in user, so <c>GET /admin/crew/export</c> hands the full roster
 /// (and the flag) to anyone. <c>GET /menu</c> correctly hides the admin entry from
 /// non-admins, which is exactly why nobody noticed.

@@ -1,7 +1,7 @@
 # Writing a lab
 
 A lab (shown to players as a "mission") is one folder with one class. This guide
-walks through adding one, for example the missing 2.3 `brute-force`.
+walks through adding one.
 
 ## 1. Story first
 
@@ -28,7 +28,7 @@ Create `src/Trainer.Web/Labs/<Name>/<Name>Lab.cs` and implement `ILab`
   with Wesley's token: `auth.GetToken(Slug, DemoAuth.Player)`.
 - `FixOptions`: at least three. Exactly one has `IsCorrect: true`. Wrong options must
   be mistakes real developers make. `Id` is a short kebab-case name of the approach.
-- `Tools`: optional extra tools (`LabTool.JwtEditor`, `LabTool.ModeratorView`).
+- `Tools`: optional extra tools (`LabTool.JwtEditor`, `LabTool.ModeratorView`, `LabTool.Repeater`).
 - Every player-facing string is a `Text(En, De)`. Code snippets stay English.
 - Endpoint code comes in two styles, Minimal API and controller; players pick one with
   the switch on the lab page (display only, the lab's real endpoints don't change).

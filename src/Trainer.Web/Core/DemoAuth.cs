@@ -6,7 +6,7 @@ namespace Trainer.Web.Core;
 public sealed record DemoUser(string Lab, string Name);
 
 /// <summary>
-/// Demo authentication (SPEC §5.3): each lab seeds users with random opaque
+/// Demo authentication: each lab seeds users with random opaque
 /// tokens generated at startup; tokens are looked up to find the user.
 /// Players act as <see cref="Player"/>.
 /// </summary>

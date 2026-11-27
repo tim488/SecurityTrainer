@@ -4,7 +4,7 @@ namespace Trainer.Web.Core.Story;
 public sealed record Act(int Number, Text Title, Text? Ending = null);
 
 /// <summary>
-/// Act titles, opening scene, act endings and finale (SPEC §3.3).
+/// Act titles, opening scene, act endings and finale.
 /// Text comes from docs/story.md (English) and docs/story.de.md (German).
 /// </summary>
 public static class Acts

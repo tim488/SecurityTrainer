@@ -8,7 +8,7 @@ public sealed record PersonalLog(int Id, string OwnerId, string Stardate, Text T
 }
 
 /// <summary>
-/// 1.1 Broken Object Level Authorization (SPEC §6): <c>GET /logs/{id}</c> returns
+/// 1.1 Broken Object Level Authorization: <c>GET /logs/{id}</c> returns
 /// any log to any logged-in user. Riker's log 1003 holds the flag. Any other ID
 /// returns the next of ten joke logs from the rest of the crew, in turn.
 /// Log text follows the request's <c>Accept-Language</c> (English or German).

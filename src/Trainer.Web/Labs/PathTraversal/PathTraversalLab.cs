@@ -4,7 +4,7 @@ using Trainer.Web.Core.Simulation;
 namespace Trainer.Web.Labs.PathTraversal;
 
 /// <summary>
-/// 3.1 Path traversal (SPEC §6): <c>GET /archive/download?file=</c> combines the file name
+/// 3.1 Path traversal: <c>GET /archive/download?file=</c> combines the file name
 /// with <c>/data/archive</c> on a virtual filesystem, so <c>../restricted/crew-evaluations.pdf</c>
 /// (or an absolute path) escapes the public archive. One filesystem per language.
 /// </summary>

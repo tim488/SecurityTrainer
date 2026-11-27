@@ -21,7 +21,7 @@ public sealed class CargoDb(DbContextOptions<CargoDb> options) : DbContext(optio
 }
 
 /// <summary>
-/// 1.3 SQL injection (SPEC §6): <c>GET /cargo?search=</c> concatenates the search term
+/// 1.3 SQL injection: <c>GET /cargo?search=</c> concatenates the search term
 /// into <c>FromSqlRaw</c>. The classified item's description holds the flag.
 /// There is one in-memory SQLite database per language with the same schema, picked
 /// by the request's <c>Accept-Language</c>, so the injection works the same in both.
@@ -342,6 +342,11 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
             they are always data. The same goes for Dapper and plain ADO.NET: use
             `@search` parameters, never concatenation.
 
+            One more thing helped you: the API returned the raw database error. That is handy
+            while you learn, but a real app should log the details and send the caller only a
+            generic error. Otherwise every typo in an attack tells the attacker what the query
+            looks like.
+
             Why the other options fail:
             - **Doubling quotes** works for one context in one database, and only where nobody forgets it.
             - **Blocking keywords** misses other syntax (`UNION`, a closing quote) and breaks real searches.
@@ -362,6 +367,11 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
             `FromSqlRaw` mit `+`. Parameter werden getrennt von der Abfrage geschickt und sind deshalb
             immer Daten. Für Dapper und reines ADO.NET gilt dasselbe: Nimm `@search`-Parameter und
             verkette nie Strings.
+
+            Geholfen hat dir außerdem, dass die API den rohen Datenbankfehler zurückgegeben hat. Beim Lernen
+            ist das praktisch. Eine echte App sollte die Details aber nur ins Log schreiben und dem Aufrufer
+            einen allgemeinen Fehler schicken. Sonst verrät jeder Fehlversuch dem Angreifer, wie die Abfrage
+            aussieht.
 
             Warum die anderen Optionen nicht helfen:
             - **Anführungszeichen verdoppeln** klappt in einem Kontext und einer Datenbank, und nur da, wo es keiner vergisst.
@@ -389,10 +399,13 @@ public sealed class SqlInjectionLab(FlagService flags, DemoAuth auth) : ILab, ID
                 try
                 {
                     // Not composed any further (no Select/Where after it), so EF Core sends the SQL exactly as built.
+                    // EF1003 warns about exactly this concatenation. It is the lab's vulnerability, so it stays.
+#pragma warning disable EF1003
                     var items = db.CargoItems
                         .FromSqlRaw("SELECT * FROM CargoItems WHERE Name LIKE '%" + search + "%' AND IsClassified = 0")
                         .AsNoTracking()
                         .ToList();
+#pragma warning restore EF1003
                     return Results.Ok(items.Select(c => new { c.Id, c.Name, c.Quantity, c.Hold, c.Description }));
                 }
                 catch (Exception ex) when (ex is DbException or InvalidOperationException)

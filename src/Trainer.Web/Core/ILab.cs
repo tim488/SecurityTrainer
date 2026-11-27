@@ -1,6 +1,6 @@
 namespace Trainer.Web.Core;
 
-/// <summary>Contract every lab implements (SPEC §5.1). All player-facing text is a <see cref="Text"/> (English + German).</summary>
+/// <summary>Contract every lab implements. All player-facing text is a <see cref="Text"/> (English + German).</summary>
 public interface ILab
 {
     string Slug { get; }                     // "bola"
@@ -14,7 +14,7 @@ public interface ILab
     IReadOnlyList<FixOption> FixOptions { get; }
     Text ExplanationMarkdown { get; }
 
-    /// <summary>Extra tools on the Exploit step (SPEC §5.2). Most labs need none.</summary>
+    /// <summary>Extra tools on the Exploit step. Most labs need none.</summary>
     IReadOnlyList<LabTool> Tools => [];
 
     void MapEndpoints(IEndpointRouteBuilder app);

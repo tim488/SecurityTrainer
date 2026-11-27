@@ -7,7 +7,7 @@ namespace Trainer.Web.Labs.MassAssignment;
 public sealed record CrewUser(int Id, string? DisplayName, string? Email, bool IsAdmin, int Credits);
 
 /// <summary>
-/// 2.1 Mass assignment (SPEC §6): <c>PUT /profile</c> binds the body to the stored
+/// 2.1 Mass assignment: <c>PUT /profile</c> binds the body to the stored
 /// <see cref="CrewUser"/> and copies every property, so <c>"isAdmin": true</c> sticks.
 /// <c>GET /admin/secret</c> returns the flag to admins.
 /// </summary>

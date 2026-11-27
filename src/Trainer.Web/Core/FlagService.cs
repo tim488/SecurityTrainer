@@ -6,7 +6,7 @@ namespace Trainer.Web.Core;
 
 /// <summary>
 /// Generates one random flag per lab per app start (<c>FLAG{slug-&lt;hex&gt;}</c>)
-/// and checks submissions in constant time (SPEC §5.4).
+/// and checks submissions in constant time.
 /// </summary>
 public sealed class FlagService
 {

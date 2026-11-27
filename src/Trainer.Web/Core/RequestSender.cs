@@ -13,7 +13,7 @@ public sealed record ConsoleResponse(int StatusCode, string ReasonPhrase, IReadO
 public sealed record ConsoleExchange(DateTimeOffset At, ConsoleRequest Request, ConsoleResponse? Response, string? Error);
 
 /// <summary>
-/// Backend of the request console (SPEC §5.2): sends requests server-side to the
+/// Backend of the request console: sends requests server-side to the
 /// app's own address, never follows redirects, only allows <c>/api/labs/</c> paths,
 /// and keeps the last 10 exchanges per lab in memory. Unless the player typed one,
 /// an <c>Accept-Language</c> header for the current UI language is added on the

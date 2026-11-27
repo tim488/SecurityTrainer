@@ -26,7 +26,7 @@ public sealed class GlobalSettings
 public enum LabStatus { New, Exploited, Solved }
 
 /// <summary>
-/// Per-circuit progress (SPEC §5.6), persisted to <c>localStorage</c> via JS interop.
+/// Per-circuit progress, persisted to <c>localStorage</c> via JS interop.
 /// Every interop call is wrapped in try/catch: without storage (prerendering,
 /// private mode, blocked storage) the app keeps working and progress is simply
 /// lost on reload.

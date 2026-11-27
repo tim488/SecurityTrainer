@@ -4,7 +4,7 @@ using Trainer.Web.Core;
 namespace Trainer.Web.Labs.ClientSecrets;
 
 /// <summary>
-/// 2.2 Secrets in the client (SPEC §6): the quartermaster's Blazor WebAssembly app ships
+/// 2.2 Secrets in the client: the quartermaster's Blazor WebAssembly app ships
 /// its <c>wwwroot/appsettings.json</c>, including the Starbase supply API key, to every
 /// browser (simulated at <c>GET /static/appsettings.json</c>). The simulated Starbase API
 /// at <c>GET /starbase/requisitions</c> accepts that key and lists Lore's orders, one of

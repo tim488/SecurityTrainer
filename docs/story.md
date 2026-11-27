@@ -6,11 +6,12 @@ The German version is `docs/story.de.md`; keep both in step.
 ## How to read this file
 
 - **Beat:** what happens in the story at this point, in one line. The text is written to match it.
-- **TODO:** a placeholder, written lab by lab as each lab is built.
 - **Calling card points to:** the next system Lore attacks, which is the next lab.
 - **Barclay lines:** one per fix option, the correct one too, keyed by the option's `Id`
-  (see SPEC §5.1). They all sound equally unsure, so they give nothing away.
-- Where each element appears in the app is defined in SPEC §3.3.
+  (`FixOption.Id` in `Core/ILab.cs`). They all sound equally unsure, so they give nothing away.
+- Where each element appears in the app: the opening scene and act endings come from
+  `Core/Story/Acts.cs`; briefing, hints, calling card, Barclay lines and debrief are
+  properties of each lab class.
 - Limits: opening scene ≤ 120 words, briefing ≤ 100 words, debrief ≤ 60 words.
   The story never gives away the exploit.
 

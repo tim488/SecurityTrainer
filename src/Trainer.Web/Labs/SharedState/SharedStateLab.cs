@@ -13,7 +13,7 @@ public sealed class ReplicatorOrderState
 }
 
 /// <summary>
-/// 3.2 Shared state (SPEC §6): the Blazor replicator panel keeps its order in a singleton
+/// 3.2 Shared state: the Blazor replicator panel keeps its order in a singleton
 /// <see cref="ReplicatorOrderState"/>, shared by every user. A Riker bot places an off-ration
 /// order every few seconds, authorised with his command code (the flag), which lands in that
 /// shared state. <c>GET /replicator/order</c> returns whatever is in it.

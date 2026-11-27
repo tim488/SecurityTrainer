@@ -7,7 +7,7 @@ using Trainer.Web.Core.Simulation;
 namespace Trainer.Web.Labs.Ssrf;
 
 /// <summary>
-/// 3.4 Server-side request forgery (SPEC §6): <c>POST /link-preview { "url": ... }</c> fetches
+/// 3.4 Server-side request forgery: <c>POST /link-preview { "url": ... }</c> fetches
 /// any URL from inside the ship's (simulated) network. The core's metadata service at
 /// <c>http://169.254.169.254/latest/credentials</c> returns credentials with the flag.
 /// The fake network also has an internal inventory host, a DNS alias for the metadata
