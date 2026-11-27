@@ -75,12 +75,11 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
         if (changed) Changed?.Invoke();
     }
 
-    public MissionProgress Get(string slug)
-    {
-        if (!_missions.TryGetValue(slug, out var progress))
-            _missions[slug] = progress = new MissionProgress();
-        return progress;
-    }
+    /// <summary>
+    /// The mission's progress, or an empty one if nothing is loaded yet. Doesn't store the empty one:
+    /// pages render before <see cref="LoadAsync"/> runs, and a stored placeholder would hide the saved progress.
+    /// </summary>
+    public MissionProgress Get(string slug) => _missions.GetValueOrDefault(slug) ?? new MissionProgress();
 
     public MissionStatus StatusOf(string slug)
     {
@@ -90,7 +89,7 @@ public sealed class ProgressStore(IJSRuntime js, IConfiguration config)
 
     public async Task UpdateAsync(string slug, Action<MissionProgress> change)
     {
-        var progress = Get(slug);
+        var progress = _missions[slug] = Get(slug);
         change(progress);
         await WriteAsync(MissionKeyPrefix + slug, progress);
         Changed?.Invoke();
