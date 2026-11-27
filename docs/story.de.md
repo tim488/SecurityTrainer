@@ -262,5 +262,32 @@ von hier.
 
 *Lore greift nach dem Hauptcomputer.*
 
+### 3.1 `path-traversal`: Jefferies-Röhre
+- Briefing:
+  > Logbuch des Captains, Sternzeit 47329.2. Auf jeder Konsole an Bord kursiert eine Nachricht.
+  > Sie zitiert Wort für Wort meine vertraulichen Beurteilungen der Führungsoffiziere. Mr. Worf sei
+  > „gelegentlich zu direkt“. Bei Commander Riker steht Schlimmeres. Diese Beurteilungen gibt es
+  > nur im gesperrten Archiv, und das liegt auf demselben System wie die öffentlichen
+  > Missionsberichte. Ich habe Mr. Crusher gebeten herauszufinden, wie Lore vom einen ins andere
+  > gekommen ist.
+- Hinweise (Data):
+  1. `GET /archive` listet vier öffentliche Missionsberichte auf. `download` nimmt einen Dateinamen und verbindet ihn mit `/data/archive`. Der Dateiname wird genau so verwendet, wie Sie ihn schicken.
+  2. In einem Dateipfad steht `..` für das übergeordnete Verzeichnis. `/data/restricted` liegt eine Ebene über dem öffentlichen Archiv und dann wieder eine hinunter.
+  3. Außerdem fällt mir auf, dass `Path.Combine` den ersten Pfad komplett verwirft, wenn der zweite mit `/` beginnt. Es gibt also zwei Wege in diese Röhre.
+- Visitenkarte (Lore):
+  > Picard findet Riker „gelegentlich leichtsinnig“. Da hat Picard recht, aber das würd' ich ihm
+  > nie sagen. Schön zu wissen, was die Leute wirklich denken, oder, Wesley? Als Nächstes will ich
+  > wissen, was sie wollen. Seit dem Update verwechseln die Replikatoren ständig die Bestellungen.
+  > Jeder kriegt das Abendessen von jemand anderem. Mal sehen, was da sonst noch mitkommt. — L.
+- Barclay:
+  - `full-path-check`: „W-wir könnten erst den echten Pfad ausrechnen und dann prüfen, ob er noch im Archiv liegt? Also schauen, wo die Röhre rauskommt, nicht wo sie anfängt.“
+  - `strip-dot-dot`: „D-die Punkte sind das Problem, Sir. Wir entfernen einfach jedes `../`. Ohne Punkte kein Klettern.“
+  - `require-pdf`: „Es ist ein PDF-Archiv. A-also geben wir nur PDFs raus, alles andere wird abgelehnt. D-das ist wenigstens ordentlich.“
+  - `reject-leading-slash`: „Absolute Pfade sind die gefährlichen. I-ich lehne einfach alles ab, was mit einem Schrägstrich anfängt. D-dann muss es ja im Archiv bleiben.“
+- Nachbesprechung:
+  > Gut gemacht, Mr. Crusher. Das Archiv prüft jetzt jeden Pfad, bevor es eine Datei liest. Man
+  > sagt mir, Sie hätten auch Ihre eigene Beurteilung gelesen. Ich hoffe, sie steigt Ihnen nicht
+  > zu Kopf. Mr. Worf wollte seine ebenfalls sehen. Ich habe nein gesagt. Direkt.
+
 ### Finale
 - TODO

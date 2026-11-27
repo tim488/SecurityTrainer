@@ -322,15 +322,32 @@ The German version is `docs/story.de.md`; keep both in step.
 *Lore goes for the core of the ship.*
 
 ### 3.1 `path-traversal`: Jefferies Tube
-- Beat: Lore's latest note quotes confidential crew evaluations. They only exist
-  in the restricted archive, next to the public mission reports.
-- Flag file: `/data/restricted/crew-evaluations.pdf`.
-- Calling card points to: crew data getting mixed up between users (→ 3.2).
-- Briefing: TODO
-- Hints (Data): TODO ×3
-- Calling card (Lore): TODO
-- Barclay lines: `strip-dot-dot` TODO · `require-pdf` TODO · `reject-leading-slash` TODO
-- Debrief: TODO
+- Beat: Lore's latest note quotes Picard's confidential crew evaluations. They only exist in the restricted archive (`/data/restricted/crew-evaluations.pdf`), next to the public mission reports.
+- Calling card points to: crew data getting mixed up between users, via the replicators (→ 3.2).
+- Briefing:
+  > Captain's log, stardate 47329.2. A message is circulating on every console aboard. It
+  > quotes my confidential evaluations of the senior staff, word for word. Mr. Worf is
+  > "occasionally too direct". Commander Riker's is worse. Those evaluations exist only in
+  > the restricted archive, which sits on the same system as the public mission reports. I
+  > have asked Mr. Crusher to find out how Lore got from one into the other.
+- Hints (Data):
+  1. `GET /archive` lists four public mission reports. `download` takes a file name and combines it with `/data/archive`. The file name is used exactly as you send it.
+  2. In a file path, `..` means the directory above. `/data/restricted` is one level up from the public archive, and then down again.
+  3. I also note that `Path.Combine` discards the first path entirely if the second one starts with `/`. There are, therefore, two ways into this particular tube.
+- Calling card (Lore):
+  > Picard thinks Riker is "occasionally reckless". Picard is right, and I'd never tell him.
+  > Isn't it nice to know what people really think, Wesley? Next I'd like to know what they
+  > want. Since the refit, the replicators keep mixing up orders. Everyone gets someone
+  > else's dinner. I wonder what else comes along with it. — L.
+- Barclay lines:
+  - `full-path-check`: "W-we could work out the real path first, and then check it's still inside the archive? Like checking where the tube comes out, not where it goes in."
+  - `strip-dot-dot`: "The dots are the problem, sir. We t-take out every `../`. No dots, no climbing."
+  - `require-pdf`: "It's a PDF archive. So w-we only hand out PDFs. Anything else gets refused. Th-that's tidy, at least."
+  - `reject-leading-slash`: "Absolute paths are the scary ones. I'll just refuse anything that starts with a slash. Th-then it has to stay in the archive."
+- Debrief:
+  > Well done, Mr. Crusher. The archive now checks every path before it reads a file. I am
+  > told you also read your own evaluation. I trust it will not go to your head. Mr. Worf
+  > has asked to see his as well. I said no. Directly.
 
 ### 3.2 `shared-state`: Crossed Beams
 - Beat: crew members receive each other's replicator orders, and with Riker's

@@ -344,7 +344,8 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 **3.1 Jefferies Tube** — `path-traversal` · API · Medium
 - *Premise:* Lore's latest note quotes confidential crew evaluations. They only exist in the restricted archive.
 - *Vulnerable:* `GET /archive/download?file=1001.pdf` (public mission reports) uses
-  `Path.Combine("/data/archive", file)` over the virtual filesystem.
+  `Path.Combine("/data/archive", file)` over the virtual filesystem
+  (`Core/Simulation/VirtualFileSystem.cs`, one per language). `GET /archive` lists the reports.
 - *Flag:* in `/data/restricted/crew-evaluations.pdf`.
 - *Exploit:* `file=../restricted/crew-evaluations.pdf` (or an absolute path:
   `Path.Combine` discards the root).
