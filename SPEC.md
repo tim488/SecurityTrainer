@@ -417,7 +417,7 @@ suggestions. *Premise* is a one-line summary; the full briefing is in
 
 ## 7. Adding a lab
 
-See `docs/writing-a-lab.md` (to be written with v1):
+See `docs/writing-a-lab.md`:
 
 1. Create `src/Trainer.Web/Labs/<Name>/` and implement `ILab`.
 2. Put the `FlagService` flag where only the exploit reveals it.
